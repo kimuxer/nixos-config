@@ -1,0 +1,92 @@
+nixos-config/
+├── flake.nix          # 主入口文件（唯一需要手动创建的根文件）
+├── flake.lock         # 自动生成的依赖锁定文件
+├── .gitignore         # Git忽略文件
+├── README.md          # 你的配置说明
+├── justfile           # 常用命令快捷方式（强烈推荐）
+│
+├── system/            # 系统级配置（替代原hosts目录）
+│   ├── default.nix    # 系统配置总入口
+│   ├── hardware-configuration.nix  # 安装时自动生成
+│   ├── boot.nix       # GRUB启动、内核参数、systemd-boot
+│   ├── networking.nix # 主机名、防火墙、DNS、网络代理
+│   ├── users.nix      # 系统用户声明（只在这里创建用户）
+│   ├── security.nix   # 系统安全、防火墙、sudo、SELinux
+│   └── hardware/      # 硬件驱动配置
+│       ├── default.nix
+│       ├── nvidia.nix # NVIDIA显卡驱动（你的主力显卡）
+│       ├── audio.nix  # PipeWire音频系统
+│       └── input.nix  # 键盘、鼠标、触控板配置
+│
+├── modules/           # 可复用功能模块（核心部分）
+│   ├── system/        # 系统级通用模块
+│   │   ├── core/      # 核心系统配置
+│   │   │   ├── default.nix
+│   │   │   ├── nix.nix # Nix包管理器本身配置
+│   │   │   └── logging.nix
+│   │   │
+│   │   ├── services/  # 系统服务
+│   │   │   ├── default.nix
+│   │   │   ├── ssh.nix
+│   │   │   ├── bluetooth.nix
+│   │   │   └── printing.nix
+│   │   │
+│   │   └── desktop/   # 桌面环境通用配置
+│   │       ├── default.nix
+│   │       ├── wayland.nix # Wayland全局配置
+│   │       ├── kde/     # KDE Plasma桌面
+│   │       │   ├── default.nix
+│   │       │   ├── themes.nix
+│   │       │   └── keybinds.nix
+│   │       │
+│   │       └── niri/    # Niri窗口管理器（你想尝试的）
+│   │           ├── default.nix
+│   │           ├── keybinds.nix
+│   │           └── rules.nix
+│   │
+│   └── home/          # Home Manager用户级模块
+│       ├── core/      # 核心用户配置
+│       │   ├── default.nix
+│       │   ├── fish.nix # Fish Shell配置（你的主力Shell）
+│       │   ├── git.nix
+│       │   └── xdg.nix # XDG目录规范（强制所有程序遵守）
+│       │
+│       ├── terminal/  # 终端工具链
+│       │   ├── default.nix
+│       │   ├── alacritty.nix
+│       │   ├── tmux.nix
+│       │   └── neovim/ # Neovim复杂配置拆分子目录
+│       │       ├── default.nix
+│       │       ├── plugins.nix
+│       │       ├── keymaps.nix
+│       │       └── options.nix
+│       │
+│       ├── apps/      # 日常应用程序
+│       │   ├── default.nix
+│       │   ├── browsers.nix # Firefox/Chrome
+│       │   ├── media.nix    # 媒体播放器
+│       │   └── office.nix   # LibreOffice等
+│       │
+│       └── dev/       # 开发环境
+│           ├── default.nix
+│           ├── rust.nix     # Rust开发环境（你的主力）
+│           ├── python.nix
+│           └── nodejs.nix
+│
+├── home/              # 你的个人Home Manager配置（替代原users目录）
+│   ├── default.nix    # Home Manager总入口
+│   ├── packages.nix   # 你个人安装的所有软件包
+│   └── secrets.nix    # 加密敏感信息（使用agenix）
+│
+├── overlays/          # Nixpkgs覆盖层
+│   ├── default.nix    # 所有覆盖层汇总
+│   └── patches.nix    # 对现有包的补丁
+│
+├── lib/               # 辅助函数和常量
+│   ├── default.nix
+│   ├── colors.nix     # 全局主题颜色定义（统一所有程序主题）
+│   └── helpers.nix    # 通用Nix辅助函数
+│
+└── scripts/           # 辅助脚本
+    ├── install.sh     # 全新系统安装脚本
+    └── update.sh      # 一键更新脚本

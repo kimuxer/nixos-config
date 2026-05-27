@@ -1,0 +1,9 @@
+keys:
+  - &kim age1czp2zrr9v596c7vsxqtltx92t5c6tl53l0xdd27xs7arkzkfucds4c436c
+
+creation_rules:
+  - path_regex: secrets/secrets\.yaml$
+    key_groups:
+      - age:
+        - *kim
+
