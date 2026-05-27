@@ -11,15 +11,10 @@
     inputs.sops-nix.nixosModules.sops
   ];
 
-  # 1. 声明 sops 的配置主文件（请根据你实际的相对路径调整）
   sops.defaultSopsFile = ../../secrets/secrets.yaml;
   sops.defaultSopsFormat = "yaml";
   sops.age.keyFile = "/var/lib/sops-nix/key.txt";
 
-  #sops.age.keyFile = "/home/kim/.config/sops/age/keys.txt";
-  #sops.age.sshKeyPaths = [ "/home/kim/.ssh/id_ed25519" ];
-
-  # 2. 声明在模板中需要被注入的 secrets 变量
   sops.secrets.vps_ip = { };
   sops.secrets.vps_domain = { };
   sops.secrets."nodes/vless" = { };
@@ -28,8 +23,6 @@
   sops.secrets."nodes/anytls" = { };
   sops.secrets."nodes/vmess" = { };
 
-  # 3. 使用 sops-nix 模板渲染 dae 配置文件
-  # 配置文件名以 .dae 结尾，符合 dae 服务的规范
   sops.templates."config.dae" = {
     content = ''
       global {
@@ -95,7 +88,6 @@
     '';
   };
 
-  # 4. 告诉 dae 载入上面 sops 动态渲染出的明文配置文件
   services.dae = {
     enable = true;
     package = inputs.daeuniverse.packages.${pkgs.stdenv.hostPlatform.system}.dae;
@@ -103,7 +95,6 @@
       v2ray-geoip
       v2ray-domain-list-community
     ];
-    # 指向模板物理路径（通常在运行时生成于 /run/secrets/config.dae）
     configFile = config.sops.templates."config.dae".path;
   };
 }

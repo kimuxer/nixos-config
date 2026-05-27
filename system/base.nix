@@ -19,6 +19,5 @@
   nix.registry.nixpkgs.flake = inputs.nixpkgs;
   nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 
-  # 系统状态版本（你用 26.05 完全正确）
   system.stateVersion = "26.05";
 }
