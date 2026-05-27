@@ -100,27 +100,5 @@
         }
       ];
     };
-
-    # --- 优化后的主题：使用终端变量而非死板的颜色值 ---
-    theme = {
-      manager = {
-        # 使用终端的 blue 变量，而不是具体的 #7aa2f7
-        hovered = { fg = "black"; bg = "blue"; bold = true; }; 
-        
-        directory = { fg = "blue"; }; 
-        executable = { fg = "green"; };
-        symlink = { fg = "cyan"; };
-      };
-
-      # 调色板定义：全部设为 null，强制 Yazi 使用终端的主题颜色
-      palette = {
-        blue = null;
-        magenta = null;
-        cyan = null;
-        green = null;
-        orange = null;
-        red = null;
-      };
-    };
   };
 }
