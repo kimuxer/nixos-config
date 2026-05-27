@@ -8,6 +8,7 @@
     ./kitty
     ./fastfetch
     ./nixvim
+    ./yazi
   ];
 
   home.shellAliases = {
