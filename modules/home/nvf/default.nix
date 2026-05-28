@@ -1,47 +1,54 @@
 { lib, inputs, pkgs, ... }:
 {
-  imports = [ inputs.nvf.homeManagerModules.default ];
+  imports = [ 
+    inputs.nvf.homeManagerModules.default 
+    ./keymaps.nix
+  ];
 
   programs.nvf = {
     enable = true;
 
     settings.vim = {
-      # ⚡ 依旧保留这一行（确保 wrapped Neovim 能读取本地家目录由 DMS 动态生成的 ~/ .config/nvim/colors/dms.lua）
-      luaConfigPre = ''
-        vim.opt.rtp:prepend(vim.fn.expand("~/.config/nvim"))
-      '';
-
-      # =======================================================
-      # 🎨 现代 IDE 核心配置（根据 NVF 官方手册推荐补齐）
-      # =======================================================
-      languages.enableTreesitter = true;       # ⚡ 开启现代高速语法解析器（极大改善代码着色）
-      autocomplete.nvim-cmp.enable = true;     # ⚡ 开启代码自动补全浮动窗口（打字时自动弹出提示）
-      languages.nix.enable = true;             # ⚡ 开启 Nix 语言支持（提供 Nil 语法查错与自动格式化）
-      binds.whichKey.enable = true;            # ⚡ 开启这个超强的提示器
-      # 基础配置
+      lineNumberMode = "relative";
+      options = { mouse = "a"; };
       viAlias = true;
       vimAlias = true;
+      syntaxHighlighting = true;
+
+      # === 核心插件区 ===
       lsp.enable = true;
+      autocomplete.nvim-cmp.enable = true;
+      binds.whichKey.enable = true;
+      binds.cheatsheet.enable = true;
       
-      # Neovim 选项
-      options = {
-        mouse = "a";
-        number = true;
-        relativenumber = true;
-        autoindent = true;
-        termguicolors = true;
+      # 启用 Telescope（它会自动注册 <leader>ff 等快捷键）
+      telescope.enable = true; 
+
+      languages = {
+        enableTreesitter = true;
+        enableFormat = true;
+        nix.enable = true;
+        fish.enable = true;
+        lua.enable = true;
+        rust.enable = true;
       };
 
-      # 状态栏 lualine 配置（完全交给 base46 托管，设为 auto 即可自动跟随 dms 变色）
       statusline.lualine = {
         enable = true;
-        theme = "auto"; 
+        theme = "auto";
+      };
+
+      clipboard = {
+        enable = true;
+        registers = "unnamedplus"; # 自动使用系统剪贴板，无需额外配置快捷键
+        providers.wl-copy.enable = true;
+      };
+
+      dashboard.alpha = {
+        enable = true;
+        theme = "theta";
+        opts.leader = "SPC";
       };
     };
-  };
-
-  home.sessionVariables = {
-    EDITOR = "nvim";
-    VISUAL = "nvim";
   };
 }

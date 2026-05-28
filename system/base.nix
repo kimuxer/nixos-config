@@ -4,6 +4,15 @@
   # 最新内核
   boot.kernelPackages = pkgs.linuxPackages_latest;
   hardware.cpu.intel.updateMicrocode = true;
+  
+  boot.kernel.sysctl = {
+   "vm.swappiness" = 10;
+  };
+  zramSwap = {
+    enable = true;
+    memoryPercent = 25; 
+    algorithm = "zstd";
+  };
 
   # Nix 存储优化
   nix.settings.auto-optimise-store = true;
@@ -19,5 +28,7 @@
   nix.registry.nixpkgs.flake = inputs.nixpkgs;
   nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 
+  # 系统状态版本（你用 26.05 完全正确）
   system.stateVersion = "26.05";
 }
+

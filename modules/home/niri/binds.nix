@@ -9,7 +9,7 @@
     "Ctrl+Shift+Delete" = { action.quit = [ ]; repeat = false; };
 
     # -- 应用启动与 DMS UI (IPC 调用) --
-    "Mod+Return" = { action.spawn = [ "kitty" ]; repeat = false; };
+    "Mod+Return" = { action.spawn = [ "footclient" ]; repeat = false; };
     "Mod+D" = { action.spawn = [ "dms" "ipc" "call" "spotlight" "toggle" ]; repeat = false; };
     "Mod+B" = { action.spawn = [ "zen" "--class" "zen-browser" ]; repeat = false; };
     "Mod+E" = { action.spawn = [ "kitty" "-e" "yazi" ]; repeat = false; };

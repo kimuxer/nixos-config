@@ -21,8 +21,8 @@
     zen-browser.url = "github:youwen5/zen-browser-flake";
     zen-browser.inputs.nixpkgs.follows = "nixpkgs";
 
-    nixvim.url = "github:nix-community/nixvim";
-    #nixvim.inputs.nixpkgs.follows = "nixpkgs";
+    nvf.url = "github:NotAShelf/nvf";
+    nvf.inputs.nixpkgs.follows = "nixpkgs";
 
     # 透明代理
     daeuniverse.url = "github:daeuniverse/flake.nix";

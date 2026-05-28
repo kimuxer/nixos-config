@@ -6,20 +6,20 @@
   };
 
   boot.kernelParams = [
-    "quiet"
-    "loglevel=3"
-    "splash"
+  #  "quiet"
+  #  "loglevel=3"
+  #  "splash"
     "nosgx"
     "nvidia_drm.modeset=1"
     "nvidia_drm.fbdev=1"
   ];
 
-  boot.plymouth = {
-    enable = true;
-    themePackages = [ pkgs.catppuccin-plymouth ];
-    theme = "catppuccin-macchiato";
+#  boot.plymouth = {
+#    enable = true;
+#    themePackages = [ pkgs.catppuccin-plymouth ];
+#    theme = "catppuccin-macchiato";
 
-  };
+ # };
 
   boot.loader = {
     efi.canTouchEfiVariables = true;
