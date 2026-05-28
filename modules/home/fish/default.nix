@@ -8,7 +8,7 @@
     enable = true;
 
     # 所有别名 → 全部变成 Fish 自动展开缩写
-    shellAliases = {
+    shellAbbrs = {
       # 基础工具替换
       cat   = "bat";
       top   = "btm";
