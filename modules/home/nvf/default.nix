@@ -25,7 +25,7 @@
       telescope.enable = true; 
 
       languages = {
-        enableTreesitter = true;
+        enableTreesitter = false;
         enableFormat = true;
         nix.enable = true;
         fish.enable = true;
