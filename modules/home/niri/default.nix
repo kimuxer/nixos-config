@@ -31,8 +31,17 @@
 
     niri = {
       includes = {
-        enable = false;
+        enable = true;
         override = false;
+        originalFileName = "custom"; 
+        filesToInclude = [         
+          "alttab"         
+          "binds"
+          "colors"
+          "layout"
+          "outputs"
+          "wpblur"
+        ];
       };
       enableSpawn = true;    # 跟随niri启动
     };
