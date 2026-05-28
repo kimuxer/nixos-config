@@ -41,6 +41,7 @@
           "layout"
           "outputs"
           "wpblur"
+          "cursor"
         ];
       };
       enableSpawn = true;    # 跟随niri启动
