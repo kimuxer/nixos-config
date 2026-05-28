@@ -14,10 +14,10 @@
         qt6Packages.fcitx5-configtool
         qt6Packages.fcitx5-qt
         fcitx5-gtk
-        catppuccin-fcitx5
         fcitx5-lua
-        fcitx5-rime
+        fcitx5-fluent
       ];
     };
   };
 }
+
