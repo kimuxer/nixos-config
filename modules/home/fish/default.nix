@@ -6,10 +6,9 @@
   # ==============================
   programs.fish = {
     enable = true;
-    enableAbbreviations = true;
 
     # 所有别名 → 全部变成 Fish 自动展开缩写
-    abbreviations = {
+    shellAliases = {
       # 基础工具替换
       cat   = "bat";
       top   = "btm";

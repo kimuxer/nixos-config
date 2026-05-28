@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 {
   programs.foot = {
     enable = true;
@@ -12,6 +12,11 @@
         pad = "12x12"; # 设置窗口内边距
         resize-delay-ms = 50;
       };
+      
+      colors-dark = {
+        alpha = "0.85";
+        alpha-mode = "default";
+      };
 
       mouse = {
         hide-when-typing = "yes";
@@ -24,15 +29,17 @@
       scrollback = {
         lines = 25000;
         multiplier = 3.0;
-        indicator-position = relative;
-        indicator-format = "";
+        indicator-position = "relative";
+        indicator-format="none";
       };
-      url = {
-        launch = "xdg-open ${url}";
-        label-letters = "sadfjklewcmpgh"; # 当进入 URL 模式时显示的快捷键字母
-        style = "underline"; # URL 样式，下划线最直观
-        osc8-underline = "url-mode"; # 支持 OSC 8 超链接协议
+      csd = {
+        preferred = "none"; # 这会告诉 foot 不要渲染标题栏
+        size = 0;           # 标题栏高度设为0
+        button-width = 0;   # 按钮宽度设为0
       };
     };
   };
 }
+
+
+
