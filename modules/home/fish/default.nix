@@ -44,9 +44,15 @@
     # 不显示欢迎语
     interactiveShellInit = ''
       set -g fish_greeting ""
+
       # 终端locale为en
       export LANG=en_US.UTF-8
       export LC_ALL=en_US.UTF-8
+
+      # 开启终端时运行一次fastfetch
+      if status is-interactive
+        fastfetch
+      end
     '';
   };
 
