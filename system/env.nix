@@ -34,7 +34,7 @@
     NIXOS_OZONE_WL = "1";
     MOZ_ENABLE_WAYLAND = "1";
     _JAVA_AWT_WM_NONREPARENTING = "1";
-    DMS_RUN_GREETER = "1";
+    #DMS_RUN_GREETER = "1";
     
     # 输入法 (注：部分 NixOS 模块可能已经通过 i18n 设置处理了，建议检查)
                 #XMODIFIERS = "@im=fcitx";

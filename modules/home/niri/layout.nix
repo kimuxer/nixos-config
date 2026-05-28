@@ -31,9 +31,9 @@
 
     # --- 聚焦环渐变 (Focus Ring Gradients) ---
     # 官方文档提到 focus-ring 支持渐变色，这能让你的 UI 更有质感。
-    #focus-ring = {
-    #  enable = true;
-    #  width = 2;
-    #};
+    focus-ring = {
+      enable = false;
+     # width = 2;
+    };
   };
 }

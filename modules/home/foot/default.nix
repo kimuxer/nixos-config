@@ -13,14 +13,10 @@
         resize-delay-ms = 50;
         selection-target = "both";
       };
-
-
-
-      
-                        #colors-dark = {
-                        #alpha = "0.85";
-                        #alpha-mode = "default";
-                        #};          
+      #colors-dark = {
+        #alpha = "0.85";
+        #alpha-mode = "default";
+      #};          
 
       mouse = {
         hide-when-typing = "yes";
