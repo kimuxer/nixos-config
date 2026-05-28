@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ ... }:
 
 {
   programs.niri.settings.window-rules = [
@@ -31,7 +31,14 @@
       # 【极其重要】：必须设为 false，否则 Kitty 的 0.75 透明度会被 Niri 垫在底下的背景盖住
       draw-border-with-background = false;
       # 强制终端不参与“非活动变暗”，保持代码始终清晰
-      opacity = 0.8;
+      opacity = 0.85;
+    }
+    {
+      matches = [{ app-id = "footclient"; }];
+      # 【极其重要】：必须设为 false，否则 Kitty 的 0.75 透明度会被 Niri 垫在底下的背景盖住
+      draw-border-with-background = false;
+      # 强制终端不参与“非活动变暗”，保持代码始终清晰
+      opacity = 0.85;
     }
 
     # --- 4. 非活动窗口变暗效果 ---
@@ -40,10 +47,9 @@
       matches = [{ is-active = false; }];
       # 排除 Kitty，因为终端我们通常希望它背景一直透明但文字清晰
       excludes = [
-        { app-id = "kitty"; }
         { app-id = "zen"; }
       ];
-      opacity = 0.9;
+      opacity = 0.7;
     }
 
     # --- 5. DMS (Quickshell) 组件适配 ---
