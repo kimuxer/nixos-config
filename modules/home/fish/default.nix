@@ -17,10 +17,6 @@
       grep  = "rg";
       find  = "fd";
       man   = "tldr";
-      ls    = "eza --icons";
-      ll    = "eza -lh --icons --git";
-      la    = "eza -a --icons";
-      lt    = "eza --tree --icons --level 3";
       cls   = "clear";
       q     = "exit";
 
@@ -43,15 +39,34 @@
 
     # 不显示欢迎语
     interactiveShellInit = ''
+      # --- 强行抹除任何名为 ls 的别名或函数 ---
+      # 这行是核心：不管是谁在启动时注入的 alias ls，
+      # 我们都在它生效后的第一时间强制抹除它。
+      #functions --erase ls 2>/dev/null
+      
       set -g fish_greeting ""
 
       # 终端locale为en
       export LANG=en_US.UTF-8
       export LC_ALL=en_US.UTF-8
+    
+      # 统一封装，全部使用 --wraps=eza，这样它们就全部拥有了 eza 的完美补全能力
+    
+      function ls --wraps=eza --description 'alias ls=eza --icons'
+        eza --icons $argv
+      end
 
-      # 修复 eza 补全和波浪号（~）不兼容的 Bug
-      complete -c eza -w ls
-      complete -c eza -F
+      function ll --wraps=eza --description 'alias ll=eza -lh --icons --git'
+        eza -lh --icons --git $argv
+      end
+
+      function la --wraps=eza --description 'alias la=eza -a --icons'
+        eza -a --icons $argv
+      end
+
+      function lt --wraps=eza --description 'alias lt=eza --tree --icons --level 3'
+        eza --tree --icons --level 3 $argv
+      end
 
       # 开启终端时运行一次fastfetch
       if status is-interactive
