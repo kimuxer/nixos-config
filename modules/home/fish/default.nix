@@ -39,11 +39,7 @@
 
     # 不显示欢迎语
     interactiveShellInit = ''
-      # --- 强行抹除任何名为 ls 的别名或函数 ---
-      # 这行是核心：不管是谁在启动时注入的 alias ls，
-      # 我们都在它生效后的第一时间强制抹除它。
-      #functions --erase ls 2>/dev/null
-      
+     # 去掉fish欢迎语 
       set -g fish_greeting ""
 
       # 终端locale为en
