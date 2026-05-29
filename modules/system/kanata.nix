@@ -21,9 +21,9 @@
           @cap @mv_lyr 1 2 3 4 5 6 7 8 9)
 
         (deflayer move_layer
-          ;; 这里的 _ 表示保持上层的按键状态 (即按住 ralt)
-          ;; _ (对应 caps)
-          _
+          ;; 1. (caps): _ 表示保持 Caps 原有行为
+          ;; 2. (ralt): _ 表示保持 RAlt 原有行为（作为层触发键，这里必须是透明/保持，否则层会立刻断开）
+          _ _
           ;; M-S-1 代表 Super(Meta) + Shift + 1
           ;; 这里的 M 必须和你在 Niri 里的 Mod 定义一致
           M-S-1 M-S-2 M-S-3 M-S-4 M-S-5 M-S-6 M-S-7 M-S-8 M-S-9)
