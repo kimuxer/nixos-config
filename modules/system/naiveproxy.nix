@@ -1,0 +1,61 @@
+# /etc/nixos/system/services/naive.nix
+{ config, pkgs, lib, ... }:
+
+let
+  # 1. 免编译预构建包
+  naiveproxy-bin = pkgs.stdenv.mkDerivation rec {
+    pname = "naiveproxy";
+    version = "148.0.7778.96-5";
+
+    src = pkgs.fetchurl {
+      url = "https://github.com/klzgrad/naiveproxy/releases/download/v${version}/naiveproxy-v${version}-linux-x64.tar.xz";
+      hash = "sha256-ymlY3Lv7exs4xVohPatpJ848FBfZabgVZXUTuB/HNS0=";
+    };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    # 自适应提取二进制
+    installPhase = ''
+      find . -type f -name "naive" -exec install -Dm755 {} $out/bin/naive \;
+    '';
+  };
+
+  # ⚡ 静态参数绑定：直接在内部决定你的本地监听端口为 55555
+  listenPort = "socks://127.0.0.1:55555";
+in
+{
+  # 1. 放入系统环境以便命令行随时可以调用调试
+  environment.systemPackages = [ naiveproxy-bin ];
+
+  # 2. 自动复用你在全局（如 dae.nix）中定义好的 sops.defaultSopsFile 路径！
+  # 并在运行期将所有人限制为 nobody，保证安全
+  sops.secrets.naive_proxy = {
+    sopsFile = config.sops.defaultSopsFile; 
+    owner = "nobody";
+    group = "nobody";
+  };
+
+  # 3. 声明 Systemd 服务（只要导入此模块，服务便会默认静默启用并开机自启）
+  systemd.services.naiveproxy = {
+    description = "NaiveProxy Client Service";
+    after = [ "network.target" "sops-nix.service" ];
+    wants = [ "sops-nix.service" ];
+    wantedBy = [ "multi-user.target" ];
+    before = [ "dae.service" ]; # ⚡ 严格时序保证
+
+    serviceConfig = {
+      Type = "simple";
+      # 动态读取解密出的 proxy 链接并直接启动
+      ExecStart = "${pkgs.bash}/bin/bash -c '${naiveproxy-bin}/bin/naive --listen=${listenPort} --proxy=$(cat ${config.sops.secrets.naive_proxy.path})'";
+      Restart = "on-failure";
+      RestartSec = 5;
+
+      # 权限降级，安全运行
+      User = "nobody";
+      Group = "nobody";
+    };
+  };
+}

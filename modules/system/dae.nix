@@ -52,6 +52,7 @@
       }
 
       node {
+        vps_naive: "socks5://127.0.0.1:55555"
         # 注意：此处必须使用 ''${ 规避 Nix 编译期插值，保留给 sops-nix 在运行期替换
         vps_vless: "${config.sops.placeholder."nodes/vless"}"
         vps_hy2: "${config.sops.placeholder."nodes/hy2"}"
@@ -67,6 +68,7 @@
       }
 
       routing {
+        pname(naive) -> direct(must)
         ### 1. 官方预设生存规则 (保护内网、绑定 WAN 的连通性检查)
         pname(NetworkManager, systemd-resolved, dnsmasq) -> direct(must)
         dip(224.0.0.0/3, 'ff00::/8') -> direct

@@ -34,9 +34,9 @@
       gd    = "git diff";
 
       # NixOS 系统命令
-      ns    = "sudo nixos-rebuild switch --flake .#nixos";
-      nb    = "sudo nixos-rebuild boot --flake .#nixos";
-      nt    = "sudo nixos-rebuild test --flake .#nixos";
+      ns    = "sudo nixos-rebuild switch --flake .#nixdevbox";
+      nb    = "sudo nixos-rebuild boot --flake .#nixdevbox";
+      nt    = "sudo nixos-rebuild test --flake .#nixdevbox";
       nc    = "sudo nix-collect-garbage -d";
       no    = "nix-store --optimise";
     };
@@ -48,6 +48,10 @@
       # 终端locale为en
       export LANG=en_US.UTF-8
       export LC_ALL=en_US.UTF-8
+
+      # 修复 eza 补全和波浪号（~）不兼容的 Bug
+      complete -c eza -w ls
+      complete -c eza -F
 
       # 开启终端时运行一次fastfetch
       if status is-interactive
