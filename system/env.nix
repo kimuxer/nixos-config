@@ -1,5 +1,12 @@
 { ... }:
 {
+  # 强制greetd使用软光标，解决鼠标右下方噪点问题
+  systemd.services.greetd.environment = {
+    WLR_NO_HARDWARE_CURSORS = "1";
+    XCURSOR_THEME = "Bibata-Modern-Ice";
+    XCURSOR_SIZE = "20";
+  };
+
   # --- 1. 底层系统环境变量 ---
   # 这些是全局生效的驱动层和图形后端设置，应在进程启动前就载入
   environment.variables = {
@@ -7,7 +14,7 @@
     LIBVA_DRIVER_NAME = "nvidia";
     GBM_BACKEND = "nvidia-drm";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-    WLR_NO_HARDWARE_CURSORS = "1";
+    #WLR_NO_HARDWARE_CURSORS = "1";
     
     # 图形后端 (后端驱动)
     SDL_VIDEODRIVER = "wayland";
@@ -34,10 +41,9 @@
     NIXOS_OZONE_WL = "1";
     MOZ_ENABLE_WAYLAND = "1";
     _JAVA_AWT_WM_NONREPARENTING = "1";
-    #DMS_RUN_GREETER = "1";
     
     # 输入法 (注：部分 NixOS 模块可能已经通过 i18n 设置处理了，建议检查)
-                #XMODIFIERS = "@im=fcitx";
+    XMODIFIERS = "@im=fcitx";
 
     # 编辑器
     EDITOR = "nvim";
