@@ -31,11 +31,11 @@ in
   environment.systemPackages = [ naiveproxy-bin ];
 
   # 2. 自动复用你在全局（如 dae.nix）中定义好的 sops.defaultSopsFile 路径！
-  # 并在运行期将所有人限制为 nobody，保证安全
+  # 并在运行期将所有人限制为 naiveproxy，保证安全
   sops.secrets.naive_proxy = {
     sopsFile = config.sops.defaultSopsFile; 
-    owner = "nobody";
-    group = "nobody";
+    owner = "naiveproxy";
+    group = "naiveproxy";
   };
 
   # 3. 声明 Systemd 服务（只要导入此模块，服务便会默认静默启用并开机自启）
@@ -54,8 +54,8 @@ in
       RestartSec = 5;
 
       # 权限降级，安全运行
-      User = "nobody";
-      Group = "nobody";
+      User = "naiveproxy";
+      Group = "naiveproxy";
     };
   };
 }

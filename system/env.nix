@@ -43,7 +43,7 @@
     _JAVA_AWT_WM_NONREPARENTING = "1";
     
     # 输入法 (注：部分 NixOS 模块可能已经通过 i18n 设置处理了，建议检查)
-    XMODIFIERS = "@im=fcitx";
+    #XMODIFIERS = "@im=fcitx";
 
     # 编辑器
     EDITOR = "nvim";
