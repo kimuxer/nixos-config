@@ -86,9 +86,10 @@
     papirus-icon-theme
 
     # --------------------------
-    # Qt 6 配置与主题（全局生效）
+    # Qt 6 gtk3 配置与主题（全局生效）
     # --------------------------
     qt6Packages.qt6ct
+    adw-gtk3
     #qt6Packages.qtstyleplugin-kvantum
   ];
 }
