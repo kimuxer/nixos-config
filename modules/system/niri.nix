@@ -47,16 +47,17 @@
   # ============================
   programs.dank-material-shell = {
     enable = true;
-    greeter = {
-      enable = true;
-      compositor = {
-        name = "niri";
-      };
-
-      configHome = "/home/kim";
-    };
+#    greeter = {
+#      enable = true;
+#      compositor = {
+#        name = "niri";
+#      };
+#
+#      configHome = "/home/kim";
+#    };
   };
-
+  # 暂时使用ly作为DM 
+  services.displayManager.ly.enable = true;
   # 关闭冲突服务
   systemd.user.services.niri-flake-polkit.enable = lib.mkForce false;
 }
