@@ -5,9 +5,8 @@
     ./apps
     ./fish
     ./git
-    ./kitty
+    #./kitty
     ./fastfetch
-    #./nixvim
     ./yazi
     ./nvf
     ./foot
