@@ -33,7 +33,7 @@
       includes = {
         enable = true;
         override = false;
-        originalFileName = "custom"; 
+        originalFileName = "hm"; 
         filesToInclude = [         
           "alttab"         
           "binds"
@@ -42,13 +42,14 @@
           "outputs"
           "wpblur"
           "cursor"
+          "windowrules"
         ];
       };
       enableSpawn = true;    # 跟随niri启动
     };
 
     dgop.package = inputs.dgop.packages.${pkgs.stdenv.hostPlatform.system}.default;
-    # quickshell.package = inputs.quickshell.packages.${pkgs.system}.default;
+    quickshell.package = inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default;
   };
 
   # 保持你的自启动项
