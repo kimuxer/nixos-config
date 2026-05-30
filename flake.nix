@@ -33,11 +33,6 @@
     sops-nix.url = "github:mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
-    # zen-editor
-    zed-editor-flake.url = "github:HPsaucii/zed-editor-flake";
-    zed-editor-flake.inputs.nixpkgs.follows = "nixpkgs";
-  };
-
   outputs = inputs @ { self, flake-parts, nixpkgs, home-manager, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems =[ "x86_64-linux" ];
