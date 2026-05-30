@@ -49,7 +49,7 @@
 
       # 系统相关的配置放在这里
       flake = {
-        nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+        nixosConfigurations.nixdevbox = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = { inherit inputs; }; # 把 inputs 传给所有模块
 
