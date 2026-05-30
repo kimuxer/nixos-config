@@ -4,6 +4,12 @@
   # 系统纯净策略：清空 NixOS 预装无用包
   environment.defaultPackages = lib.mkForce [];
 
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+    enableFishIntegration = true;
+    enableBashIntegration = true;
+  };
 
   programs = {
     # 系统级编辑器（所有用户可用）
