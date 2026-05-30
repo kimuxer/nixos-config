@@ -21,6 +21,7 @@
     zen-browser.url = "github:youwen5/zen-browser-flake";
     zen-browser.inputs.nixpkgs.follows = "nixpkgs";
 
+    # neovim
     nvf.url = "github:NotAShelf/nvf";
     nvf.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -28,8 +29,13 @@
     daeuniverse.url = "github:daeuniverse/flake.nix";
     daeuniverse.inputs.nixpkgs.follows = "nixpkgs";
 
+    # 敏感信息加密
     sops-nix.url = "github:mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
+    # zen-editor
+    zed-editor-flake.url = "github:HPsaucii/zed-editor-flake";
+    zed-editor-flake.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs @ { self, flake-parts, nixpkgs, home-manager, ... }:
@@ -37,24 +43,19 @@
       systems =[ "x86_64-linux" ];
 
       # 开发环境、自定义包在这里定义 (针对每个系统)
-      perSystem = { pkgs, ... }: {
+      #perSystem = { pkgs, ... }: {
         # 暂时空着
-      };
+      #};
 
       # 系统相关的配置放在这里
       flake = {
-        nixosConfigurations.nixdevbox = nixpkgs.lib.nixosSystem {
+        nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = { inherit inputs; }; # 把 inputs 传给所有模块
 
           modules =[
             ./system
             ./modules/system
-
-            ({ ... }: {
-              nixpkgs.config.allowUnfree = true;
-              nix.settings.experimental-features = [ "nix-command" "flakes" ];
-            })
           ];
         };
       };
