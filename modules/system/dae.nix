@@ -81,7 +81,7 @@
 
         domain(geosite:google, geosite:github) -> proxy_group
         domain(suffix: nixos.org, suffix: cachix.org) -> proxy_group
-
+        pname(termusic) -> proxy_group
         ### 4. 智能分流与终极兜底
         domain(geosite:cn) -> direct
         dip(geoip:cn) -> direct
