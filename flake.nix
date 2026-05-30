@@ -32,6 +32,7 @@
     # 敏感信息加密
     sops-nix.url = "github:mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+  };
 
   outputs = inputs @ { self, flake-parts, nixpkgs, home-manager, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
