@@ -21,23 +21,23 @@
         "type": "github"
       }
     },
-    "dgop": {
+    "danksearch": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1778679554,
-        "narHash": "sha256-zoPgnxIlDja91/4TmnCui+Fzc/xU/1jdJFu9bovtOk8=",
+        "lastModified": 1779650358,
+        "narHash": "sha256-53a8H1NhppF1Wte4XRm78AAb23ZVOda2vlmpV4sa90U=",
         "owner": "AvengeMedia",
-        "repo": "dgop",
-        "rev": "06574b54fa4878a93d8605962d50b13e9528a4ca",
+        "repo": "danksearch",
+        "rev": "e4be0825f06370d506e4755cfeae97247a18586f",
         "type": "github"
       },
       "original": {
         "owner": "AvengeMedia",
-        "repo": "dgop",
+        "repo": "danksearch",
         "type": "github"
       }
     },
@@ -59,6 +59,26 @@
       "original": {
         "owner": "AvengeMedia",
         "repo": "DankMaterialShell",
+        "type": "github"
+      }
+    },
+    "dms-plugins": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1780107042,
+        "narHash": "sha256-ISqJC5Vpg3OA1zpfe6F3NKYrsByprO0UF0Y7r/j5Bvo=",
+        "owner": "AvengeMedia",
+        "repo": "dms-plugin-registry",
+        "rev": "4b1a70c5423cb178bc80dbbba4ab8154ff7cbfd2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "AvengeMedia",
+        "repo": "dms-plugin-registry",
         "type": "github"
       }
     },
@@ -356,8 +376,9 @@
     "root": {
       "inputs": {
         "daeuniverse": "daeuniverse",
-        "dgop": "dgop",
+        "danksearch": "danksearch",
         "dms": "dms",
+        "dms-plugins": "dms-plugins",
         "flake-parts": "flake-parts_2",
         "home-manager": "home-manager",
         "niri": "niri",

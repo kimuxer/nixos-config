@@ -3,6 +3,8 @@
   imports =[
     inputs.dms.homeModules.dank-material-shell
     inputs.dms.homeModules.niri
+    inputs.dms-plugins.modules.default
+    inputs.danksearch.homeModules.dsearch
 
     ./env.nix
     ./layout.nix
@@ -16,6 +18,9 @@
 
   programs.dank-material-shell = {
     enable = true;
+    dgop.package = pkgs.dgop;
+    quickshell.package = pkgs.quickshell;
+    
     systemd = {
       enable = false;             # Systemd service for auto-start
       restartIfChanged = true;    # Auto-restart dms.service when dank-material-shell changes
@@ -48,8 +53,8 @@
       enableSpawn = true;    # 跟随niri启动
     };
 
-    dgop.package = inputs.dgop.packages.${pkgs.stdenv.hostPlatform.system}.default;
-    quickshell.package = inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    #dgop.package = inputs.dgop.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    #quickshell.package = inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default;
   };
 
   # 保持你的自启动项

@@ -15,8 +15,18 @@
     niri.inputs.nixpkgs.follows = "nixpkgs";
     dms.url = "github:AvengeMedia/DankMaterialShell";
     dms.inputs.nixpkgs.follows = "nixpkgs";
-    dgop.url = "github:AvengeMedia/dgop";
-    dgop.inputs.nixpkgs.follows = "nixpkgs";
+    #dgop.url = "github:AvengeMedia/dgop";
+    #dgop.inputs.nixpkgs.follows = "nixpkgs";
+    # Dank-Material-Shell plugins
+    dms-plugins = {
+      url = "github:AvengeMedia/dms-plugin-registry";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    # Dank Search
+    danksearch = {
+      url = "github:AvengeMedia/danksearch";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     zen-browser.url = "github:youwen5/zen-browser-flake";
     zen-browser.inputs.nixpkgs.follows = "nixpkgs";
