@@ -1,11 +1,11 @@
 { ... }:
 {
   # 强制greetd使用软光标，解决鼠标右下方噪点问题
-  systemd.services.greetd.environment = {
-    WLR_NO_HARDWARE_CURSORS = "1";
-    XCURSOR_THEME = "Bibata-Modern-Ice";
-    XCURSOR_SIZE = "20";
-  };
+#  systemd.services.greetd.environment = {
+#    WLR_NO_HARDWARE_CURSORS = "1";
+#    XCURSOR_THEME = "Bibata-Modern-Ice";
+#    XCURSOR_SIZE = "20";
+#  };
 
   # --- 1. 底层系统环境变量 ---
   # 这些是全局生效的驱动层和图形后端设置，应在进程启动前就载入
