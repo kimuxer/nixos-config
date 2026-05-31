@@ -71,25 +71,25 @@
       # 全边框插件：界面更美观，带圆角/完整边框
       full-border = {
         package = pkgs.yaziPlugins.full-border;
-        setup = true; # 自动初始化插件（不用写 init.lua）
+        #setup = true; # 自动初始化插件（不用写 init.lua）
       };
 
       # Lazygit 集成：在 Yazi 里直接打开 Git 工具
       lazygit = {
         package = pkgs.yaziPlugins.lazygit;
-        setup = true;
+        #setup = true;
       };
 
       # Starship 集成：底部状态栏显示主题、Git 分支、路径等
       starship = {
         package = pkgs.yaziPlugins.starship;
-        setup = true;
+        #setup = true;
       };
 
       # 系统剪贴板插件：支持复制/粘贴文件到系统剪切板
       clipboard = {
         package = pkgs.yaziPlugins.clipboard;
-        setup = true;
+        #setup = true;
       };
     };
 

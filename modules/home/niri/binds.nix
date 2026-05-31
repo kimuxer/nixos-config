@@ -12,7 +12,7 @@
     "Mod+Return" = { action.spawn = [ "footclient" ]; repeat = false; };
     "Mod+D" = { action.spawn = [ "dms" "ipc" "call" "spotlight" "toggle" ]; repeat = false; };
     "Mod+B" = { action.spawn = [ "zen" "--class" "zen-browser" ]; repeat = false; };
-    "Mod+E" = { action.spawn = [ "kitty" "-e" "yazi" ]; repeat = false; };
+    "Mod+E" = { action.spawn = [ "footclient" "-e" "yazi" ]; repeat = false; };
 
     # DMS 功能组件
     "Mod+V" = { action.spawn = [ "dms" "ipc" "call" "clipboard" "toggle" ]; repeat = false; };
