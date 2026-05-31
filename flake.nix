@@ -15,8 +15,6 @@
     niri.inputs.nixpkgs.follows = "nixpkgs";
     dms.url = "github:AvengeMedia/DankMaterialShell";
     dms.inputs.nixpkgs.follows = "nixpkgs";
-    #dgop.url = "github:AvengeMedia/dgop";
-    #dgop.inputs.nixpkgs.follows = "nixpkgs";
     # Dank-Material-Shell plugins
     dms-plugins = {
       url = "github:AvengeMedia/dms-plugin-registry";
@@ -42,6 +40,9 @@
     # 敏感信息加密
     sops-nix.url = "github:mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    
+    silentSDDM.url = "github:uiriansan/SilentSDDM";
+    silentSDDM.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs @ { self, flake-parts, nixpkgs, home-manager, ... }:

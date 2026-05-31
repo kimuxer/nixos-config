@@ -6,6 +6,7 @@
     inputs.dms.nixosModules.dank-material-shell
     inputs.dms.nixosModules.greeter
     inputs.niri.nixosModules.niri
+    inputs.silentSDDM.nixosModules.default
   ];
 
   # ============================
@@ -57,9 +58,14 @@
   #  };
   };
   services = {
-    desktopManager.plasma6.enable = true;
+    #desktopManager.plasma6.enable = true;
     displayManager.sddm.enable = true;
     displayManager.sddm.wayland.enable = true;
+  };
+  programs.silentSDDM = {
+        enable = true;
+        theme = "rei";
+        # settings = { ... }; see example in module
   };
   # 关闭冲突服务
   systemd.user.services.niri-flake-polkit.enable = lib.mkForce false;
