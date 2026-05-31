@@ -4,7 +4,6 @@
     inputs.dms.homeModules.dank-material-shell
     inputs.dms.homeModules.niri
     inputs.dms-plugins.modules.default
-    inputs.danksearch.homeModules.dsearch
 
     ./env.nix
     ./layout.nix
@@ -14,6 +13,7 @@
     ./output.nix
     ./binds.nix
     ./cursor.nix
+    #./danksearch.nix
   ];
 
   programs.dank-material-shell = {
@@ -52,9 +52,6 @@
       };
       enableSpawn = true;    # 跟随niri启动
     };
-
-    #dgop.package = inputs.dgop.packages.${pkgs.stdenv.hostPlatform.system}.default;
-    #quickshell.package = inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default;
   };
 
   # 保持你的自启动项
