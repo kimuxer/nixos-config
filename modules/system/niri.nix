@@ -31,7 +31,6 @@
       pkgs.xdg-desktop-portal-gnome
       pkgs.xdg-desktop-portal-gtk
     ];
-
     config.common.default = "gtk";
   };
 
@@ -75,7 +74,7 @@
         enable = true;
         # default / rei / ken / silvia / everforest / catppuccin-latte 
         # catppuccin-frappe / catppuccin-macchiato / catppuccin-mocha / nord
-        theme = "rei"; 
+        theme = "default-left"; 
         # settings = { ... }; see example in module
   };
   # 关闭冲突服务
