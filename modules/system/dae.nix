@@ -63,7 +63,10 @@
 
       group {
         proxy_group {
-          policy: min                  # ⚡ 单节点锁定，杜绝无效测速引发的 connection reset
+          #policy: min                  # ⚡ 单节点锁定，杜绝无效测速引发的 connection reset
+          policy: min_moving_avg
+          # Select the first node from the group for every connection.
+          #policy: fixed(0)
         }
       }
 
