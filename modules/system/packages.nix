@@ -96,6 +96,6 @@
     # --------------------------
     qt6Packages.qt6ct
     adw-gtk3
-    #qt6Packages.qtstyleplugin-kvantum
+    qt6Packages.qtstyleplugin-kvantum
   ];
 }
