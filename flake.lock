@@ -384,8 +384,29 @@
         "niri": "niri",
         "nixpkgs": "nixpkgs",
         "nvf": "nvf",
+        "silentSDDM": "silentSDDM",
         "sops-nix": "sops-nix",
         "zen-browser": "zen-browser"
+      }
+    },
+    "silentSDDM": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1780180566,
+        "narHash": "sha256-tfXlfIFWY+E/izmRb9Qd3to3guxhyIh9HyZAoTKqa9k=",
+        "owner": "uiriansan",
+        "repo": "SilentSDDM",
+        "rev": "0828621769acaa26ef131ed96255c7bd06038111",
+        "type": "github"
+      },
+      "original": {
+        "owner": "uiriansan",
+        "repo": "SilentSDDM",
+        "type": "github"
       }
     },
     "sops-nix": {
