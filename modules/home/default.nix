@@ -5,7 +5,7 @@
     ./apps
     ./fish
     ./git
-    #./kitty
+    ./zed-editor
     ./fastfetch
     ./yazi
     ./nvf

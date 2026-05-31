@@ -8,7 +8,7 @@
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
 
     # 代码编辑器
-    pkgs.zed-editor
+    #pkgs.zed-editor
 
     # 聊天
     pkgs.telegram-desktop
