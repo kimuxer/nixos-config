@@ -37,7 +37,7 @@
     niri = {
       includes = {
         enable = true;
-        override = false;
+        override = true;
         originalFileName = "hm"; 
         filesToInclude = [         
           "alttab"         
