@@ -33,7 +33,7 @@ in
           ndigits = 2;
         };
         key = {
-          width = 12;
+          width = 8;
         };
         separator = "";
       };
@@ -43,13 +43,13 @@ in
           type = "custom";
           key = "╭── system ──────┄";
         }
-        { type = "os"; key = "│  "; }
-        { type = "kernel"; key = "│  "; }
-        { type = "wm"; key = "│  "; }
-        { type = "shell"; key = "│  "; }
-        { type = "terminal"; key = "│  "; }
-        { type = "packages"; key = "│ 󰏖 "; }
-        { type = "disk"; key = "│  "; format = "{13} {1} / {2} ({3})"; }
+        { type = "os"; key = "│  ›  "; }
+        { type = "kernel"; key = "│  ›  "; }
+        { type = "wm"; key = "│  ›  "; }
+        { type = "shell"; key = "│  ›  "; }
+        { type = "terminal"; key = "│  ›  "; }
+        { type = "packages"; key = "│  ›  "; }
+        { type = "disk"; key = "│  ›  "; format = "{13} {1} / {2} ({3})"; }
         {
           type = "custom";
           key = "╰─┄";
