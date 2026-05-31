@@ -43,7 +43,7 @@
       options = [ "subvol=@cache" ];
     };
 
-  fileSystems."/.snapshots" =
+  fileSystems."/home/.snapshots" =
     { device = "/dev/disk/by-uuid/f463f4b2-c8c8-435f-a4ef-72979f35e0b5";
       fsType = "btrfs";
       options = [ "subvol=@snapshots" ];

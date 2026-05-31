@@ -16,12 +16,12 @@ in
 
   # 所有子卷共用挂载参数
   fileSystems = {
-    "/"            = { options = commonOptions; };
-    "/home"        = { options = commonOptions; };
-    "/nix"         = { options = commonOptions; };
-    "/var/log"     = { options = commonOptions; };
-    "/var/cache"   = { options = commonOptions; };
-    "/.snapshots"  = { options = commonOptions; };
+    "/"                 = { options = commonOptions; };
+    "/home"             = { options = commonOptions; };
+    "/nix"              = { options = commonOptions; };
+    "/var/log"          = { options = commonOptions; };
+    "/var/cache"        = { options = commonOptions; };
+    "/home/.snapshots"  = { options = commonOptions; };
 
     # Swap 不需要压缩，单独配置
     "/swap" = {
@@ -33,4 +33,20 @@ in
   swapDevices = [
     { device = "/swap/swapfile"; }
   ];
+  
+  services.snapper = {
+    configs = {
+      home = {
+        SUBVOLUME = "/home";
+        ALLOW_USERS = [ "kim" ];
+        TIMELINE_CREATE = true;
+        TIMELINE_CLEANUP = true;
+        TIMELINE_LIMIT_HOURLY = 5;
+        TIMELINE_LIMIT_DAILY = 3;
+        TIMELINE_LIMIT_WEEKLY = 1;
+        TIMELINE_LIMIT_MONTHLY = 0;
+        TIMELINE_LIMIT_YEARLY = 0;
+      };
+    };
+  };
 }
