@@ -48,7 +48,7 @@
   programs.dank-material-shell = {
     enable = true;
     greeter = {
-      enable = false;
+      enable = true;
       compositor = {
         name = "niri";
       };
