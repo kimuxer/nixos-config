@@ -6,6 +6,9 @@
 #    XCURSOR_THEME = "Bibata-Modern-Ice";
 #    XCURSOR_SIZE = "20";
 #  };
+  systemd.services.sddm.environment = {
+    WLR_NO_HARDWARE_CURSORS = "1";
+  };
 
   # --- 1. 底层系统环境变量 ---
   # 这些是全局生效的驱动层和图形后端设置，应在进程启动前就载入

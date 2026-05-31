@@ -62,16 +62,20 @@
     displayManager.sddm = {
       enable = true;
       wayland.enable = true;
+      wayland.compositor = "kwin";
       settings = {
         Theme = {
           CursorTheme = "Bibata-Modern-Ice";
+          CursorSize = "20";
         };
       };
     };
   };
   programs.silentSDDM = {
         enable = true;
-        theme = "rei";
+        # default / rei / ken / silvia / everforest / catppuccin-latte 
+        # catppuccin-frappe / catppuccin-macchiato / catppuccin-mocha / nord
+        theme = "rei"; 
         # settings = { ... }; see example in module
   };
   # 关闭冲突服务
