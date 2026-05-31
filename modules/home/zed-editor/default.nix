@@ -4,42 +4,47 @@
   programs.zed-editor = {
     enable = true;
 
-    # 自动为你下载所需的扩展包（例如 Nix、TOML 高亮支持）
     extensions = [
       "nix"
       "toml"
       "markdown"
     ];
 
-    # 声明式管理 Zed 的 userSettings (对应它的 settings.json)
+    # 对应 ~/.config/zed/settings.json 的声明式配置
     userSettings = {
-      # --- 1. 编辑器代码字体 (Buffer Font) ---
-      buffer_font_family = "JetBrainsMono Nerd Font"; # 使用你系统已全局安装的代码字体
-      buffer_font_size = 12;                         # 代码字体大小
-      buffer_font_weight = 400;                      # 字体粗细
-      buffer_line_height = "comfortable";                   # 舒适的行高
+      # --- 字体与显示大小 ---
+      buffer_font_family = "JetBrainsMono Nerd Font";
+      buffer_font_size = 12;                         # 对应你截图中的 12
+      buffer_font_weight = 400;
 
-      # --- 2. 编辑器界面 UI 字体 ---
-      ui_font_family = "Inter";                      # 使用你系统已全局安装的 UI 英文首选字体
-      ui_font_size = 14;                             # 侧边栏及界面字体大小
+      # ⚡ 修正 1：主编辑器的行高配置使用 "buffer_line_height"
+      # 可选值有: "comfortable" (默认), "standard", 或自定义比例如 { "custom" = 1.5; }
+      buffer_line_height = "comfortable";
 
-      # --- 3. 内置终端字体 ---
+      ui_font_family = "Inter";
+      ui_font_size = 14;                             # 对应你截图中的 14
+
+      # --- 终端设置 ---
       terminal = {
         font_family = "JetBrainsMono Nerd Font";
         font_size = 12;
+        # 终端内的行高，这里可以使用 "line_height"
         line_height = "standard";
       };
 
-      # --- 4. 其他推荐体验参数 ---
-      theme = "One Dark";                                         # 主题名称（可按喜好修改）
-      relative_line_numbers = "enabled";                 # 相对行号（匹配你 NVF 编辑器的阅读习惯）
-      vim_mode = false;                                             # 是否开启 Vim 快捷键模式（按需改为 true）
+      # --- 外观与行为 ---
+      theme = "One Dark";
+      icon_theme = "Zed (Default)";
 
-      # 缩进参考线
+      # ⚡ 修正 2：新版相对行号改用字符串 "enabled"
+      relative_line_numbers = "enabled";
+
       indent_guides = {
         enabled = true;
         coloring = "indent_aware";
       };
+
+      vim_mode = false;
     };
   };
 }
