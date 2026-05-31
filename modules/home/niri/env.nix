@@ -13,6 +13,9 @@
     # Niri 独享的 Qt 样式代理（KDE 会自动使用其自身的 native 样式，互不打架）
     QT_QPA_PLATFORMTHEME = "qt6ct";
 
+    # ⚡ 仅在 Niri 会话中禁用 Qt 应用的客户端窗口装饰，防止双重标题栏
+    QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+
     # 输入法
     #XMODIFIERS = "@im=fcitx";
   };
