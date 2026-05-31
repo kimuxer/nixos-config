@@ -47,21 +47,20 @@
   # ============================
   programs.dank-material-shell = {
     enable = true;
-    greeter = {
-      enable = true;
-      compositor = {
-        name = "niri";
-      };
+  #  greeter = {
+  #    enable = true;
+  #    compositor = {
+  #      name = "niri";
+  #    };
 
-      configHome = "/home/kim";
-    };
+  #    configHome = "/home/kim";
+  #  };
   };
-  services.desktopManager.plasma6.enable = true;
-  # 暂时使用ly作为DM 
- # services.displayManager.sddm = {
- #   enable = true;          # 必须加！不然 sddm 服务不创建
- #   wayland.enable = true;  # 你原来的 wayland 支持
-#};
+  services = {
+    desktopManager.plasma6.enable = true;
+    displayManager.sddm.enable = true;
+    displayManager.sddm.wayland.enable = true;
+  };
   # 关闭冲突服务
   systemd.user.services.niri-flake-polkit.enable = lib.mkForce false;
 }
