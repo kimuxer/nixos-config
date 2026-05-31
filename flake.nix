@@ -42,7 +42,7 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     
     silentSDDM.url = "github:uiriansan/SilentSDDM";
-    silentSDDM.nixpkgs.follows = "nixpkgs";
+    silentSDDM.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs @ { self, flake-parts, nixpkgs, home-manager, ... }:
