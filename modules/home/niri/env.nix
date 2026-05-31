@@ -1,33 +1,19 @@
-# modules/home/hyprland/env.nix
 { ... }:
 {
-  wayland.windowManager.hyprland.settings = {
-    env = [
-      "XDG_CURRENT_DESKTOP,niri"
-      "XDG_SESSION_TYPE,wayland"
-      "XDG_SESSION_DESKTOP,niri"
+  # ⚡ 核心隔离：
+  # 将 Niri 专用的环境变量定义在 Niri 自身的配置树中。
+  # 这样只有当从 SDDM 登录 Niri 时这些变量才会生效，登录 KDE 时不会受其影响。
+  programs.niri.settings.environment = {
+    # Niri 会话内强制使用的图形后端
+    SDL_VIDEODRIVER = "wayland";
+    CLUTTER_BACKEND = "wayland";
+    GDK_BACKEND = "wayland,x11";
+    QT_QPA_PLATFORM = "wayland;xcb";
 
-      # Qt 平台及主题
-      "QT_QPA_PLATFORM,wayland;xcb"
-      "QT_QPA_PLATFORMTHEME,qt6ct"
+    # Niri 独享的 Qt 样式代理（KDE 会自动使用其自身的 native 样式，互不打架）
+    QT_QPA_PLATFORMTHEME = "qt6ct";
 
-      # 强制其他工具包使用 Wayland
-      "SDL_VIDEODRIVER,wayland"
-      "CLUTTER_BACKEND,wayland"
-      "GDK_BACKEND,wayland;x11"
-
-      # Electron / Chromium / Firefox 原生 Wayland
-      "NIXOS_OZONE_WL,1"
-      "MOZ_ENABLE_WAYLAND,1"
-
-      # Java 应用修复
-      "_JAVA_AWT_WM_NONREPARENTING,1"
-
-      # 输入法
-      #"XMODIFIERS,@im=fcitx"
-      #"GTK_IM_MODULE,fcitx"
-      #"QT_IM_MODULE,fcitx"
-      #"SDL_IM_MODULE,fcitx"
-    ];
+    # 输入法
+    #XMODIFIERS = "@im=fcitx";
   };
 }

@@ -2,7 +2,8 @@
 {
   imports = [
     ./packages.nix
-    ./niri.nix
+    #./niri.nix
+    ./desktop.nix
     ./kanata.nix
     ./naiveproxy.nix
     ./dae.nix

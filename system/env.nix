@@ -1,54 +1,31 @@
 { ... }:
 {
-  # 强制greetd使用软光标，解决鼠标右下方噪点问题
-#  systemd.services.greetd.environment = {
-#    WLR_NO_HARDWARE_CURSORS = "1";
-#    XCURSOR_THEME = "Bibata-Modern-Ice";
-#    XCURSOR_SIZE = "20";
-#  };
   systemd.services.sddm.environment = {
     WLR_NO_HARDWARE_CURSORS = "1";
   };
 
   # --- 1. 底层系统环境变量 ---
-  # 这些是全局生效的驱动层和图形后端设置，应在进程启动前就载入
+  # 仅保留基础的显卡驱动配置和全局鼠标样式，对所有桌面环境通用
   environment.variables = {
-    # NVIDIA 驱动配置 (驱动与图形后端)
+    # NVIDIA 驱动配置
     LIBVA_DRIVER_NAME = "nvidia";
     GBM_BACKEND = "nvidia-drm";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-    #WLR_NO_HARDWARE_CURSORS = "1";
-    
-    # 图形后端 (后端驱动)
-    SDL_VIDEODRIVER = "wayland";
-    CLUTTER_BACKEND = "wayland";
-    GDK_BACKEND = "wayland,x11";
-    QT_QPA_PLATFORM = "wayland;xcb";
-    ## 外观与主题
-    QT_QPA_PLATFORMTHEME = "qt6ct";
 
-    # greetd 界面鼠标样式
+    # 全局基础鼠标样式
     XCURSOR_THEME = "Bibata-Modern-Ice";
     XCURSOR_SIZE = "20";
   };
 
-  # --- 2. 用户会话环境变量 ---
-  # 这些是属于你的图形界面会话、输入法和外观偏好，随用户登录生效
+  # --- 2. 全局用户会话环境变量 ---
+  # 仅保留安全的、不对特定会话产生干扰的工具链与编辑器配置
   environment.sessionVariables = {
-    # 桌面环境元数据
-    XDG_CURRENT_DESKTOP = "niri";
-    XDG_SESSION_TYPE = "wayland";
-    XDG_SESSION_DESKTOP = "niri";
-
-    # 应用行为优化
+    # 常用应用的基础 Wayland 优化（Niri 和 KDE 均支持且通用）
     NIXOS_OZONE_WL = "1";
     MOZ_ENABLE_WAYLAND = "1";
     _JAVA_AWT_WM_NONREPARENTING = "1";
-    
-    # 输入法 (注：部分 NixOS 模块可能已经通过 i18n 设置处理了，建议检查)
-    #XMODIFIERS = "@im=fcitx";
 
-    # 编辑器
+    # 默认编辑器
     EDITOR = "nvim";
     VISUAL = "nvim";
   };
