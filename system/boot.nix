@@ -1,4 +1,4 @@
-{  pkgs, ... }: 
+{  ... }: 
 {
   boot = {
     initrd = {
@@ -9,7 +9,7 @@
     kernelParams = [
       #"quiet"
       #"loglevel=3" 
-      #"splash" 
+      "splash" 
       "nosgx"
       "nvidia_drm.modeset=1"
       "nvidia_drm.fbdev=1"
@@ -33,9 +33,9 @@
         efiSupport = true;
         enableEditor = true;
         maxGenerations = 10;
-       # style = {
-       #   interface.resolution = "1920x1080";
-       # };
+        style = {
+          interface.resolution = "1920x1080";
+        };
         extraEntries = "
           /windows 11 pro
             protocol: efi
