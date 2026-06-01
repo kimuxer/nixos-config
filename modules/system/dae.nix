@@ -83,7 +83,7 @@
         domain(suffix: ${config.sops.placeholder.vps_domain}) -> direct
 
         domain(geosite:google, geosite:github) -> proxy_group
-        domain(suffix: nixos.org, suffix: cachix.org) -> proxy_group
+        domain(suffix: nixos.org, suffix: cachix.org, suffix:go.opentelemetry.io, suffix:golang.org) -> proxy_group
         pname(termusic) -> proxy_group
         ### 4. 智能分流与终极兜底
         domain(geosite:cn) -> direct

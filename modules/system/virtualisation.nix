@@ -13,6 +13,7 @@
   # 2. 开启 virt-manager 图形化管理客户端
   programs.virt-manager.enable = true;
 
+  networking.firewall.trustedInterfaces = [ "virbr0" ];
   # 3. 启用 Spice USB 重定向（允许虚拟机直接读取你插在物理机上的 U 盘） [cite: 1.2.2]
   virtualisation.spiceUSBRedirection.enable = true;
 }
