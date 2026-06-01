@@ -17,6 +17,7 @@
       "video"           # 显卡
       "audio"           # 音频
       "input"           # 输入设备
+      "libvirtd"        # 虚拟机
     ];
   };
   
