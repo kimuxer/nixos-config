@@ -93,6 +93,7 @@
     # --------------------------
     bibata-cursors
     papirus-icon-theme
+    cava
 
     # --------------------------
     # Qt 6 gtk3 配置与主题（全局生效）
