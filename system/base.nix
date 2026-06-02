@@ -29,5 +29,5 @@
   nixpkgs.config.allowUnfree = true;
 
   # 4. 系统状态版本
-  system.stateVersion = "26.05";
+  system.stateVersion = "26.11";
 }
