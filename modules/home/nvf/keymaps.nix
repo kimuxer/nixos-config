@@ -30,5 +30,6 @@
     # 其他 UI 交互
     { key = "<leader>ln"; mode = "n"; desc = "Toggle line number"; action = "<cmd>set nu! rnu!<CR>"; }
     { key = "<leader>cl"; mode = "n"; desc = "Clear search highlight"; action = "<cmd>nohl<CR>"; }
+    { key = "<leader>e"; mode = "n"; desc = "Run neo-tree"; action = "<cmd>Neotree<CR>"; }
   ];
 }
