@@ -49,6 +49,15 @@
         theme = "theta";
         opts.leader = "SPC";
       };
+
+      filetree.neo-tree = {
+        enable = true;
+        setupOpts = {
+          add_blank_line_at_top = true;
+          git_status_async = true;
+        };
+      };
+
     };
   };
 }

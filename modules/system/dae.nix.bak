@@ -32,9 +32,7 @@
         allow_insecure: false
         auto_config_kernel_parameter: true  # ⚡ 内核参数全能管家，接管一切转发与底层拓扑微调
         dial_mode: domain
-        # ⚡ 域名嗅探窗口：设置为 50ms 以确保在拨号前能精准完成 SNI 解析。
-        # 防止因嗅探过快导致域名识别失败而触发不必要的 Fallback 兜底。
-        sniffing_timeout: 50ms                
+        sniffing_timeout: 0                 # ⚡ 极致首包响应优化，免去无用嗅探扣留
         tls_implementation: utls            # ⚡ 强力安全伪装，模拟主流浏览器指纹，保护节点生存期
         utls_imitate: chrome_auto
       }
@@ -54,68 +52,43 @@
       }
 
       node {
+        vps_naive: "socks5://127.0.0.1:55555"
         # 注意：此处必须使用 ''${ 规避 Nix 编译期插值，保留给 sops-nix 在运行期替换
         vps_vless: "${config.sops.placeholder."nodes/vless"}"
         vps_hy2: "${config.sops.placeholder."nodes/hy2"}"
         vps_tuic: "${config.sops.placeholder."nodes/tuic"}"
         vps_anytls: "${config.sops.placeholder."nodes/anytls"}"
         vps_vmess: "${config.sops.placeholder."nodes/vmess"}"
-        vps_naive: "socks5://127.0.0.1:55555"
       }
 
       group {
-        # 核心组：不仅是物理意义上的“合”，更是策略上的“优”
-        master_group {
+        proxy_group {
+          #policy: min                  # ⚡ 单节点锁定，杜绝无效测速引发的 connection reset
           policy: min_moving_avg
-          check_tolerance: 200ms # 适应你的 200ms+ 跨国延迟，防止无效抖动
-          tcp_check_url: 'http://connectivitycheck.gstatic.com/generate_204'
-    
-          # 策略权重：通过延迟偏移（Offset）实现“协议分层”
-          # 即使 VLESS 物理延迟比 HY2 低，我们也强制优先走 HY2
-          filter: name(vps_hy2) [add_latency: -100ms]
-          filter: name(vps_tuic) [add_latency: 0ms]
-          filter: name(vps_vless) [add_latency: -100ms]
-          filter: name(vps_anytls) [add_latency: -50ms]
-          filter: name(vps_vmess) [add_latency: 0ms]
-        }
-
-        # 备用组：绝对防线
-        emergency_group {
-          policy: fixed(0)
-          filter: name(vps_naive)
+          # Select the first node from the group for every connection.
+          #policy: fixed(0)
         }
       }
 
       routing {
-        ### [级别1] 内核/系统级直连（不可动）
+        pname(naive) -> direct(must)
+        ### 1. 官方预设生存规则 (保护内网、绑定 WAN 的连通性检查)
+        pname(NetworkManager, systemd-resolved, dnsmasq) -> direct(must)
         dip(224.0.0.0/3, 'ff00::/8') -> direct
-        pname(NetworkManager, systemd-resolved) -> direct(must)
-        dip(geoip:private) -> direct(must)
-        
-        ### [级别2] 逃逸与防环区（优先级必须提到最高）
-        # 必须确保在代理开始工作前，先排除节点自身的地址
+        dip(geoip:private) -> direct
+        dport(53) && !dip(223.5.5.5) -> proxy_group
+
+        ### 2. 环境防御与环路死锁逃逸
         dip("${config.sops.placeholder.vps_ip}") -> direct
         domain(suffix: ${config.sops.placeholder.vps_domain}) -> direct
 
-        ### [级别3] 强制业务区
-        pname(termusic, yt-dlp) -> master_group
-        domain(suffix: google-analytics.com) -> master_group
-
-        ### [级别4] 智能分流区
-        # 针对 DNS 的精细化管理：只代理非 cn 的 DNS 查询
-        # 确保 dae 自身的 DNS 流量不会产生“鸡生蛋，蛋生鸡”的环路
-        dip(223.5.5.5) -> direct
-        dport(53) && !dip(223.5.5.5) -> master_group
-
-        # 常规地理分流
+        domain(geosite:google, geosite:github) -> proxy_group
+        domain(suffix: nixos.org, suffix: cachix.org, suffix:go.opentelemetry.io, suffix:golang.org) -> proxy_group
+        pname(termusic) -> proxy_group
+        ### 4. 智能分流与终极兜底
         domain(geosite:cn) -> direct
         dip(geoip:cn) -> direct
-        
-        # 业务组分流（利用我们定义的带健康探测的分组）
-        domain(geosite:google, geosite:youtube, geosite:github) -> master_group
-
-        ### [级别5] 终极兜底
-        fallback: master_group
+        fallback: proxy_group
       }
     '';
   };
