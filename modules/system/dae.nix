@@ -30,19 +30,17 @@
         wan_interface: auto
         log_level: info
         allow_insecure: false
-        auto_config_kernel_parameter: true  # ⚡ 内核参数全能管家，接管一切转发与底层拓扑微调
+        auto_config_kernel_parameter: true
         dial_mode: domain
-        # ⚡ 域名嗅探窗口：设置为 50ms 以确保在拨号前能精准完成 SNI 解析。
-        # 防止因嗅探过快导致域名识别失败而触发不必要的 Fallback 兜底。
         sniffing_timeout: 50ms                
-        tls_implementation: utls            # ⚡ 强力安全伪装，模拟主流浏览器指纹，保护节点生存期
+        tls_implementation: utls
         utls_imitate: chrome_auto
       }
 
       dns {
         upstream {
           alidns: 'udp://223.5.5.5:53'
-          googledns: 'tcp://8.8.8.8:53'    # ⚡ 硬编码 IP 建立安全 DoT 通道，斩断 DNS Bootstrap 环路
+          googledns: 'tcp://8.8.8.8:53'
         }
         routing {
           request {
@@ -54,7 +52,6 @@
       }
 
       node {
-        # 注意：此处必须使用 ''${ 规避 Nix 编译期插值，保留给 sops-nix 在运行期替换
         vps_vless: "${config.sops.placeholder."nodes/vless"}"
         vps_hy2: "${config.sops.placeholder."nodes/hy2"}"
         vps_tuic: "${config.sops.placeholder."nodes/tuic"}"
@@ -64,18 +61,18 @@
       }
 
       group {
-        # 核心组：不仅是物理意义上的“合”，更是策略上的“优”
         master_group {
           policy: min_moving_avg
-          check_tolerance: 200ms # 适应你的 200ms+ 跨国延迟，防止无效抖动
-          tcp_check_url: 'http://connectivitycheck.gstatic.com/generate_204'
+          check_tolerance: 50ms 
+          tcp_check_url: 'http://cp.cloudflare.com/generate_204'
+          check_interval: 20s
     
           # 策略权重：通过延迟偏移（Offset）实现“协议分层”
           # 即使 VLESS 物理延迟比 HY2 低，我们也强制优先走 HY2
-          filter: name(vps_hy2) [add_latency: -100ms]
-          filter: name(vps_tuic) [add_latency: 0ms]
-          filter: name(vps_vless) [add_latency: -100ms]
-          filter: name(vps_anytls) [add_latency: -50ms]
+          filter: name(vps_hy2) [add_latency: -30ms]
+          filter: name(vps_tuic) [add_latency: -10ms]
+          filter: name(vps_vless) [add_latency: -20ms]
+          filter: name(vps_anytls) [add_latency: -20ms]
           filter: name(vps_vmess) [add_latency: 0ms]
         }
 
