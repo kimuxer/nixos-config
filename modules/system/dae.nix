@@ -74,13 +74,14 @@
           filter: name(vps_vless) [add_latency: -20ms]
           filter: name(vps_anytls) [add_latency: -20ms]
           filter: name(vps_vmess) [add_latency: 0ms]
+          filter: name(vps_naive) [add_latency: 0ms]
         }
 
         # 备用组：绝对防线
-        emergency_group {
-          policy: fixed(0)
-          filter: name(vps_naive)
-        }
+        #emergency_group {
+        #  policy: fixed(0)
+        #  filter: name(vps_naive)
+        #}
       }
 
       routing {
