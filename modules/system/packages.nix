@@ -24,7 +24,12 @@
   # ==============================================
   programs.dconf.enable = true; # UI 程序通用依赖
 
-
+  # SSH 保活
+  programs.ssh.extraConfig = ''
+    Host *
+      ServerAliveInterval 30
+      ServerAliveCountMax 3
+  '';
   # Qt 平台启用（Wayland + 主题必需）
   qt.enable = true;
 
@@ -93,7 +98,6 @@
     # --------------------------
     bibata-cursors
     papirus-icon-theme
-    cava
 
     # --------------------------
     # Qt 6 gtk3 配置与主题（全局生效）
