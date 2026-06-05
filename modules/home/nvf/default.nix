@@ -1,7 +1,7 @@
-{ lib, inputs, pkgs, ... }:
+{ inputs, ... }:
 {
-  imports = [ 
-    inputs.nvf.homeManagerModules.default 
+  imports = [
+    inputs.nvf.homeManagerModules.default
     ./keymaps.nix
   ];
 
@@ -13,8 +13,8 @@
       viAlias = true;
       vimAlias = true;
       syntaxHighlighting = true;
-      options = { 
-        mouse = "a"; 
+      options = {
+        mouse = "a";
         tabstop = 2;
         autoindent = false;
         shiftwidth = 0;
@@ -23,15 +23,14 @@
         indentexpr = "";
       };
 
-
       # === 核心插件区 ===
       lsp.enable = true;
       autocomplete.nvim-cmp.enable = true;
       binds.whichKey.enable = true;
       binds.cheatsheet.enable = true;
-      
+
       # 启用 Telescope（它会自动注册 <leader>ff 等快捷键）
-      telescope.enable = true; 
+      telescope.enable = true;
 
       treesitter = {
         enable = true;

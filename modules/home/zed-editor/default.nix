@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 
 {
   programs.zed-editor = {
@@ -14,7 +14,7 @@
     userSettings = {
       # --- 字体与显示大小 ---
       buffer_font_family = "JetBrainsMono Nerd Font";
-      buffer_font_size = 12;                         # 对应你截图中的 12
+      buffer_font_size = 12; # 对应你截图中的 12
       buffer_font_weight = 400;
 
       # ⚡ 修正 1：主编辑器的行高配置使用 "buffer_line_height"
@@ -22,7 +22,7 @@
       buffer_line_height = "comfortable";
 
       ui_font_family = "Inter";
-      ui_font_size = 14;                             # 对应你截图中的 14
+      ui_font_size = 14; # 对应你截图中的 14
 
       # --- 终端设置 ---
       terminal = {
