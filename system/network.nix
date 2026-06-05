@@ -1,7 +1,7 @@
-{ inputs, pkgs, ... }:
+{ ... }:
 
 {
-    # --- 1. 物理机身份设定 ---
+  # --- 1. 物理机身份设定 ---
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
   time.timeZone = "Asia/Shanghai";
