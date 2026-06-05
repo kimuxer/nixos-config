@@ -10,10 +10,19 @@
 
     settings.vim = {
       lineNumberMode = "relative";
-      options = { mouse = "a"; };
       viAlias = true;
       vimAlias = true;
       syntaxHighlighting = true;
+      options = { 
+        mouse = "a"; 
+        tabstop = 2;
+        autoindent = false;
+        shiftwidth = 0;
+        smartindent = false;
+        cindent = false;
+        indentexpr = "";
+      };
+
 
       # === 核心插件区 ===
       lsp.enable = true;
@@ -24,8 +33,13 @@
       # 启用 Telescope（它会自动注册 <leader>ff 等快捷键）
       telescope.enable = true; 
 
+      treesitter = {
+        enable = true;
+        indent.enable = false;
+      };
+
       languages = {
-        enableTreesitter = false;
+        enableTreesitter = true;
         enableFormat = true;
         nix.enable = true;
         fish.enable = true;
