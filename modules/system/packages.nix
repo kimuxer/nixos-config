@@ -36,6 +36,8 @@
   # 启用固件自动升级服务（KDE 的发现中心 Discover 也会调用它）
   services.fwupd.enable = true;
 
+  # 
+  programs.nix-ld.enable = true;
   # ==============================================
   # 系统级全局安装包（所有用户、任何环境都需要）
   # ==============================================
@@ -54,6 +56,8 @@
     killall
     wl-clipboard
     udiskie
+    llvmPackages.lldb
+    vscode-extensions.vadimcn.vscode-lldb
     # --------------------------
     # 网络调试工具 (配合 dae 绝佳)
     # --------------------------
