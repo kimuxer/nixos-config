@@ -6,6 +6,7 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
+    backupFileExtension = "backup";
 
     # 【关键追加】将系统的 inputs 转发给 Home Manager 的配置树
     extraSpecialArgs = { inherit inputs; };

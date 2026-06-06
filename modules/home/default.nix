@@ -1,7 +1,7 @@
 { ... }:
 {
   imports = [
-    ./niri
+    ./niri/niri-noctalia.nix
     ./apps
     ./fish
     ./git
@@ -10,5 +10,6 @@
     ./yazi
     ./nvf
     ./foot
+    ./mako
   ];
 }

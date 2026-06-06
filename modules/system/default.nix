@@ -9,6 +9,7 @@
     ./dae.nix
     ./fonts.nix
     ./starship.nix
+    ./gtklock.nix
     #./sops.nix
     #./hyprland.nix
   ];

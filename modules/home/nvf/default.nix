@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ inputs, config, ... }:
 {
   imports = [
     inputs.nvf.homeManagerModules.default
@@ -71,6 +71,21 @@
         };
       };
 
+#      luaConfigRC = {
+#        my-custom-config = {
+#          after = [ "pluginConfigs" ]; # 确保它在插件加载后执行
+#          data = ''
+#            vim.api.nvim_create_autocmd("FileType", {
+#              pattern = "alpha",
+#              callback = function()
+#                vim.keymap.set("n", "c", function()
+#                  vim.cmd("edit ${config.home.homeDirectory}/nixos/modules/home/nvf/default.nix")
+#                end, { buffer = true, desc = "Edit nvf config" })
+#              end,
+#            })
+#          '';
+#        };
+#      };
     };
   };
 }
