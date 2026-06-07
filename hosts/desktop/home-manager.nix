@@ -12,6 +12,6 @@
     extraSpecialArgs = { inherit inputs; };
 
     # 定义用户 "kim" 的 Home Manager 配置
-    users.kim = import ../home;
+    users.kim = import ../../home;
   };
 }
