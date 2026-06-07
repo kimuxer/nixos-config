@@ -80,7 +80,7 @@
         enable = true;
         theme = "default-left"; 
   };
-
+  
   # 关闭冲突服务
   systemd.user.services.niri-flake-polkit.enable = lib.mkForce false;
 }

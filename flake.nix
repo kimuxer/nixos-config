@@ -36,7 +36,6 @@
 
     disko.url = "github:nix-community/disko/latest";
     disko.inputs.nixpkgs.follows = "nixpkgs";
-
   };
 
   outputs = inputs @ { self, flake-parts, nixpkgs, home-manager, ... }:
@@ -59,6 +58,8 @@
             ./modules/system
           ];
         };
+        
+        # 软路由系统
         nixosConfigurations.router = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = { inherit inputs; };

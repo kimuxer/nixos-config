@@ -4,6 +4,11 @@
   # 启用 fish  shell
   programs.fish.enable = true;
 
+  nix.settings.trusted-users = [ 
+    "root"
+    "@wheel"
+  ];
+
   # 用户配置
   users.users.kim = {
     isNormalUser = true;

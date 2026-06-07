@@ -1,9 +1,9 @@
-{ inputs, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   programs.zed-editor = {
     enable = true;
-    package = inputs.zed-editor-flake.packages.${pkgs.stdenv.hostPlatform.system}.zed-editor-bin;
+    package = pkgs.zed-editor;
     extensions = [
       "nix"
       "toml"
