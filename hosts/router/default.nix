@@ -11,5 +11,6 @@
     ./packages.nix
     ./naiveproxy.nix
     ./dae.nix
+    ./services.nix
   ];
 }

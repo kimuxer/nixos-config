@@ -2,8 +2,8 @@
 
 {
   imports = [
-   # inputs.dms.nixosModules.dank-material-shell
-   # inputs.dms.nixosModules.greeter
+    inputs.dms.nixosModules.dank-material-shell
+    inputs.dms.nixosModules.greeter
     inputs.niri.nixosModules.niri
     inputs.silentSDDM.nixosModules.default
   ];
@@ -64,9 +64,9 @@
   # ============================
   # DMS + Display Manager 登录器
   # ============================
-  #programs.dank-material-shell = {
-  #  enable = true;
-  #};
+  programs.dank-material-shell = {
+    enable = true;
+  };
 
   services = {
     displayManager.sddm = {

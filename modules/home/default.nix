@@ -1,7 +1,7 @@
 { ... }:
 {
   imports = [
-    ./niri/niri-noctalia.nix
+    ./niri
     ./apps
     ./fish
     ./git

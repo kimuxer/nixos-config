@@ -13,20 +13,20 @@
     #桌面环境与合成器 ( Niri + DMS )
     niri.url = "github:sodiboo/niri-flake";
     niri.inputs.nixpkgs.follows = "nixpkgs";
-    #dms.url = "github:AvengeMedia/DankMaterialShell";
-    #dms.inputs.nixpkgs.follows = "nixpkgs";
+    dms.url = "github:AvengeMedia/DankMaterialShell";
+    dms.inputs.nixpkgs.follows = "nixpkgs";
     # Dank-Material-Shell plugins
-    #dms-plugins = {
-    #  url = "github:AvengeMedia/dms-plugin-registry";
-    #  inputs.nixpkgs.follows = "nixpkgs";
-    #};
+    dms-plugins = {
+      url = "github:AvengeMedia/dms-plugin-registry";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # Dank Search
-    #danksearch = {
-    #  url = "github:AvengeMedia/danksearch";
-    #  inputs.nixpkgs.follows = "nixpkgs";
-    #};
-    noctalia.url = "github:noctalia-dev/noctalia-shell/v5";
-    noctalia.inputs.nixpkgs.follows = "nixpkgs";
+    danksearch = {
+      url = "github:AvengeMedia/danksearch";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    #noctalia.url = "github:noctalia-dev/noctalia-shell/v5";
+    #noctalia.inputs.nixpkgs.follows = "nixpkgs";
 
     zen-browser.url = "github:youwen5/zen-browser-flake";
     zen-browser.inputs.nixpkgs.follows = "nixpkgs";
