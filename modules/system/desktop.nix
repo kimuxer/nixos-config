@@ -2,8 +2,6 @@
 
 {
   imports = [
-    inputs.dms.nixosModules.dank-material-shell
-    inputs.dms.nixosModules.greeter
     inputs.niri.nixosModules.niri
     inputs.silentSDDM.nixosModules.default
   ];
@@ -62,12 +60,8 @@
   services.desktopManager.plasma6.enable = true;
 
   # ============================
-  # DMS + Display Manager 登录器
+  # Display Manager 登录器
   # ============================
-  programs.dank-material-shell = {
-    enable = true;
-  };
-
   services = {
     displayManager.sddm = {
       enable = true;
