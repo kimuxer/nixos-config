@@ -2,7 +2,7 @@
 
 {
   # --- 1. 物理机身份设定 ---
-  networking.hostName = "nixos";
+  networking.hostName = "nixdevbox";
   networking.networkmanager.enable = true;
   time.timeZone = "Asia/Shanghai";
 
