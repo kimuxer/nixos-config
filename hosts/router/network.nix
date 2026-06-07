@@ -1,0 +1,59 @@
+{ ... }:
+
+{
+  time.timeZone = "Asia/Shanghai";
+
+  networking = {
+    hostName = "router";
+    useDHCP = false;
+
+    # 1. 依然开启基础 NAT
+    # 提示：因为上级光猫/主路由不知道你工控机下面的局域网段，
+    # 那些不需要走 dae 代理的国内直连流量，依然需要通过工控机 NAT 伪装（Masquerade）出去。
+    nat = {
+      enable = true;
+      externalInterface = "enp1s0"; # ──> 接光猫/主路由的物理网口
+      internalInterfaces = [ "br0" ];
+    };
+
+    # 2. 简化的防火墙
+    firewall = {
+      enable = true;
+      trustedInterfaces = [ "br0" "lo" ]; # 绝对信任内网，不影响 dae 的 eBPF 捞包
+    };
+
+    # 3. 5 口物理桥接，化身硬核千兆交换机
+    bridges = {
+      "br0" = {
+        interfaces = [ "enp2s0" "enp3s0" "enp4s0" "enp5s0" "enp6s0" ];
+      };
+    };
+
+    # 4. IP 分配
+    interfaces = {
+      # WAN 口：挂在上级路由下面，自动通过 DHCP 获取一个上级网段的 IP
+      "enp1s0".useDHCP = true;
+
+      # LAN 网桥：给你的内网设备开辟一个独立的纯净网段
+      "br0" = {
+        ipv4.addresses = [{
+          address = "192.168.10.1"; # ──> 故意换成 .10 网段，避免与光猫默认的 192.168.1.1 冲突
+          prefixLength = 24;
+        }];
+      };
+    };
+  };
+
+  # 5. 内网专属 DHCP：把内网设备的网关和 DNS 全部收拢到工控机自己身上
+  services.dnsmasq = {
+    enable = true;
+    settings = {
+      interface = [ "br0" "lo" ];
+      dhcp-range = "192.168.10.10,192.168.10.250,12h";
+      dhcp-option = [
+        "3,192.168.10.1" # 把所有设备的默认网关指向工控机，由 dae 进行分流
+        "6,192.168.10.1" # 把所有设备的 DNS 指向工控机，防止 DNS 污染
+      ];
+    };
+  };
+}

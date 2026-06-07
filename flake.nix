@@ -49,6 +49,9 @@
     # zed-editor
     zed-editor-flake.url = "github:HPsaucii/zed-editor-flake";
 
+    disko.url = "github:nix-community/disko/latest";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+
   };
 
   outputs = inputs @ { self, flake-parts, nixpkgs, home-manager, ... }:
@@ -67,8 +70,16 @@
           specialArgs = { inherit inputs; }; # 把 inputs 传给所有模块
 
           modules =[
-            ./system
+            ./hosts/desktop
             ./modules/system
+          ];
+        };
+        nixosConfigurations.router = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs; };
+
+          modules =[
+            ./hosts/router
           ];
         };
       };

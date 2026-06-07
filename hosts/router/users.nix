@@ -1,0 +1,26 @@
+# hosts/router/users.nix
+{ ... }:
+
+{
+  services.openssh = {
+    enable = true;
+    settings = {
+      PermitRootLogin = "yes";
+      PasswordAuthentication = false;
+    };
+  };
+
+  users.users.root = {
+    initialPassword = "root"; # 初始临时密码（第一次登录用）
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOxnON3MkP3jq6+UKldz4ChA2OSf07KryKUsJBXeB5wD 604719@qq.com"
+    ];
+  };
+
+  users.users.naiveproxy = {
+    isSystemUser = true; # 创建一个系统用户（无法登录，仅供服务使用）
+    group = "naiveproxy";
+  };
+
+  users.groups.naiveproxy = {};
+}

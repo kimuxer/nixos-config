@@ -1,0 +1,125 @@
+{ inputs, pkgs, config, ... }:
+
+{
+  imports = [
+    inputs.daeuniverse.nixosModules.dae
+    inputs.sops-nix.nixosModules.sops
+  ];
+
+  # 1. 密钥管理（保持原样，相对路径指向你的秘密大本营）
+  sops.defaultSopsFile = ../../secrets/secrets.yaml;
+  sops.defaultSopsFormat = "yaml";
+  sops.age.keyFile = "/var/lib/sops-nix/key.txt";
+
+  sops.secrets.vps_ip = { };
+  sops.secrets.vps_domain = { };
+  sops.secrets."nodes/vless" = { };
+  sops.secrets."nodes/hy2" = { };
+  sops.secrets."nodes/tuic" = { };
+  sops.secrets."nodes/anytls" = { };
+  sops.secrets."nodes/vmess" = { };
+
+  # 2. 动态渲染 dae 配置文件
+  sops.templates."config.dae" = {
+    content = ''
+      global {
+        disable_waiting_network: true
+        # ──> ⚡【路由端核心修改】显式绑定你的内网网桥和外网物理口
+        # 拒绝 auto，防止 eBPF 在多网卡环境下一把抓导致网络风暴
+        lan_interface: br0
+        wan_interface: enp1s0
+
+        log_level: info
+        allow_insecure: false
+        auto_config_kernel_parameter: true
+        dial_mode: domain
+        sniffing_timeout: 50ms
+        tls_implementation: utls
+        utls_imitate: chrome_auto
+      }
+
+      dns {
+        upstream {
+          alidns: 'udp://223.5.5.5:53'
+          googledns: 'tcp://8.8.8.8:53'
+        }
+        routing {
+          request {
+            qname(geosite:cn) -> alidns
+            fallback: googledns
+          }
+        }
+        ipversion_prefer: 4
+      }
+
+      node {
+        vps_vless: "${config.sops.placeholder."nodes/vless"}"
+        vps_hy2: "${config.sops.placeholder."nodes/hy2"}"
+        vps_tuic: "${config.sops.placeholder."nodes/tuic"}"
+        #vps_anytls: "${config.sops.placeholder."nodes/anytls"}"
+        vps_vmess: "${config.sops.placeholder."nodes/vmess"}"
+        vps_naive: "socks5://127.0.0.1:55555"
+      }
+
+      group {
+        master_group {
+          policy: min_moving_avg
+          check_tolerance: 50ms
+          tcp_check_url: 'http://cp.cloudflare.com/generate_204'
+          check_interval: 20s
+
+          # 你的协议分层绝活，完美保留
+          filter: name(vps_hy2) [add_latency: -30ms]
+          filter: name(vps_tuic) [add_latency: -10ms]
+          filter: name(vps_vless) [add_latency: -20ms]
+          #filter: name(vps_anytls) [add_latency: -20ms]
+          filter: name(vps_vmess) [add_latency: 0ms]
+          filter: name(vps_naive) [add_latency: 0ms]
+        }
+      }
+
+      routing {
+        ### [级别1] 内核/系统级直连（不可动）
+        dip(224.0.0.0/3, 'ff00::/8') -> direct
+
+        # ──> 💡【路由端微调】加入 dhcpcd/dnsmasq，确保路由底层基础网络组件绝对直连
+        pname(NetworkManager, systemd-resolved, dhcpcd, dnsmasq) -> direct(must)
+        dip(geoip:private) -> direct(must)
+
+        ### [级别2] 逃逸与防环区（优先级必须提到最高）
+        dip("${config.sops.placeholder.vps_ip}") -> direct
+        domain(suffix: ${config.sops.placeholder.vps_domain}) -> direct
+
+        ### [级别3] 强制业务区（软路由上没有桌面应用，这行留着或删掉都行，不影响）
+        pname(termusic, yt-dlp) -> master_group
+        domain(suffix: google-analytics.com) -> master_group
+
+        ### [级别4] 智能分流区
+        # 完美契合软路由！dae 会在 br0 层拦截局域网的所有 53 端口请求，
+        # 从而无缝接管全家设备的 DNS 解析，从根源上防止 DNS 污染。
+        dip(223.5.5.5) -> direct
+        dport(53) && !dip(223.5.5.5) -> master_group
+
+        # 常规地理分流
+        domain(geosite:cn) -> direct
+        dip(geoip:cn) -> direct
+
+        # 业务组分流
+        domain(geosite:google, geosite:youtube, geosite:github) -> master_group
+
+        ### [级别5] 终极兜底
+        fallback: master_group
+      }
+    '';
+  };
+
+  services.dae = {
+    enable = true;
+    package = inputs.daeuniverse.packages.${pkgs.stdenv.hostPlatform.system}.dae;
+    assets = with pkgs; [
+      v2ray-geoip
+      v2ray-domain-list-community
+    ];
+    configFile = config.sops.templates."config.dae".path;
+  };
+}
