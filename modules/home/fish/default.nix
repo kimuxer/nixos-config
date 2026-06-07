@@ -35,6 +35,7 @@
       nt = "sudo nixos-rebuild test --flake .#nixdevbox";
       nc = "sudo nix-collect-garbage -d";
       no = "nix-store --optimise";
+      nsproxy = "nixos-rebuild switch --flake .#router --target-host root@192.168.50.254";
     };
 
     # 不显示欢迎语
