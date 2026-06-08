@@ -38,6 +38,17 @@ in
     group = "naiveproxy";
   };
 
+  sops.templates."naiveproxy.json" = {
+    content = ''
+      {
+        "listen": "${listenPort}",
+        "proxy": "${config.sops.placeholder.naive_proxy}"
+      }
+    '';
+    owner = "naiveproxy";
+    group = "naiveproxy";
+  };
+
   # 3. 声明 Systemd 服务（只要导入此模块，服务便会默认静默启用并开机自启）
   systemd.services.naiveproxy = {
     description = "NaiveProxy Client Service";
@@ -49,7 +60,8 @@ in
     serviceConfig = {
       Type = "simple";
       # 动态读取解密出的 proxy 链接并直接启动
-      ExecStart = "${pkgs.bash}/bin/bash -c '${naiveproxy-bin}/bin/naive --listen=${listenPort} --proxy=$(cat ${config.sops.secrets.naive_proxy.path})'";
+      ExecStart = "${naiveproxy-bin}/bin/naive ${config.sops.templates."naiveproxy.json".path}";
+      #ExecStart = "${pkgs.bash}/bin/bash -c '${naiveproxy-bin}/bin/naive --listen=${listenPort} --proxy=$(cat ${config.sops.secrets.naive_proxy.path})'";
       Restart = "on-failure";
       RestartSec = 5;
 
