@@ -1,0 +1,3647 @@
+
+=== 文件路径: /etc/nixos/hosts/router/users.nix ===
+# hosts/router/users.nix
+{ ... }:
+
+{
+  services.openssh = {
+    enable = true;
+    settings = {
+      PermitRootLogin = "yes";
+      PasswordAuthentication = false;
+    };
+  };
+
+  users.users.root = {
+    initialPassword = "root"; # 初始临时密码（第一次登录用）
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOxnON3MkP3jq6+UKldz4ChA2OSf07KryKUsJBXeB5wD 604719@qq.com"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIpvPtSvAEllUr4VsEJBcsCs9CHhIvz4vwml/j3mV2v0 win-desktop"
+    ];
+  };
+
+  users.users.naiveproxy = {
+    isSystemUser = true; # 创建一个系统用户（无法登录，仅供服务使用）
+    group = "naiveproxy";
+  };
+
+  users.groups.naiveproxy = {};
+}
+
+=== 文件路径: /etc/nixos/hosts/router/services.nix ===
+{ pkgs, ... }:
+
+{
+  # 1. 定义定时器，每天半夜 12 点触发
+  systemd.timers."scheduled-shutdown" = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "00:00:00";
+      Persistent = true; # 如果因为某种原因错过了时间，下次开机立即补执行关机（防止意外）
+      Unit = "scheduled-shutdown.service";
+    };
+  };
+
+  # 2. 定义定时器要执行的具体关机命令
+  systemd.services."scheduled-shutdown" = {
+    script = ''
+      ${pkgs.systemd}/bin/shutdown now
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+      User = "root";
+    };
+  };
+}
+
+=== 文件路径: /etc/nixos/hosts/router/disko.nix ===
+{ inputs, ... }:
+
+{
+  imports = [ inputs.disko.nixosModules.disko ];
+  disko.devices = {
+    disk = {
+      main = {
+        type = "disk";
+        device = "/dev/sda";
+        content = {
+          type = "gpt";
+          partitions = {
+            ESP = {
+              priority = 1;
+              name = "ESP";
+              size = "1G";
+              type = "EF00";
+              content = {
+                type = "filesystem";
+                format = "vfat";
+                mountpoint = "/boot";
+                mountOptions = [ "umask=0077" ];
+              };
+            };
+
+            root = {
+              size = "100%";
+              content = {
+                type = "filesystem";
+                format = "ext4";
+                mountpoint = "/";
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+
+  swapDevices = [ {
+    device = "/swapfile";
+    size = 2048;
+  } ];
+}
+
+=== 文件路径: /etc/nixos/hosts/router/packages.nix ===
+{ pkgs, lib, ... }:
+
+{
+  # 系统纯净策略：清空 NixOS 预装无用包
+  environment.defaultPackages = lib.mkForce [ ];
+
+  # 启用固件自动升级服务（KDE 的发现中心 Discover 也会调用它）
+  #services.fwupd.enable = true;
+  #programs.nix-ld.enable = true;
+
+  services.xserver.enable = false;
+
+  # ==============================================
+  # 系统级全局安装包（所有用户、任何环境都需要）
+  # ==============================================
+  environment.systemPackages = with pkgs; [
+    # --------------------------
+    # 底层系统运维工具
+    # --------------------------
+    sops
+    git
+    curl
+    wget
+    unzip
+    p7zip
+    jq
+    file
+    killall
+
+    # --------------------------
+    # 网络调试工具 (配合 dae 绝佳)
+    # --------------------------
+    dnsutils # 提供 dig, nslookup 命令，方便测试 DNS 转发
+    # --------------------------
+    # 硬件查询与维护
+    # --------------------------
+    hwinfo
+    pciutils
+    usbutils
+    parted # 核心分区工具
+    smartmontools # 硬盘健康状态监控
+
+    # --------------------------
+    # 现代必装 CLI 工具（系统级全局）
+    # --------------------------
+    eza
+    bat
+    ripgrep
+    fd
+    bottom
+    procs
+    dust
+    duf
+    tealdeer
+    fastfetch
+    helix
+  ];
+}
+
+=== 文件路径: /etc/nixos/hosts/router/network.nix ===
+{ ... }:
+
+{
+  time.timeZone = "Asia/Shanghai";
+
+  networking = {
+    hostName = "router";
+    useDHCP = false;
+
+    # 1. 依然开启基础 NAT
+    # 提示：因为上级光猫/主路由不知道你工控机下面的局域网段，
+    # 那些不需要走 dae 代理的国内直连流量，依然需要通过工控机 NAT 伪装（Masquerade）出去。
+    nat = {
+      enable = true;
+      externalInterface = "enp1s0"; # ──> 接光猫/主路由的物理网口
+      internalInterfaces = [ "br0" ];
+    };
+
+    # 2. 简化的防火墙
+    firewall = {
+      enable = true;
+      trustedInterfaces = [ "br0" "lo" ]; # 绝对信任内网，不影响 dae 的 eBPF 捞包
+    };
+
+    # 3. 5 口物理桥接，化身硬核千兆交换机
+    bridges = {
+      "br0" = {
+        interfaces = [ "enp2s0" "enp3s0" "enp4s0" "enp5s0" "enp6s0" ];
+      };
+    };
+
+    # 4. IP 分配
+    interfaces = {
+      # WAN 口：挂在上级路由下面，自动通过 DHCP 获取一个上级网段的 IP
+      "enp1s0".useDHCP = true;
+
+      # LAN 网桥：给你的内网设备开辟一个独立的纯净网段
+      "br0" = {
+        ipv4.addresses = [{
+          address = "192.168.10.1"; # ──> 故意换成 .10 网段，避免与光猫默认的 192.168.1.1 冲突
+          prefixLength = 24;
+        }];
+      };
+    };
+  };
+
+  # 5. 内网专属 DHCP：把内网设备的网关和 DNS 全部收拢到工控机自己身上
+  services.dnsmasq = {
+    enable = true;
+    settings = {
+      interface = [ "br0" "lo" ];
+      dhcp-range = "192.168.10.10,192.168.10.250,12h";
+      dhcp-option = [
+        "3,192.168.10.1" # 把所有设备的默认网关指向工控机，由 dae 进行分流
+        "6,192.168.10.1" # 把所有设备的 DNS 指向工控机，防止 DNS 污染
+      ];
+    };
+  };
+}
+
+=== 文件路径: /etc/nixos/hosts/router/base.nix ===
+{ inputs, pkgs, lib, ... }:
+
+{
+
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
+  zramSwap = {
+    enable = true;
+    memoryPercent = 25; # ZRAM 最多占用 25% 的物理内存
+  };
+
+  nix = {
+    channel.enable = false;
+
+    settings = {
+      auto-optimise-store = true;
+      experimental-features = [ "nix-command" "flakes" ];
+      nix-path = "nixpkgs=flake:nixpkgs";
+    };
+
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 7d";
+    };
+
+    registry = lib.mapAttrs (_: flake: { inherit flake; }) (
+      lib.filterAttrs (_: lib.isType "flake") inputs
+    );
+
+    nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
+  };
+
+  nixpkgs.config.allowUnfree = true;
+
+  system.stateVersion = "26.05";
+}
+
+=== 文件路径: /etc/nixos/hosts/router/boot.nix ===
+{ pkgs, ... }:
+
+{
+  boot = {
+    # 1. 引导加载器配置 (systemd-boot)
+    loader = {
+      systemd-boot = {
+        enable = true;
+        # 限制旧一代配置文件的保留数量，防止软路由 /boot 分区爆满
+        configurationLimit = 10;
+      };
+      # 允许修改 EFI 变量（anywhere 自动化安装和正常引导必需）
+      efi.canTouchEfiVariables = true;
+      # 软路由开机越快越好，将引导菜单倒计时缩短为 3 秒
+      timeout = 3;
+    };
+
+    initrd = {
+      # 极其全能的存储与 USB 驱动包（涵盖 NVMe, SATA SSD, U 盘启动）
+      availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
+      kernelModules = [ ];
+    };
+    # 开启 Intel CPU 的虚拟化支持（方便以后工控机里开 KVM 玩小虚拟机）
+    kernelModules = [ "kvm-intel" ];
+    extraModulePackages = [ ];
+
+    # 3. ⚡ 软路由的灵魂：内核网络参数优化 (Sysctl)
+    kernel.sysctl = {
+      # 强制开启 IPv4 和 IPv6 的流量转发（不做软路由就没法转发包了）
+      "net.ipv4.ip_forward" = 1;
+      "net.ipv6.conf.all.forwarding" = 1;
+
+      # 开启 BBR 拥塞控制算法（让你的 dae 代理和网络转发延迟更低、速度更稳）
+      "net.core.default_qdisc" = "fq";
+      "net.ipv4.tcp_congestion_control" = "bbr";
+
+      # 优化工控机的高并发网络缓存，防止网络流量大时丢包
+      "net.core.rmem_max" = 16777216;
+      "net.core.wmem_max" = 16777216;
+    };
+  };
+}
+
+=== 文件路径: /etc/nixos/hosts/router/default.nix ===
+{ inputs, ... }:
+
+{
+  imports = [
+    inputs.disko.nixosModules.disko
+    ./disko.nix
+    ./base.nix
+    ./boot.nix
+    ./network.nix
+    ./users.nix
+    ./packages.nix
+    ./naiveproxy.nix
+    ./dae.nix
+    ./services.nix
+  ];
+}
+
+=== 文件路径: /etc/nixos/hosts/router/dae.nix ===
+{ inputs, pkgs, config, ... }:
+
+{
+  imports = [
+    inputs.daeuniverse.nixosModules.dae
+    inputs.sops-nix.nixosModules.sops
+  ];
+
+  # 1. 密钥管理（保持原样，相对路径指向你的秘密大本营）
+  sops.defaultSopsFile = ../../secrets/secrets.yaml;
+  sops.defaultSopsFormat = "yaml";
+  sops.age.keyFile = "/var/lib/sops-nix/key.txt";
+
+  sops.secrets.vps_ip = { };
+  sops.secrets.vps_domain = { };
+  sops.secrets."nodes/vless" = { };
+  sops.secrets."nodes/hy2" = { };
+  sops.secrets."nodes/tuic" = { };
+  sops.secrets."nodes/anytls" = { };
+  sops.secrets."nodes/vmess" = { };
+
+  # 2. 动态渲染 dae 配置文件
+  sops.templates."config.dae" = {
+    content = ''
+      global {
+        disable_waiting_network: true
+        # ──> ⚡【路由端核心修改】显式绑定你的内网网桥和外网物理口
+        # 拒绝 auto，防止 eBPF 在多网卡环境下一把抓导致网络风暴
+        lan_interface: br0
+        wan_interface: enp1s0
+
+        log_level: info
+        allow_insecure: false
+        auto_config_kernel_parameter: true
+        dial_mode: domain
+        sniffing_timeout: 50ms
+        tls_implementation: utls
+        utls_imitate: chrome_auto
+      }
+
+      dns {
+        upstream {
+          alidns: 'udp://223.5.5.5:53'
+          googledns: 'tcp://8.8.8.8:53'
+        }
+        routing {
+          request {
+            qname(geosite:cn) -> alidns
+            fallback: googledns
+          }
+        }
+        ipversion_prefer: 4
+      }
+
+      node {
+        vps_vless: "${config.sops.placeholder."nodes/vless"}"
+        vps_hy2: "${config.sops.placeholder."nodes/hy2"}"
+        vps_tuic: "${config.sops.placeholder."nodes/tuic"}"
+        #vps_anytls: "${config.sops.placeholder."nodes/anytls"}"
+        vps_vmess: "${config.sops.placeholder."nodes/vmess"}"
+        vps_naive: "socks5://127.0.0.1:55555"
+      }
+
+      group {
+        master_group {
+          policy: min_moving_avg
+          check_tolerance: 50ms
+          tcp_check_url: 'http://cp.cloudflare.com/generate_204'
+          check_interval: 20s
+
+          # 你的协议分层绝活，完美保留
+          filter: name(vps_hy2) [add_latency: -30ms]
+          filter: name(vps_tuic) [add_latency: -10ms]
+          filter: name(vps_vless) [add_latency: -20ms]
+          #filter: name(vps_anytls) [add_latency: -20ms]
+          filter: name(vps_vmess) [add_latency: 0ms]
+          filter: name(vps_naive) [add_latency: 0ms]
+        }
+      }
+
+      routing {
+        ### [级别1] 内核/系统级直连（不可动）
+        dip(224.0.0.0/3, 'ff00::/8') -> direct
+
+        # ──> 💡【路由端微调】加入 dhcpcd/dnsmasq，确保路由底层基础网络组件绝对直连
+        pname(NetworkManager, systemd-resolved, dhcpcd, dnsmasq) -> direct(must)
+        dip(geoip:private) -> direct(must)
+
+        ### [级别2] 逃逸与防环区（优先级必须提到最高）
+        dip("${config.sops.placeholder.vps_ip}") -> direct
+        domain(suffix: ${config.sops.placeholder.vps_domain}) -> direct
+
+        ### [级别3] 强制业务区（软路由上没有桌面应用，这行留着或删掉都行，不影响）
+        pname(termusic, yt-dlp) -> master_group
+        domain(suffix: google-analytics.com) -> master_group
+
+        ### [级别4] 智能分流区
+        # 完美契合软路由！dae 会在 br0 层拦截局域网的所有 53 端口请求，
+        # 从而无缝接管全家设备的 DNS 解析，从根源上防止 DNS 污染。
+        dip(223.5.5.5) -> direct
+        dport(53) && !dip(223.5.5.5) -> master_group
+
+        # 常规地理分流
+        domain(geosite:cn) -> direct
+        dip(geoip:cn) -> direct
+
+        # 业务组分流
+        domain(geosite:google, geosite:youtube, geosite:github) -> master_group
+
+        ### [级别5] 终极兜底
+        fallback: master_group
+      }
+    '';
+  };
+
+  services.dae = {
+    enable = true;
+    package = inputs.daeuniverse.packages.${pkgs.stdenv.hostPlatform.system}.dae;
+    assets = with pkgs; [
+      v2ray-geoip
+      v2ray-domain-list-community
+    ];
+    configFile = config.sops.templates."config.dae".path;
+  };
+}
+
+=== 文件路径: /etc/nixos/hosts/router/naiveproxy.nix ===
+# /etc/nixos/system/services/naive.nix
+{ config, pkgs, lib, ... }:
+
+let
+  # 1. 免编译预构建包
+  naiveproxy-bin = pkgs.stdenv.mkDerivation rec {
+    pname = "naiveproxy";
+    version = "148.0.7778.96-5";
+
+    src = pkgs.fetchurl {
+      url = "https://github.com/klzgrad/naiveproxy/releases/download/v${version}/naiveproxy-v${version}-linux-x64.tar.xz";
+      hash = "sha256-ymlY3Lv7exs4xVohPatpJ848FBfZabgVZXUTuB/HNS0=";
+    };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    # 自适应提取二进制
+    installPhase = ''
+      find . -type f -name "naive" -exec install -Dm755 {} $out/bin/naive \;
+    '';
+  };
+
+  # ⚡ 静态参数绑定：直接在内部决定你的本地监听端口为 55555
+  listenPort = "socks://127.0.0.1:55555";
+in
+{
+  # 1. 放入系统环境以便命令行随时可以调用调试
+  environment.systemPackages = [ naiveproxy-bin ];
+
+  # 2. 自动复用你在全局（如 dae.nix）中定义好的 sops.defaultSopsFile 路径！
+  # 并在运行期将所有人限制为 naiveproxy，保证安全
+  sops.secrets.naive_proxy = {
+    sopsFile = config.sops.defaultSopsFile;
+    owner = "naiveproxy";
+    group = "naiveproxy";
+  };
+
+  # 3. 声明 Systemd 服务（只要导入此模块，服务便会默认静默启用并开机自启）
+  systemd.services.naiveproxy = {
+    description = "NaiveProxy Client Service";
+    after = [ "network.target" "sops-nix.service" ];
+    wants = [ "sops-nix.service" ];
+    wantedBy = [ "multi-user.target" ];
+    before = [ "dae.service" ]; # ⚡ 严格时序保证
+
+    serviceConfig = {
+      Type = "simple";
+      # 动态读取解密出的 proxy 链接并直接启动
+      ExecStart = "${pkgs.bash}/bin/bash -c '${naiveproxy-bin}/bin/naive --listen=${listenPort} --proxy=$(cat ${config.sops.secrets.naive_proxy.path})'";
+      Restart = "on-failure";
+      RestartSec = 5;
+
+      # 权限降级，安全运行
+      User = "naiveproxy";
+      Group = "naiveproxy";
+    };
+  };
+}
+
+=== 文件路径: /etc/nixos/hosts/desktop/network.nix ===
+{ ... }:
+
+{
+  # --- 1. 物理机身份设定 ---
+  networking.hostName = "nixdevbox";
+  networking.networkmanager.enable = true;
+  time.timeZone = "Asia/Shanghai";
+
+  # 开启 SSH 方便远程管理（如果不需要可以去掉）
+  services.openssh.enable = false;
+}
+
+=== 文件路径: /etc/nixos/hosts/desktop/users.nix ===
+{ pkgs, ... }:
+
+{
+  # 启用 fish  shell
+  programs.fish.enable = true;
+
+  nix.settings.trusted-users = [ 
+    "root"
+    "@wheel"
+  ];
+
+  # 用户配置
+  users.users.kim = {
+    isNormalUser = true;
+    description = "Kimuxer";
+    shell = pkgs.fish;
+
+    # 必需权限组
+    extraGroups = [
+      "wheel"           # sudo 权限
+      "networkmanager"  # 管理网络
+      "video"           # 显卡
+      "audio"           # 音频
+      "input"           # 输入设备
+      "libvirtd"        # 虚拟机
+    ];
+  };
+  
+  users.users.naiveproxy = {
+    isSystemUser = true; # 创建一个系统用户（无法登录，仅供服务使用）
+    group = "naiveproxy";
+  };
+
+  users.groups.naiveproxy = {};
+
+  # 允许 wheel 组免密 sudo（可选，但是非常舒服）
+  security.doas.enable = true;
+  security.sudo.wheelNeedsPassword = false;
+}
+
+=== 文件路径: /etc/nixos/hosts/desktop/home-manager.nix ===
+{ inputs, ... }: 
+{
+  imports = [
+    inputs.home-manager.nixosModules.home-manager
+  ];
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    backupFileExtension = "backup";
+
+    # 【关键追加】将系统的 inputs 转发给 Home Manager 的配置树
+    extraSpecialArgs = { inherit inputs; };
+
+    # 定义用户 "kim" 的 Home Manager 配置
+    users.kim = import ../../home;
+  };
+}
+
+=== 文件路径: /etc/nixos/hosts/desktop/env.nix ===
+{ ... }:
+{
+  systemd.services.sddm.environment = {
+    WLR_NO_HARDWARE_CURSORS = "1";
+  };
+
+  # --- 1. 底层系统环境变量 ---
+  # 仅保留基础的显卡驱动配置和全局鼠标样式，对所有桌面环境通用
+  environment.variables = {
+    # NVIDIA 驱动配置
+    LIBVA_DRIVER_NAME = "nvidia";
+    GBM_BACKEND = "nvidia-drm";
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+
+    # 全局基础鼠标样式
+    XCURSOR_THEME = "Bibata-Modern-Ice";
+    XCURSOR_SIZE = "20";
+  };
+
+  # --- 2. 全局用户会话环境变量 ---
+  # 仅保留安全的、不对特定会话产生干扰的工具链与编辑器配置
+  environment.sessionVariables = {
+    # 常用应用的基础 Wayland 优化（Niri 和 KDE 均支持且通用）
+    NIXOS_OZONE_WL = "1";
+    MOZ_ENABLE_WAYLAND = "1";
+    _JAVA_AWT_WM_NONREPARENTING = "1";
+
+    # 默认编辑器
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+  };
+}
+
+=== 文件路径: /etc/nixos/hosts/desktop/base.nix ===
+{ inputs, pkgs, lib, ... }:
+
+{
+  boot.kernelPackages = pkgs.linuxPackages_zen;
+
+  zramSwap = {
+    enable = true;
+    memoryPercent = 25; # 限制 ZRAM 最多占用 25% 的物理内存
+  };
+
+  nix = {
+    channel.enable = false;
+    settings = {
+      auto-optimise-store = true;
+      experimental-features = [ "nix-command" "flakes" ];
+      nix-path = "nixpkgs=flake:nixpkgs";
+    };
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 7d";
+    };
+    registry = lib.mapAttrs (_: flake: { inherit flake; }) (
+      lib.filterAttrs (_: lib.isType "flake") inputs
+    );
+    nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
+  };
+
+  nixpkgs.config.allowUnfree = true;
+
+  # 4. 系统状态版本
+  system.stateVersion = "26.11";
+}
+
+=== 文件路径: /etc/nixos/flake.nix ===
+{
+  description = "Kim's NixOS Flake (Flake-Parts)";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    #桌面环境与合成器 ( Niri + noctalia )
+    niri.url = "github:sodiboo/niri-flake";
+    niri.inputs.nixpkgs.follows = "nixpkgs";
+    noctalia.url = "github:noctalia-dev/noctalia-shell/v5";
+    noctalia.inputs.nixpkgs.follows = "nixpkgs";
+
+    zen-browser.url = "github:youwen5/zen-browser-flake";
+    zen-browser.inputs.nixpkgs.follows = "nixpkgs";
+
+    # neovim
+    nvf.url = "github:NotAShelf/nvf";
+    nvf.inputs.nixpkgs.follows = "nixpkgs";
+
+    # 透明代理
+    daeuniverse.url = "github:daeuniverse/flake.nix";
+    daeuniverse.inputs.nixpkgs.follows = "nixpkgs";
+
+    # 敏感信息加密
+    sops-nix.url = "github:mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    
+    silentSDDM.url = "github:uiriansan/SilentSDDM";
+    silentSDDM.inputs.nixpkgs.follows = "nixpkgs";
+
+    disko.url = "github:nix-community/disko/latest";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+  };
+
+  outputs = inputs @ { self, flake-parts, nixpkgs, home-manager, ... }:
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      systems =[ "x86_64-linux" ];
+
+      # 开发环境、自定义包在这里定义 (针对每个系统)
+      #perSystem = { pkgs, ... }: {
+        # 暂时空着
+      #};
+
+      # 系统相关的配置放在这里
+      flake = {
+        nixosConfigurations.nixdevbox = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs; }; # 把 inputs 传给所有模块
+
+          modules =[
+            ./hosts/desktop
+            ./modules/system
+          ];
+        };
+        
+        # 软路由系统
+        nixosConfigurations.router = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs; };
+
+          modules =[
+            ./hosts/router
+          ];
+        };
+      };
+    };
+}
+
+=== 文件路径: /etc/nixos/hosts/desktop/hardware/pipewire.nix ===
+{  ... }:
+
+{
+  services.pulseaudio.enable = false;
+  # 实时权限，防止音频卡顿
+  security.rtkit.enable = true;
+
+  # PipeWire + WirePlumber 全套音频
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    pulse.enable = true;
+    wireplumber.enable = true;
+  };
+}
+
+=== 文件路径: /etc/nixos/hosts/desktop/default.nix ===
+{ ... }:
+{
+  imports = [
+    ./base.nix
+    ./boot.nix
+    ./env.nix
+    ./network.nix
+    ./users.nix
+    ./home-manager.nix
+    ./hardware  
+  ];
+}
+
+=== 文件路径: /etc/nixos/hosts/desktop/hardware/hardware-configuration.nix ===
+# Do not modify this file!  It was generated by ‘nixos-generate-config’
+# and may be overwritten by future invocations.  Please make changes
+# to /etc/nixos/configuration.nix instead.
+{ config, lib, pkgs, modulesPath, ... }:
+
+{
+  imports =
+    [ (modulesPath + "/installer/scan/not-detected.nix")
+    ];
+
+  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
+  boot.initrd.kernelModules = [ ];
+  boot.kernelModules = [ "kvm-intel" ];
+  boot.extraModulePackages = [ ];
+
+  fileSystems."/" =
+    { device = "/dev/disk/by-uuid/f463f4b2-c8c8-435f-a4ef-72979f35e0b5";
+      fsType = "btrfs";
+      options = [ "subvol=@" ];
+    };
+
+  fileSystems."/home" =
+    { device = "/dev/disk/by-uuid/f463f4b2-c8c8-435f-a4ef-72979f35e0b5";
+      fsType = "btrfs";
+      options = [ "subvol=@home" ];
+    };
+
+  fileSystems."/nix" =
+    { device = "/dev/disk/by-uuid/f463f4b2-c8c8-435f-a4ef-72979f35e0b5";
+      fsType = "btrfs";
+      options = [ "subvol=@nix" ];
+    };
+
+  fileSystems."/var/log" =
+    { device = "/dev/disk/by-uuid/f463f4b2-c8c8-435f-a4ef-72979f35e0b5";
+      fsType = "btrfs";
+      options = [ "subvol=@log" ];
+    };
+
+  fileSystems."/var/cache" =
+    { device = "/dev/disk/by-uuid/f463f4b2-c8c8-435f-a4ef-72979f35e0b5";
+      fsType = "btrfs";
+      options = [ "subvol=@cache" ];
+    };
+
+  fileSystems."/home/.snapshots" =
+    { device = "/dev/disk/by-uuid/f463f4b2-c8c8-435f-a4ef-72979f35e0b5";
+      fsType = "btrfs";
+      options = [ "subvol=@snapshots" ];
+    };
+
+  fileSystems."/swap" =
+    { device = "/dev/disk/by-uuid/f463f4b2-c8c8-435f-a4ef-72979f35e0b5";
+      fsType = "btrfs";
+      options = [ "subvol=@swap" ];
+    };
+
+  fileSystems."/boot" =
+    { device = "/dev/disk/by-uuid/0349-DA8D";
+      fsType = "vfat";
+      options = [ "fmask=0022" "dmask=0022" ];
+    };
+
+  swapDevices = [ ];
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+}
+
+=== 文件路径: /etc/nixos/hosts/desktop/hardware/nvidia.nix ===
+{ config, pkgs, ...}:
+{
+  # 显式添加内核参数
+  boot.kernelParams =[ 
+    "nvidia-drm.modeset=1" 
+    "nvidia-drm.fbdev=1" 
+  ];
+
+  services.xserver.videoDrivers = [ "nvidia" ];
+
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [ nvidia-vaapi-driver ];
+  };
+
+  hardware.nvidia = {
+    # 针对 1080Ti 的 legacy_580 稳定驱动
+    package = config.boot.kernelPackages.nvidiaPackages.legacy_580;
+    modesetting.enable = true;
+    powerManagement.enable = true;
+    powerManagement.finegrained = false;
+    open = false;
+    nvidiaSettings = false;
+  };
+}
+=== 文件路径: /etc/nixos/hosts/desktop/hardware/default.nix ===
+{ ... }:
+{
+  imports = [
+    ./hardware-configuration.nix
+    ./btrfs.nix
+    ./nvidia.nix
+    ./pipewire.nix
+    ./input.nix 
+  ];
+}
+
+=== 文件路径: /etc/nixos/modules/home/noctalia/default.nix ===
+{ inputs, ... }:
+{
+  imports = [
+    inputs.noctalia.homeModules.default
+  ];
+
+  programs.noctalia = {
+    enable = true;
+    systemd.enable = false;
+    settings = {
+      shell = {
+        time_format = "{:%H:%M}";
+        clipboard_auto_paste = "ctrl_shift_v";
+
+        shadow = {
+          direction = "down";
+          alpha = 0.52;
+        };
+
+        panel = {
+          transparency_mode = "glass";
+          clipboard_placement = "attached";
+          wallpaper_placement = "attached";
+          session_placement = "attached";
+        };
+        
+        screenshot = {
+          save_to_file = true;
+          copy_to_clipboard = true;
+          freeze_screen = true;
+      
+          pipe_to_command = true;
+          pipe_command = "satty -f -"; 
+        };
+
+        session = {
+          actions = [
+            { 
+              action = "lock"; 
+              command = "gtklock";
+            }
+            { 
+              action = "logout"; 
+              enabled = true; 
+            }
+            { 
+              action = "shutdown"; 
+              destructive = true; 
+            }
+          ];
+        };
+      };
+
+      bar = {
+        order = [ "main" ];
+        main = {
+          position = "top";
+          thickness = 24;
+          scale = 0.8;
+          margin_edge = 1; # 留空边距
+          margin_ends = 2; # 缩短两端边距
+          start = [ "launcher" "workspaces" ];
+          center = [ "clock" ];
+          end = [ "media" "tray" "notifications" "clipboard" "volume" "control-center" "session"];
+        };
+      };
+
+      wallpaper = {
+        directory = "/home/kim/Pictures/wallpapers";
+        automation.enabled = true;
+      };
+
+      theme = {
+        mode = "dark"; 
+        source = "wallpaper";      
+        wallpaper_scheme = "m3-tonal-spot"; 
+
+        templates = {
+          enable_builtin_templates = true;
+          enable_community_templates = true;
+          # run: noctalia theme --list-templates
+          builtin_ids = [ "niri" "foot" "starship" "qt" "gtk3" "gtk4" "cava" ];   
+          community_ids = [ "neovim" "papirus-icons" "telegram" "yazi" "zed" "zen-browser" ];
+        };
+      };
+
+      lockscreen = {
+        blurred_desktop = true;
+        blur_intensity = 0.5;
+        tint_intensity = 0.3;
+      };
+
+      location = {
+        address = "Dalian, CN";
+      };
+    };
+  };
+}
+
+=== 文件路径: /etc/nixos/hosts/desktop/boot.nix ===
+{  ... }: 
+{
+  boot = {
+    initrd = {
+      systemd.enable = true;
+      kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
+    };
+
+    kernelParams = [
+      #"quiet"
+      #"loglevel=3" 
+      "splash" 
+      "nosgx"
+      "nvidia_drm.modeset=1"
+      "nvidia_drm.fbdev=1"
+      "video=efifb:off"           # 物理屏蔽 EFI framebuffer
+      "video=vesafb:off"          # 物理屏蔽 VESA framebuffer
+      "module_blacklist=nouveau"  # 再补一道内核参数拉黑
+#      "ipv6.disable=1"
+    ];
+
+  #  boot.plymouth = {
+  #    enable = true;
+  #    themePackages = [ pkgs.catppuccin-plymouth ];
+  #    theme = "catppuccin-macchiato";
+
+   # };
+
+    loader = {
+      efi.canTouchEfiVariables = true;
+      limine = {
+        enable = true;
+        efiSupport = true;
+        enableEditor = true;
+        maxGenerations = 10;
+        style = {
+          interface.resolution = "1920x1080";
+        };
+        extraEntries = "
+          /windows 11 pro
+            protocol: efi
+            path: guid(940818ba-1baa-41ad-86cb-405ee9629f74):/EFI/Microsoft/Boot/bootmgfw.efi
+          ";
+      };
+    };
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/system/packages.nix ===
+{ pkgs, lib, ... }:
+
+{
+  # 系统纯净策略：清空 NixOS 预装无用包
+  environment.defaultPackages = lib.mkForce [ ];
+
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+    enableFishIntegration = true;
+    enableBashIntegration = true;
+  };
+
+  programs = {
+    # 系统级编辑器（所有用户可用）
+    neovim = {
+      enable = true;
+      package = pkgs.neovim-unwrapped;
+    };
+  };
+
+  # ==============================================
+  # 系统级必需程序（必须在系统层开启）
+  # ==============================================
+  programs.dconf.enable = true; # UI 程序通用依赖
+
+  # SSH 保活
+  programs.ssh.extraConfig = ''
+    Host *
+      ServerAliveInterval 30
+      ServerAliveCountMax 3
+  '';
+  # Qt 平台启用（Wayland + 主题必需）
+  qt.enable = true;
+
+  # 启用固件自动升级服务（KDE 的发现中心 Discover 也会调用它）
+  services.fwupd.enable = true;
+
+  #
+  programs.nix-ld.enable = true;
+  # ==============================================
+  # 系统级全局安装包（所有用户、任何环境都需要）
+  # ==============================================
+  environment.systemPackages = with pkgs; [
+    # --------------------------
+    # 底层系统运维工具
+    # --------------------------
+    sops
+    git
+    curl
+    wget
+    unzip
+    p7zip
+    jq
+    file
+    killall
+    wl-clipboard
+    udiskie
+    llvmPackages.lldb
+    vscode-extensions.vadimcn.vscode-lldb
+    # --------------------------
+    # 网络调试工具 (配合 dae 绝佳)
+    # --------------------------
+    dnsutils # 提供 dig, nslookup 命令，方便测试 DNS 转发
+
+    # --------------------------
+    # btrfs 快照工具
+    # --------------------------
+    btrfs-assistant
+    snapper
+
+    # --------------------------
+    # 硬件查询与维护
+    # --------------------------
+    hwinfo
+    pciutils
+    usbutils
+    parted # 核心分区工具
+    smartmontools # 硬盘健康状态监控
+
+    # --------------------------
+    # Nix 开发与维护工具
+    # --------------------------
+    nixd # Nix LSP
+    nil
+    # --------------------------
+    # 现代必装 CLI 工具（系统级全局）
+    # --------------------------
+    eza
+    bat
+    ripgrep
+    fd
+    bottom
+    procs
+    dust
+    duf
+    tealdeer
+    #fastfetch
+
+    # --------------------------
+    # 系统级主题 / 光标 / 外观
+    # --------------------------
+    bibata-cursors
+    papirus-icon-theme
+
+    # --------------------------
+    # Qt 6 gtk3 配置与主题（全局生效）
+    # --------------------------
+    kdePackages.kwin # sddm 合成器
+    qt6Packages.qt6ct
+    adw-gtk3
+    qt6Packages.qtstyleplugin-kvantum
+  ];
+}
+
+=== 文件路径: /etc/nixos/hosts/desktop/hardware/input.nix ===
+{ pkgs, ... }: {
+  #i18n.defaultLocale = "en_US.UTF-8";
+  i18n.defaultLocale = "zh_CN.UTF-8";
+  i18n.extraLocaleSettings = {
+    LC_CTYPE = "zh_CN.UTF-8";
+  };
+  i18n.inputMethod = {
+    enable = true; 
+    type = "fcitx5"; 
+    fcitx5 = {
+      waylandFrontend = true;
+      addons = with pkgs; [
+        qt6Packages.fcitx5-chinese-addons 
+        qt6Packages.fcitx5-configtool
+        qt6Packages.fcitx5-qt
+        fcitx5-gtk
+        fcitx5-lua
+        fcitx5-fluent
+      ];
+    };
+  };
+}
+
+
+=== 文件路径: /etc/nixos/modules/home/nvf/keymaps.nix ===
+{ ... }:
+{
+  programs.nvf.settings.vim.keymaps = [
+    # 快速保存/退出
+    { key = "<leader>w"; mode = "n"; desc = "Save"; action = "<cmd>w<CR>"; }
+    { key = "<leader>q"; mode = "n"; desc = "Quit"; action = "<cmd>q!<CR>"; }
+    { key = "<leader>W"; mode = "n"; desc = "Save all"; action = "<cmd>wa<CR>"; }
+    { key = "<leader>Q"; mode = "n"; desc = "Quit all"; action = "<cmd>qa!<CR>"; }
+
+    { key = "U"; mode = "n"; desc = "Redo"; action = "<C-r>"; }
+
+    # 分屏管理
+    { key = "<leader>sh"; mode = "n"; desc = "Horizontal split"; action = "<cmd>split<CR>"; }
+    { key = "<leader>sv"; mode = "n"; desc = "Vertical split"; action = "<cmd>vsplit<CR>"; }
+    { key = "<leader>sc"; mode = "n"; desc = "Close current split"; action = "<cmd>close<CR>"; }
+    { key = "<leader>so"; mode = "n"; desc = "Close other splits"; action = "<cmd>only<CR>"; }
+
+    # 窗口跳转
+    { key = "<leader>h"; mode = "n"; desc = "Move left"; action = "<C-w>h"; }
+    { key = "<leader>j"; mode = "n"; desc = "Move down"; action = "<C-w>j"; }
+    { key = "<leader>k"; mode = "n"; desc = "Move up"; action = "<C-w>k"; }
+    { key = "<leader>l"; mode = "n"; desc = "Move right"; action = "<C-w>l"; }
+
+    # 分屏大小调整 (使用 Leader + 方向键)
+    { key = "<leader><Up>"; mode = "n"; desc = "Resize up"; action = "<cmd>resize -2<CR>"; }
+    { key = "<leader><Down>"; mode = "n"; desc = "Resize down"; action = "<cmd>resize +2<CR>"; }
+    { key = "<leader><Left>"; mode = "n"; desc = "Resize left"; action = "<cmd>vertical resize -2<CR>"; }
+    { key = "<leader><Right>"; mode = "n"; desc = "Resize right"; action = "<cmd>vertical resize +2<CR>"; }
+
+    # 其他 UI 交互
+    { key = "<leader>ln"; mode = "n"; desc = "Toggle line number"; action = "<cmd>set nu! rnu!<CR>"; }
+    { key = "<leader>cl"; mode = "n"; desc = "Clear search highlight"; action = "<cmd>nohl<CR>"; }
+    { key = "<leader>e"; mode = "n"; desc = "Run neo-tree"; action = "<cmd>Neotree<CR>"; }
+  ];
+}
+
+=== 文件路径: /etc/nixos/hosts/desktop/hardware/btrfs.nix ===
+{ ... }:
+
+let
+  # Btrfs 公共挂载参数（你写的完全正确）
+  commonOptions = [
+    "noatime"
+    "compress=zstd"
+    "space_cache=v2"
+    "commit=120"
+  ];
+
+in
+{
+  # SSD 优化
+  services.fstrim.enable = true;
+
+  # 所有子卷共用挂载参数
+  fileSystems = {
+    "/"                 = { options = commonOptions; };
+    "/home"             = { options = commonOptions; };
+    "/nix"              = { options = commonOptions; };
+    "/var/log"          = { options = commonOptions; };
+    "/var/cache"        = { options = commonOptions; };
+    "/home/.snapshots"  = { options = commonOptions; };
+
+    # Swap 不需要压缩，单独配置
+    "/swap" = {
+      options = [ "noatime" "space_cache=v2" ];
+    };
+  };
+
+  # Swap file (Btrfs 已正确对齐)
+  swapDevices = [
+    { device = "/swap/swapfile"; }
+  ];
+  
+  services.snapper = {
+    configs = {
+      home = {
+        SUBVOLUME = "/home";
+        ALLOW_USERS = [ "kim" ];
+        TIMELINE_CREATE = true;
+        TIMELINE_CLEANUP = true;
+        TIMELINE_LIMIT_HOURLY = 5;
+        TIMELINE_LIMIT_DAILY = 3;
+        TIMELINE_LIMIT_WEEKLY = 1;
+        TIMELINE_LIMIT_MONTHLY = 0;
+        TIMELINE_LIMIT_YEARLY = 0;
+      };
+    };
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/system/niri.nix ===
+{ pkgs, inputs, lib, ... }:
+
+{
+  imports = [
+    # ✅ 官方正确模块名
+    inputs.dms.nixosModules.dank-material-shell
+    inputs.dms.nixosModules.greeter
+    inputs.niri.nixosModules.niri
+    inputs.silentSDDM.nixosModules.default
+  ];
+
+  # ============================
+  # 基础系统服务
+  # ============================
+  security.polkit.enable = true;
+  services.gnome.gnome-keyring.enable = true;
+  services.dbus.enable = true;
+  services.upower.enable = true;
+  services.gvfs.enable = true;
+  services.udisks2.enable = true;
+  #services.devmon.enable = true;
+  services.tumbler.enable = true;
+
+  # ============================
+  # Wayland XDG Portal (优化：适配 Niri 官方标准)
+  # ============================
+  xdg.portal = {
+    enable = true;
+    # Niri 自身实现了 screencast，完美的搭配是 gnome (用于投屏) 和 gtk (用于文件选择器)
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gnome
+      pkgs.xdg-desktop-portal-gtk
+    ];
+    config.common.default = "gtk";
+  };
+
+  # ============================
+  # Niri 窗口管理器 (必须保留！负责系统级注册)
+  # ============================
+  programs.niri = {
+    enable = true;
+    package = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
+  };
+
+  # ============================
+  # DMS + Greeter 登录器
+  # ============================
+  programs.dank-material-shell = {
+    enable = true;
+  #  greeter = {
+  #    enable = true;
+  #    compositor = {
+  #      name = "niri";
+  #    };
+
+  #    configHome = "/home/kim";
+  #  };
+  };
+  services = {
+    #desktopManager.plasma6.enable = true;
+    displayManager.sddm = {
+      enable = true;
+      wayland.enable = true;
+      wayland.compositor = "kwin";
+      settings = {
+        Theme = {
+          CursorTheme = "Bibata-Modern-Ice";
+          CursorSize = "20";
+        };
+      };
+    };
+  };
+  programs.silentSDDM = {
+        enable = true;
+        # default / rei / ken / silvia / everforest / catppuccin-latte 
+        # catppuccin-frappe / catppuccin-macchiato / catppuccin-mocha / nord
+        theme = "default-left"; 
+        # settings = { ... }; see example in module
+  };
+  # 关闭冲突服务
+  systemd.user.services.niri-flake-polkit.enable = lib.mkForce false;
+}
+
+=== 文件路径: /etc/nixos/modules/system/naiveproxy.nix ===
+# /etc/nixos/system/services/naive.nix
+{ config, pkgs, lib, ... }:
+
+let
+  # 1. 免编译预构建包
+  naiveproxy-bin = pkgs.stdenv.mkDerivation rec {
+    pname = "naiveproxy";
+    version = "148.0.7778.96-5";
+
+    src = pkgs.fetchurl {
+      url = "https://github.com/klzgrad/naiveproxy/releases/download/v${version}/naiveproxy-v${version}-linux-x64.tar.xz";
+      hash = "sha256-ymlY3Lv7exs4xVohPatpJ848FBfZabgVZXUTuB/HNS0=";
+    };
+
+    nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
+    sourceRoot = ".";
+
+    # 自适应提取二进制
+    installPhase = ''
+      find . -type f -name "naive" -exec install -Dm755 {} $out/bin/naive \;
+    '';
+  };
+
+  # ⚡ 静态参数绑定：直接在内部决定你的本地监听端口为 55555
+  listenPort = "socks://127.0.0.1:55555";
+in
+{
+  # 1. 放入系统环境以便命令行随时可以调用调试
+  environment.systemPackages = [ naiveproxy-bin ];
+
+  # 2. 自动复用你在全局（如 dae.nix）中定义好的 sops.defaultSopsFile 路径！
+  # 并在运行期将所有人限制为 naiveproxy，保证安全
+  sops.secrets.naive_proxy = {
+    sopsFile = config.sops.defaultSopsFile; 
+    owner = "naiveproxy";
+    group = "naiveproxy";
+  };
+
+  # 3. 声明 Systemd 服务（只要导入此模块，服务便会默认静默启用并开机自启）
+  systemd.services.naiveproxy = {
+    description = "NaiveProxy Client Service";
+    after = [ "network.target" "sops-nix.service" ];
+    wants = [ "sops-nix.service" ];
+    wantedBy = [ "multi-user.target" ];
+    before = [ "dae.service" ]; # ⚡ 严格时序保证
+
+    serviceConfig = {
+      Type = "simple";
+      # 动态读取解密出的 proxy 链接并直接启动
+      ExecStart = "${pkgs.bash}/bin/bash -c '${naiveproxy-bin}/bin/naive --listen=${listenPort} --proxy=$(cat ${config.sops.secrets.naive_proxy.path})'";
+      Restart = "on-failure";
+      RestartSec = 5;
+
+      # 权限降级，安全运行
+      User = "naiveproxy";
+      Group = "naiveproxy";
+    };
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/system/fonts.nix ===
+{ pkgs, ... }:
+
+{
+  fonts = {
+    # 允许软件发现通过 Nix 安装的字体
+    fontDir.enable = true;
+
+    packages = with pkgs; [
+      # 1. 终端与代码：JetBrains Mono Nerd Font
+      nerd-fonts.jetbrains-mono
+
+      # 2. 中文字体：思源黑体 (Noto Sans CJK SC)
+      noto-fonts-cjk-sans
+      noto-fonts-cjk-serif
+
+      # 3. UI 字体：Inter (推荐给你的完美 UI 方案)
+      inter
+
+      # 4. 表情与符号
+      noto-fonts-color-emoji
+      nerd-fonts.symbols-only
+    ];
+
+    # --- Fontconfig 优先级配置 ---
+    # 这一步最重要：它告诉系统，如果字体里没某个字（比如中文），该找谁补位。
+    fontconfig = {
+      enable = true;
+      defaultFonts = {
+        # --- 终端与代码 ---
+        monospace = [
+          "JetBrainsMono Nerd Font"  # 首选：带图标的代码字体
+          "Noto Sans CJK SC"         # 补位：中文字符
+          "Symbols Nerd Font"        # 补位：特殊图标符号
+        ];
+
+        # --- 网页与系统 UI (无衬线) ---
+        sansSerif = [
+          "Inter"                    # 首选：UI 英文担当
+          "Noto Sans CJK SC"         # 补位：系统中文
+        ];
+
+        # --- 阅读与正式文档 (衬线) ---
+        serif = [
+          "Noto Serif CJK SC"
+          "DejaVu Serif"
+        ];
+
+        # --- 表情 ---
+        emoji = [ "Noto Color Emoji" ];
+      };
+
+      # 开启一些高级渲染优化
+      subpixel = {
+        rgba = "rgb";
+        lcdfilter = "default";
+      };
+      hinting = {
+        enable = true;
+        style = "slight";
+      };
+    };
+  };
+}
+
+=== 文件路径: /etc/nixos/home/default.nix ===
+{ ... }:
+{
+  imports = [
+    ../modules/home
+  ];
+
+    home.stateVersion = "26.11";
+}
+
+=== 文件路径: /etc/nixos/modules/system/default.nix ===
+{ ... }:
+{
+  imports = [
+    ./packages.nix
+    ./virtualisation.nix
+    ./desktop.nix
+    ./kanata.nix
+    #./naiveproxy.nix
+    #./dae.nix
+    ./fonts.nix
+    ./starship.nix
+    ./gtklock.nix
+    #./sops.nix
+    #./hyprland.nix
+  ];
+}
+
+
+=== 文件路径: /etc/nixos/modules/system/desktop.nix ===
+{ pkgs, inputs, lib, ... }:
+
+{
+  imports = [
+    inputs.niri.nixosModules.niri
+    inputs.silentSDDM.nixosModules.default
+  ];
+
+  # ============================
+  # 基础系统服务
+  # ============================
+  security.polkit.enable = true;
+  services.gnome.gnome-keyring.enable = true;
+  services.dbus.enable = true;
+  services.upower.enable = true;
+  services.gvfs.enable = true;
+  services.udisks2.enable = true;
+  services.tumbler.enable = true;
+
+  # ============================
+  # Wayland XDG Portal 隔离设计
+  # ============================
+  xdg.portal = {
+    enable = true;
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gnome
+      pkgs.xdg-desktop-portal-gtk
+      # 注：KDE Plasma 开启后，系统会自动将其所需的 xdg-desktop-portal-kde 加入。
+    ];
+    
+    # ⚡ 核心隔离配置：根据 XDG_CURRENT_DESKTOP 动态决定调用哪个后端
+    config = {
+      common = {
+        default = [ "gtk" ];
+      };
+      # Niri 会话的首选配置（屏幕共享等使用 gnome/gtk）
+      niri = {
+        default = [ "gnome" "gtk" ];
+        "org.freedesktop.impl.portal.ScreenCast" = [ "gnome" "gtk" ];
+        "org.freedesktop.impl.portal.Screenshot" = [ "gnome" "gtk" ];
+        "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
+      };
+      # KDE 会话原生配置（自动回退给 kde 自身实现）
+      kde = {
+        default = [ "kde" ];
+      };
+    };
+  };
+
+  # ============================
+  # Niri 窗口管理器
+  # ============================
+  programs.niri = {
+    enable = true;
+    package = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
+  };
+
+  # ============================
+  # 启用 KDE Plasma 6 桌面环境
+  # ============================
+  services.desktopManager.plasma6.enable = true;
+
+  # ============================
+  # Display Manager 登录器
+  # ============================
+  services = {
+    displayManager.sddm = {
+      enable = true;
+      wayland.enable = true;
+      wayland.compositor = "kwin";
+      settings = {
+        Theme = {
+          CursorTheme = "Bibata-Modern-Ice";
+          CursorSize = "20";
+        };
+      };
+    };
+  };
+
+  programs.silentSDDM = {
+        enable = true;
+        theme = "default-left"; 
+  };
+  
+  # 关闭冲突服务
+  systemd.user.services.niri-flake-polkit.enable = lib.mkForce false;
+}
+
+=== 文件路径: /etc/nixos/modules/system/kanata.nix ===
+{ ... }:
+{
+  services.kanata = {
+    enable = true;
+    keyboards.default = {
+      config = ''
+        (defsrc
+          caps ralt 1 2 3 4 5 6 7 8 9 h j k l)
+
+        (defalias
+          ;; 你原本的配置：单点 Caps，长按 Super (Meta)
+          cap (tap-hold-press 150 150 caps lmet)
+          
+          ;; 新增：按住 ralt 进入 move_layer 层
+          mv_lyr (layer-while-held move_layer)
+        )
+
+        (deflayer default
+          ;; @cap 对应 Caps 逻辑
+          ;; @mv_lyr 对应 ralt 逻辑
+          @cap @mv_lyr 1 2 3 4 5 6 7 8 9 h j k l)
+
+        (deflayer move_layer
+          ;; 1. (caps): _ 表示保持 Caps 原有行为
+          ;; 2. (ralt): _ 表示保持 RAlt 原有行为（作为层触发键，这里必须是透明/保持，否则层会立刻断开）
+          _ _
+          ;; M-S-1 代表 Super(Meta) + Shift + 1
+          ;; 这里的 M 必须和你在 Niri 里的 Mod 定义一致
+          M-S-1 M-S-2 M-S-3 M-S-4 M-S-5 M-S-6 M-S-7 M-S-8 M-S-9
+          ;; h j k l 窗口互换
+          M-S-h M-S-j M-S-k M-S-l)
+      '';
+    };
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/system/gtklock.nix ===
+{ pkgs, ... }:
+{
+  programs.gtklock = {
+    enable = true;
+    modules = [
+      pkgs.gtklock-powerbar-module
+      pkgs.gtklock-userinfo-module
+    ];
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/system/hyprland.nix ===
+{ pkgs, inputs, lib, ... }:
+
+{
+  imports = [
+    # 挂载 DMS 官方的系统层服务与登录器模块
+    inputs.dms.nixosModules.dank-material-shell
+    inputs.dms.nixosModules.greeter
+  ];
+
+  # ============================
+  # 基础系统服务
+  # ============================
+  security.polkit.enable = true;
+  services.gnome.gnome-keyring.enable = true;
+  services.dbus.enable = true;
+  services.upower.enable = true;
+  services.gvfs.enable = true;
+  services.udisks2.enable = true;
+  services.tumbler.enable = true;
+
+  # ============================
+  # Wayland XDG Portal 门户
+  # ============================
+  xdg.portal = {
+    enable = true;
+    extraPortals = [
+                        # pkgs.xdg-desktop-portal-gtk
+      pkgs.xdg-desktop-portal-hyprland # 🌟 核心补充：确保登录器和桌面的 Hyprland 都能正确调用门户服务
+    ];
+
+    # 首选门户改为 hyprland，GTK 负责文件选择对话框
+    config.common.default = [ "*" ];
+  };
+
+  # ============================
+  # 物理层 Hyprland 开启
+  # ============================
+  programs.hyprland = {
+    enable = true;
+    # 极其重要：利用最新的 UWSM，将所有图形环境变量和 systemd 服务深度绑定
+    withUWSM = true;
+  };
+
+  # ============================
+  # DMS + Greeter 登录器
+  # ============================
+  programs.dank-material-shell = {
+    enable = true;
+    #greeter = {
+     # enable = true;
+      #compositor = {
+       # name = "hyprland"; # 👈 顺从官方文档指南，完美采用 Hyprland 作为登录背景合成器
+     # };
+
+      # 告诉登录器去哪里加载你的配色和设置
+     # configHome = "/home/kim";
+    #};
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/home/mako/default.nix ===
+{ ... }:
+{
+  services.mako = {
+    enable = true;
+    
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/system/virtualisation.nix ===
+{ pkgs, ... }:
+
+{
+  # 1. 开启 libvirtd 虚拟化守护进程
+  virtualisation.libvirtd = {
+    enable = true;
+    qemu = {
+      package = pkgs.qemu_kvm;
+      runAsRoot = true;
+    };
+  };
+
+  # 2. 开启 virt-manager 图形化管理客户端
+  programs.virt-manager.enable = true;
+
+  networking.firewall.trustedInterfaces = [ "virbr0" ];
+  # 3. 启用 Spice USB 重定向（允许虚拟机直接读取你插在物理机上的 U 盘） [cite: 1.2.2]
+  virtualisation.spiceUSBRedirection.enable = true;
+}
+
+=== 文件路径: /etc/nixos/modules/home/nvf/default.nix ===
+{ inputs, config, ... }:
+{
+  imports = [
+    inputs.nvf.homeManagerModules.default
+    ./keymaps.nix
+  ];
+
+  programs.nvf = {
+    enable = true;
+
+    settings.vim = {
+      lineNumberMode = "relative";
+      viAlias = true;
+      vimAlias = true;
+      syntaxHighlighting = true;
+      options = {
+        mouse = "a";
+        tabstop = 2;
+        autoindent = false;
+        shiftwidth = 0;
+        smartindent = false;
+        cindent = false;
+        indentexpr = "";
+      };
+
+      # === 核心插件区 ===
+      lsp.enable = true;
+      autocomplete.nvim-cmp.enable = true;
+      binds.whichKey.enable = true;
+      binds.cheatsheet.enable = true;
+
+      # 启用 Telescope（它会自动注册 <leader>ff 等快捷键）
+      telescope.enable = true;
+
+      treesitter = {
+        enable = true;
+        indent.enable = false;
+      };
+
+      languages = {
+        enableTreesitter = true;
+        enableFormat = true;
+        nix.enable = true;
+        fish.enable = true;
+        lua.enable = true;
+        rust.enable = true;
+      };
+
+      statusline.lualine = {
+        enable = true;
+        theme = "auto";
+      };
+
+      clipboard = {
+        enable = true;
+        registers = "unnamedplus"; # 自动使用系统剪贴板，无需额外配置快捷键
+        providers.wl-copy.enable = true;
+      };
+
+      dashboard.alpha = {
+        enable = true;
+        theme = "theta";
+        opts.leader = "SPC";
+      };
+
+      filetree.neo-tree = {
+        enable = true;
+        setupOpts = {
+          add_blank_line_at_top = true;
+          git_status_async = true;
+        };
+      };
+
+#      luaConfigRC = {
+#        my-custom-config = {
+#          after = [ "pluginConfigs" ]; # 确保它在插件加载后执行
+#          data = ''
+#            vim.api.nvim_create_autocmd("FileType", {
+#              pattern = "alpha",
+#              callback = function()
+#                vim.keymap.set("n", "c", function()
+#                  vim.cmd("edit ${config.home.homeDirectory}/nixos/modules/home/nvf/default.nix")
+#                end, { buffer = true, desc = "Edit nvf config" })
+#              end,
+#            })
+#          '';
+#        };
+#      };
+    };
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/system/sops.nix ===
+# system configuration.nix
+{ pkgs, inputs, ... }:
+
+{
+  imports = [
+    inputs.sops-nix.nixosModules.sops # 👈 系统模块
+  ];
+
+  sops = {
+    defaultSopsFile = /home/kim/nixos/secrets/secrets.yaml; # 正确路径
+    defaultSopsFormat = "yaml";
+    age.keyFile = "/var/lib/sops-nix/key.txt";
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/home/zed-editor/default.nix ===
+{ pkgs, ... }:
+
+{
+  programs.zed-editor = {
+    enable = true;
+    package = pkgs.zed-editor;
+    extensions = [
+      "nix"
+      "toml"
+      "markdown"
+    ];
+
+    # 对应 ~/.config/zed/settings.json 的声明式配置
+    userSettings = {
+      # --- 字体与显示大小 ---
+      buffer_font_family = "JetBrainsMono Nerd Font";
+      buffer_font_size = 12; # 对应你截图中的 12
+      buffer_font_weight = 400;
+
+      # ⚡ 修正 1：主编辑器的行高配置使用 "buffer_line_height"
+      # 可选值有: "comfortable" (默认), "standard", 或自定义比例如 { "custom" = 1.5; }
+      buffer_line_height = "comfortable";
+
+      ui_font_family = "Inter";
+      ui_font_size = 14; # 对应你截图中的 14
+
+      # --- 终端设置 ---
+      terminal = {
+        font_family = "JetBrainsMono Nerd Font";
+        font_size = 12;
+        # 终端内的行高，这里可以使用 "line_height"
+        line_height = "standard";
+      };
+
+      # --- 外观与行为 ---
+      theme = "One Dark";
+      icon_theme = "Zed (Default)";
+
+      # ⚡ 修正 2：新版相对行号改用字符串 "enabled"
+      relative_line_numbers = "enabled";
+
+      indent_guides = {
+        enabled = true;
+        coloring = "indent_aware";
+      };
+
+      vim_mode = false;
+    };
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/home/hyprland/default.nix ===
+# modules/home/hyprland/default.nix
+{ config, pkgs, inputs, lib, ... }:
+
+{
+  imports = [
+    # 挂载 DMS 官方的系统层服务与登录器模块
+    inputs.dms.homeModules.dank-material-shell
+  ];
+
+  # DMS 集成
+  programs.dank-material-shell = {
+    enable = true;
+    systemd.enable = false;
+    enableSystemMonitoring = true;
+    dgop.package = inputs.dgop.packages.${pkgs.system}.default;
+                #quickshell.package = inputs.quickshell.packages.${pkgs.system}.default;
+  };
+  
+  home.file.".config/hypr" = {
+    source = ./config; # 你所有的 .lua 文件放在这里
+    recursive = true;
+  };
+  # 其他用户服务
+  services.udiskie.enable = true;  # 确保 udiskie 作为 systemd 服务运行
+}
+
+=== 文件路径: /etc/nixos/modules/system/dae.nix ===
+{
+  inputs,
+  pkgs,
+  config,
+  ...
+}:
+
+{
+  imports = [
+    inputs.daeuniverse.nixosModules.dae
+    inputs.sops-nix.nixosModules.sops
+  ];
+
+  sops.defaultSopsFile = ../../secrets/secrets.yaml;
+  sops.defaultSopsFormat = "yaml";
+  sops.age.keyFile = "/var/lib/sops-nix/key.txt";
+
+  sops.secrets.vps_ip = { };
+  sops.secrets.vps_domain = { };
+  sops.secrets."nodes/vless" = { };
+  sops.secrets."nodes/hy2" = { };
+  sops.secrets."nodes/tuic" = { };
+  sops.secrets."nodes/anytls" = { };
+  sops.secrets."nodes/vmess" = { };
+
+  sops.templates."config.dae" = {
+    content = ''
+      global {
+        lan_interface: auto
+        wan_interface: auto
+        log_level: info
+        allow_insecure: false
+        auto_config_kernel_parameter: true
+        dial_mode: domain
+        sniffing_timeout: 50ms                
+        tls_implementation: utls
+        utls_imitate: chrome_auto
+      }
+
+      dns {
+        upstream {
+          alidns: 'udp://223.5.5.5:53'
+          googledns: 'tcp://8.8.8.8:53'
+        }
+        routing {
+          request {
+            qname(geosite:cn) -> alidns
+            fallback: googledns
+          }
+        }
+        ipversion_prefer: 4
+      }
+
+      node {
+        vps_vless: "${config.sops.placeholder."nodes/vless"}"
+        vps_hy2: "${config.sops.placeholder."nodes/hy2"}"
+        vps_tuic: "${config.sops.placeholder."nodes/tuic"}"
+        vps_anytls: "${config.sops.placeholder."nodes/anytls"}"
+        vps_vmess: "${config.sops.placeholder."nodes/vmess"}"
+        vps_naive: "socks5://127.0.0.1:55555"
+      }
+
+      group {
+        master_group {
+          policy: min_moving_avg
+          check_tolerance: 50ms 
+          tcp_check_url: 'http://cp.cloudflare.com/generate_204'
+          check_interval: 20s
+    
+          # 策略权重：通过延迟偏移（Offset）实现“协议分层”
+          # 即使 VLESS 物理延迟比 HY2 低，我们也强制优先走 HY2
+          filter: name(vps_hy2) [add_latency: -30ms]
+          filter: name(vps_tuic) [add_latency: -10ms]
+          filter: name(vps_vless) [add_latency: -20ms]
+          filter: name(vps_anytls) [add_latency: -20ms]
+          filter: name(vps_vmess) [add_latency: 0ms]
+          filter: name(vps_naive) [add_latency: 0ms]
+        }
+
+        # 备用组：绝对防线
+        #emergency_group {
+        #  policy: fixed(0)
+        #  filter: name(vps_naive)
+        #}
+      }
+
+      routing {
+        ### [级别1] 内核/系统级直连（不可动）
+        dip(224.0.0.0/3, 'ff00::/8') -> direct
+        pname(NetworkManager, systemd-resolved) -> direct(must)
+        dip(geoip:private) -> direct(must)
+        
+        ### [级别2] 逃逸与防环区（优先级必须提到最高）
+        # 必须确保在代理开始工作前，先排除节点自身的地址
+        dip("${config.sops.placeholder.vps_ip}") -> direct
+        domain(suffix: ${config.sops.placeholder.vps_domain}) -> direct
+
+        ### [级别3] 强制业务区
+        pname(termusic, yt-dlp) -> master_group
+        domain(suffix: google-analytics.com) -> master_group
+
+        ### [级别4] 智能分流区
+        # 针对 DNS 的精细化管理：只代理非 cn 的 DNS 查询
+        # 确保 dae 自身的 DNS 流量不会产生“鸡生蛋，蛋生鸡”的环路
+        dip(223.5.5.5) -> direct
+        dport(53) && !dip(223.5.5.5) -> master_group
+
+        # 常规地理分流
+        domain(geosite:cn) -> direct
+        dip(geoip:cn) -> direct
+        
+        # 业务组分流（利用我们定义的带健康探测的分组）
+        domain(geosite:google, geosite:youtube, geosite:github) -> master_group
+
+        ### [级别5] 终极兜底
+        fallback: master_group
+      }
+    '';
+  };
+
+  services.dae = {
+    enable = true;
+    package = inputs.daeuniverse.packages.${pkgs.stdenv.hostPlatform.system}.dae;
+    assets = with pkgs; [
+      v2ray-geoip
+      v2ray-domain-list-community
+    ];
+    configFile = config.sops.templates."config.dae".path;
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/home/yazi/default.nix ===
+# Nix 模块导入：引入 pkgs 包管理器，其他参数忽略
+{ pkgs, ... }:
+{
+  # 配置 Yazi 终端文件管理器
+  programs.yazi = {
+    # 启用 Yazi
+    enable = true;
+
+    # 启用 Fish shell 集成（退出 Yazi 后自动切换目录）
+    enableFishIntegration = true;
+
+    # 终端输入 y 启动 Yazi（你之前问的那个配置）
+    shellWrapperName = "y";
+
+    # 额外安装的依赖工具（用于预览各种文件）
+    # Yazi 预览功能强依赖这些工具
+    extraPackages = with pkgs; [
+      ffmpegthumbnailer # 视频文件预览
+      imagemagick # 图片预览、格式转换
+      poppler # PDF 文件预览
+      ghostscript # 增强 PDF/EPS 等文档预览能力
+      unrar # RAR 压缩包解压与预览
+    ];
+
+    # Yazi 核心设置（对应 yazi.toml）
+    settings = {
+      # 文件管理器主界面配置
+      manager = {
+        ratio = [
+          1
+          3
+          4
+        ]; # 三栏比例：左侧栏 / 中间文件列表 / 右侧预览
+        sort_by = "natural"; # 自然排序（1 2 10 而非 1 10 2）
+        sort_sensitive = false; # 文件名不区分大小写
+        sort_reverse = false; # 不反转排序（正序）
+        sort_dir_first = true; # 文件夹优先显示在最前面
+        show_hidden = true; # 默认显示隐藏文件（.开头的文件）
+        show_symlink = true; # 显示符号链接（快捷方式）
+        linemode = "size"; # 显示文件大小
+        scrolloff = 5; # 滚动时上下保留 5 行边界
+        mouse_events = [
+          "scroll"
+          "move"
+          "click"
+        ]; # 开启完整鼠标支持
+      };
+
+      # 文件预览相关设置
+      preview = {
+        image_filter = "lanczos3"; # 图片缩放算法（画质最好）
+        image_quality = 80; # 预览图片质量 80%
+      };
+
+      # 打开方式配置：设置默认编辑器
+      opener = {
+        # 使用 $EDITOR 打开文件，未设置则默认用 nvim
+        # block = true 表示等待编辑器关闭再回到 Yazi
+        edit = [
+          {
+            run = ''${"EDITOR:-nvim"} "$@"'';
+            block = true;
+            desc = "editor";
+          }
+        ];
+      };
+    };
+
+    # Yazi 插件安装与自动启用
+    plugins = {
+      # 全边框插件：界面更美观，带圆角/完整边框
+      full-border = {
+        package = pkgs.yaziPlugins.full-border;
+        #setup = true; # 自动初始化插件（不用写 init.lua）
+      };
+
+      # Lazygit 集成：在 Yazi 里直接打开 Git 工具
+      lazygit = {
+        package = pkgs.yaziPlugins.lazygit;
+        #setup = true;
+      };
+
+      # Starship 集成：底部状态栏显示主题、Git 分支、路径等
+      starship = {
+        package = pkgs.yaziPlugins.starship;
+        #setup = true;
+      };
+
+      # 系统剪贴板插件：支持复制/粘贴文件到系统剪切板
+      clipboard = {
+        package = pkgs.yaziPlugins.clipboard;
+        #setup = true;
+      };
+    };
+
+    # 快捷键配置（对应 keymap.toml）
+    keymap = {
+      mgr.prepend_keymap = [
+        # Y = 复制到系统剪贴板 (Shift+y)
+        {
+          on = "Y";
+          run = [ "plugin clipboard -- --action=copy --notify-unknown-display-server" ];
+        }
+
+        # P = 从系统剪贴板粘贴 (Shift+p)
+        {
+          on = "P";
+          run = [ "plugin clipboard -- --action=paste" ];
+        }
+      ];
+    };
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/home/hyprland/env.nix ===
+# modules/home/hyprland/env.nix
+{ ... }:
+{
+  wayland.windowManager.hyprland.settings = {
+    env = [
+      "XDG_CURRENT_DESKTOP,Hyprland"
+      "XDG_SESSION_TYPE,wayland"
+      "XDG_SESSION_DESKTOP,Hyprland"
+
+      # Qt 平台及主题
+      "QT_QPA_PLATFORM,wayland;xcb"
+      "QT_QPA_PLATFORMTHEME,qt6ct"
+
+      # 强制其他工具包使用 Wayland
+      "SDL_VIDEODRIVER,wayland"
+      "CLUTTER_BACKEND,wayland"
+      "GDK_BACKEND,wayland,x11"
+
+      # Electron / Chromium / Firefox 原生 Wayland
+      "NIXOS_OZONE_WL,1"
+      "MOZ_ENABLE_WAYLAND,1"
+
+      # Java 应用修复
+      "_JAVA_AWT_WM_NONREPARENTING,1"
+
+      # 输入法
+      "XMODIFIERS,@im=fcitx"
+      #"GTK_IM_MODULE,fcitx"
+      #"QT_IM_MODULE,fcitx"
+      #"SDL_IM_MODULE,fcitx"
+    ];
+  };
+}
+=== 文件路径: /etc/nixos/modules/home/hyprland/input.nix ===
+# modules/home/hyprland/input.nix
+{ config, pkgs, ... }:
+
+{
+  wayland.windowManager.hyprland.settings = {
+    input = {
+      # --- 1. 键盘设置 ---
+      kb_layout = "us";               # 布局：美式英语
+      # kb_options = "caps:escape";   # 若需将 CapsLock 改为 Esc，可取消注释
+
+      # 按键重复手感 (与 Niri 保持一致)
+      repeat_delay = 250;             # 按住 250ms 后开始重复
+      repeat_rate = 40;               # 每秒重复 40 次
+
+      # 焦点跟随鼠标 (Focus Follows Mouse)
+      # Niri 的 focus-follows-mouse = false → Hyprland 设为 0
+      follow_mouse = 0;              # 0：鼠标移动不自动切换焦点
+
+      # Hyprland 没有直接的 “warp-mouse-to-focus” 选项。
+      # 如果你习惯键盘移动时鼠标自动居中，可以通过 Hyprctl 脚本实现，
+      # 或者使用插件，这里暂不设置。按需可添加 exec-once 调用的脚本。
+
+      # --- 2. 鼠标 / 指针设置 ---
+      sensitivity = 0.2;             # 对应 Niri 的 accel-speed，范围 -1.0 到 1.0
+      accel_profile = "flat";        # 禁用鼠标加速，实现 1:1 精准移动
+
+      # 滚轮速度 (无直接等价项，可使用 scroll_factor，但 Hyprland 通过 libinput 更底层)
+      # 若希望完全复现，可考虑在系统级通过 services.libinput 配置。
+      # 这里使用 Hyprland 的 scroll_method 和 scroll_button 相关设置来近似，
+      # 但通常保留默认即可，无需额外操作。
+
+      # --- 3. 触摸板 (如果你使用笔记本) ---
+      # 建议添加，以保持一致的滚动手感
+      # touchpad {
+      #   natural_scroll = true;
+      #   scroll_factor = 1.0;
+      # }
+    };
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/home/niri/default.nix ===
+{ ... }:
+{
+  imports = [
+    ./layout.nix
+    ./window-rules.nix
+    ./layout-rules.nix
+    ./animations.nix
+    ./input.nix
+    ./output.nix
+    ./keybinds.nix
+    ./cursor.nix
+  ];
+
+  programs.niri.settings = {
+    hotkey-overlay.skip-at-startup = true;
+    spawn-at-startup = [
+      { command =[ "fcitx5" "-d" "--replace" ]; }
+      { command =[ "noctalia" ]; }
+    ];
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/home/hyprland/window-rules.nix ===
+# modules/home/hyprland/window-rules.nix
+{ config, pkgs, ... }:
+
+{
+  wayland.windowManager.hyprland.settings = {
+    # 全局圆角已在 layout.nix 的 decoration.rounding 中设置，此处不重复。
+
+    windowrulev2 = [
+      # --- 1. 全局非活动窗口变暗 (模拟 Niri 的 is-active = false) ---
+      # 活动透明度 = 1.0，非活动透明度 = 0.9，作用于所有窗口
+      "opacity 1.0 override 0.9 override, class:.*"
+      # 排除 Kitty 终端和 Zen 浏览器，让它们始终保持完全不透明
+      "opacity 1.0 override 1.0 override, class:^(kitty)$"
+      "opacity 1.0 override 1.0 override, class:^(zen)$"
+
+      # --- 2. Zen 浏览器专用规则 ---
+      # Hyprland 没有直接 open-maximized 规则，如需最大化，
+      # 建议在启动命令中加参数，例如：zen --start-maximized
+      # 这里设置去除边框背景，保持简洁 (对应 draw-border-with-background = false)
+      "noborder, class:^(zen)$"        # 隐藏窗口边框
+      "noshadow, class:^(zen)$"        # 移除阴影，减少视觉干扰
+
+      # --- 3. Kitty 终端规则 ---
+      # 透明度由 Kitty 自身控制，Hyprland 不会像 Niri 那样垫背景，
+      # 因此无需专门关闭 draw-border-with-background。
+      # 此处仅去掉边框，保持终端界面干净
+      "noborder, class:^(kitty)$"
+
+      # --- 4. DMS / Quickshell 组件规则 ---
+      # 匹配所有 org.quickshell.quickshell 窗口
+      "float, class:^(org\\.quickshell\\.quickshell)$"
+      "noborder, class:^(org\\.quickshell\\.quickshell)$"
+      "noshadow, class:^(org\\.quickshell\\.quickshell)$"
+      "noanim, class:^(org\\.quickshell\\.quickshell)$"  # 无动画，响应更快
+      "noinitialfocus, class:^(org\\.quickshell\\.quickshell)$" # 避免抢焦点
+      "pin, class:^(org\\.quickshell\\.quickshell)$"             # 始终在顶层
+
+      # --- 5. 常见弹出窗口浮动处理 ---
+      "float, title:^(Open File|Save File|Select Folder)$"
+      "center, title:^(Open File|Save File|Select Folder)$"     # 居中弹出
+    ];
+  };
+}
+=== 文件路径: /etc/nixos/modules/system/starship.nix ===
+{ pkgs, lib, ... }:
+
+{
+  programs.starship = {
+    enable = true;
+    settings = {
+      "$schema" = "https://starship.rs/config-schema.json";
+
+      # 1. 修正后的全局布局：只放变量，不放任何裸奔的纯文本！
+      format = lib.concatStrings [
+        "$os"
+        "$username"
+        "$directory"
+        "$git_branch"    # 内部自带 "on "
+        "$git_status"
+        "$package"       # 内部自带 "is "
+        "$rust"          # 内部自带 "via "
+        "$python"        # 内部自带 "via "
+        "$nodejs"        # 内部自带 "via "
+        "$nix_shell"     # 内部自带 "via "
+        "$cmd_duration"
+        "\n"             # <--- 替换为真实的换行符，强制提示符 ❯ 在下一行
+        "$character"
+      ];
+
+      add_newline = false;
+
+      # 2. 提示符与目录保持原样
+      character = {
+        success_symbol = "[❯](bold green)";
+        error_symbol = "[❯](bold red)";
+      };
+
+      directory = {
+        style = "bold cyan";
+        format = "[$path]($style) "; # 目录不需要前缀，直接显示
+        truncation_length = 3;
+      };
+
+      # 3. 【核心修正】：将连接词作为模块的 format 前缀
+      
+      # Git 分支：只有在 Git 目录时，才会渲染 "on  branch"
+      git_branch = {
+        symbol = " ";
+        style = "bold magenta";
+        # 将 "on " 写在模块的最前面
+        format = "on [$symbol$branch]($style) "; 
+      };
+
+      # Git 状态：紧跟在分支后面
+      git_status = {
+        format = "([\\[$all_status$ahead_behind\\]]($style) )";
+        style = "bold red";
+      };
+
+      # 语言包：只有在有 package.json 时，才会渲染 "is 󰏗 v1.0.0"
+      package = {
+        symbol = "󰏗 ";
+        style = "bold orange";
+        # 将 "is " 写在最前面
+        format = "is [$symbol$version]($style) "; 
+      };
+
+      # Rust：只有在 Rust 项目中，才会渲染 "via 󱘗 v1.58"
+      rust = {
+        symbol = "󱘗 ";
+        style = "bold red";
+        # 将 "via " 写在最前面
+        format = "via [$symbol$version]($style) "; 
+      };
+
+      # Python：只有在 Python 项目中，才会渲染 "via  v3.9"
+      python = {
+        symbol = " ";
+        style = "bold yellow";
+        # 将 "via " 写在最前面
+        format = "via [$symbol$version]($style) "; 
+      };
+
+      # Node.js
+      nodejs = {
+        symbol = " ";
+        style = "bold green";
+        format = "via [$symbol$version]($style) "; 
+      };
+
+      # Nix Shell
+      nix_shell = {
+        symbol = " ";
+        style = "bold blue";
+        # 进入 nix-shell 时显示 "via  "
+        format = "via [$symbol$state]($style) "; 
+      };
+
+      # 4. 其他辅助模块
+      cmd_duration = {
+        min_time = 500;
+        style = "bold gray";
+        format = "took [$duration]($style) ";
+      };
+
+      os = {
+        disabled = false;
+        symbols.NixOS = " ";
+        style = "bold blue";
+        format = "[$symbol]($style) ";
+      };
+
+      username = {
+        show_always = false;
+        style_root = "bold red";
+        format = "[$user]($style) [in](bold gray) ";
+      };
+      hostname.disabled = true;
+    };
+  };
+}
+=== 文件路径: /etc/nixos/modules/home/fastfetch/default.nix ===
+{ ... }:
+
+let
+  # 依然保持用 let 绑定路径，这是最稳妥的
+  logoFile = ./logo.txt;
+in
+{
+  programs.fastfetch = {
+    enable = true;
+
+    # 替换 extraConfig 为 settings
+    settings = {
+      "$schema" = "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json";
+
+      logo = {
+        source = "${logoFile}";
+        position = "top";
+        padding = {
+          left = 3; # 顶部距离
+          top = 0;
+          right = 1; # position 设为top后，logo的底部距离
+        };
+      };
+
+      display = {
+        bar = {
+          char = {
+            total = "─";
+          };
+        };
+        percent = {
+          type = 3;
+          ndigits = 2;
+        };
+        key = {
+          width = 8;
+        };
+        separator = "";
+      };
+
+      modules = [
+        {
+          type = "custom";
+          key = "╭── system ──────┄";
+        }
+        {
+          type = "os";
+          key = "│  ›  ";
+        }
+        {
+          type = "kernel";
+          key = "│  ›  ";
+        }
+        {
+          type = "wm";
+          key = "│  ›  ";
+        }
+        {
+          type = "shell";
+          key = "│  ›  ";
+        }
+        {
+          type = "terminal";
+          key = "│  ›  ";
+        }
+        {
+          type = "packages";
+          key = "│  ›  ";
+        }
+        {
+          type = "disk";
+          key = "│  ›  ";
+          format = "{13} {1} / {2} ({3})";
+        }
+        {
+          type = "custom";
+          key = "╰─┄";
+        }
+        {
+          type = "colors";
+          symbol = "circle";
+        }
+        "break"
+      ];
+    };
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/home/niri/env.nix ===
+{ ... }:
+{
+  # ⚡ 核心隔离：
+  # 将 Niri 专用的环境变量定义在 Niri 自身的配置树中。
+  # 这样只有当从 SDDM 登录 Niri 时这些变量才会生效，登录 KDE 时不会受其影响。
+  programs.niri.settings.environment = {
+    # Niri 会话内强制使用的图形后端
+    SDL_VIDEODRIVER = "wayland";
+    CLUTTER_BACKEND = "wayland";
+    GDK_BACKEND = "wayland,x11";
+    QT_QPA_PLATFORM = "wayland;xcb";
+
+    # Niri 独享的 Qt 样式代理（KDE 会自动使用其自身的 native 样式，互不打架）
+    QT_QPA_PLATFORMTHEME = "qt6ct";
+
+    # ⚡ 仅在 Niri 会话中禁用 Qt 应用的客户端窗口装饰，防止双重标题栏
+    QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+
+    # 输入法
+    #XMODIFIERS = "@im=fcitx";
+    XCURSOR_THEME = "Bibata-Modern-Ice";
+    XCURSOR_SIZE = "20";
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/home/hyprland/animations.nix ===
+# modules/home/hyprland/animations.nix
+{ ... }:
+{
+  wayland.windowManager.hyprland.settings = {
+
+    # --- 1. 定义全局动画开关与速度 ---
+    animations = {
+      enabled = true;
+
+      # 全局动画速度 (数值越大越快，8 约等于 800ms)
+      speed = 8.0;
+
+      # --- 2. 定义曲线 (Curves) ---
+      # 贝塞尔曲线 (Bezier)
+      bezier = [
+        "easeOutQuint, 0.23, 1, 0.32, 1"       # 流畅的减速，推荐用于窗口开关
+        "easeInOutCubic, 0.65, 0.05, 0.36, 1"  # 平滑缓入缓出
+        "overshot, 0.05, 0.9, 0.1, 1.05"       # 带有微弹跳的效果
+        "smoothOut, 0.36, 0, 0.66, -0.56"      # 平滑滑出
+        "bounce, 0.34, 1.56, 0.64, 1"          # 生动弹跳
+      ];
+
+      # --- 3. 配置具体的动画叶子节点 ---
+      animation = [
+        # >> 窗口打开/关闭/移动 <<
+        "windows, 1, 7, easeOutQuint"
+        "windowsIn, 1, 7, easeOutQuint, popin 80%"    # 打开时轻微放大再恢复
+        "windowsOut, 1, 7, smoothOut, popin 80%"     # 关闭时轻微缩小
+        "windowsMove, 1, 7, easeInOutCubic"           # 移动/拖拽时平滑过渡
+
+        # >> 渐隐效果 <<
+        "fade, 1, 10, default"
+        "fadeIn, 1, 10, easeOutQuint"                 # 窗口淡入
+        "fadeOut, 1, 10, smoothOut"                   # 窗口淡出
+        "fadeSwitch, 1, 10, easeInOutCubic"           # 切换焦点时透明度过渡
+        "fadeShadow, 1, 10, easeInOutCubic"           # 阴影渐变
+        "fadeDim, 1, 10, easeOutQuint"                # 非活跃窗口变暗过渡
+
+        # >> 工作区切换 <<
+        "workspaces, 1, 6, easeOutQuint, slidefade 20%"  # 带滑动和渐隐的切换
+
+        # >> 边框颜色过渡 <<
+        "border, 1, 10, easeInOutCubic"
+      ];
+    };
+
+    # 可选：如果你更喜欢简约风格，替换上面的 animation 为：
+    # animation = [
+    #   "windows, 1, 4, default, popin"
+    #   "workspaces, 1, 4, default, slidefade"
+    #   "fade, 1, 4, default"
+    #   "border, 1, 4, default"
+    # ];
+  };
+}
+=== 文件路径: /etc/nixos/modules/home/default.nix ===
+{ ... }:
+{
+  imports = [
+    ./niri
+    ./noctalia
+    ./apps
+    ./fish
+    ./git
+    ./zed-editor
+    ./fastfetch
+    ./yazi
+    ./nvf
+    ./foot
+    ./mako
+  ];
+}
+
+=== 文件路径: /etc/nixos/modules/home/hyprland/binds.nix ===
+# modules/home/hyprland/binds.nix
+{ config, pkgs, lib, ... }:
+
+{
+  wayland.windowManager.hyprland.extraConfig = ''
+    $mod = SUPER [cite: 5]
+
+    # -- 应用启动与 DMS 界面 --
+    bind = $mod, Return, exec, kitty [cite: 6]
+    bind = $mod, D, exec, dms ipc call spotlight toggle [cite: 6]
+    bind = $mod, B, exec, zen --class zen-browser [cite: 6]
+    bind = $mod, E, exec, kitty -e yazi [cite: 6]
+
+    # DMS 功能组件
+    bind = $mod, V, exec, dms ipc call clipboard toggle [cite: 7]
+    bind = $mod, N, exec, dms ipc call notifications toggle [cite: 7]
+    bind = $mod, M, exec, dms ipc call processlist focusOrToggle [cite: 7]
+    bind = $mod, Y, exec, dms ipc call dankdash wallpaper [cite: 7]
+    bind = $mod, semicolon, exec, dms ipc call settings focusOrToggle [cite: 7]
+
+    # -- 核心窗口控制 --
+    bind = $mod, Q, killactive [cite: 7]
+    bind = $mod, T, togglefloating [cite: 8]
+    bind = $mod, F, fullscreen, 1
+    bind = $mod SHIFT, F, fullscreen, 0
+
+    # 原生 scroller 的合流控制
+    bind = $mod, comma, scroller:admitwindow, [cite: 9]
+    bind = $mod, period, scroller:expelwindow, [cite: 9, 10]
+
+    # -- 会话与截图 --
+    bind = $mod ALT, L, exec, dms ipc call lock lock [cite: 11]
+    bind = $mod SHIFT, Q, exec, dms ipc call shell powermenu [cite: 11]
+    bind = CTRL SHIFT, 1, exec, dms screenshot [cite: 11]
+    bind = CTRL SHIFT, 2, exec, dms screenshot full [cite: 11]
+    bind = CTRL SHIFT, 3, exec, dms screenshot last [cite: 12]
+
+    # -- 🚀 原生 scroller 纸带焦点移动 (完全复刻 Niri 体验) --
+    bind = $mod, H, scroller:movefocus, l
+    bind = $mod, L, scroller:movefocus, r
+    bind = $mod, K, scroller:movefocus, u
+    bind = $mod, J, scroller:movefocus, d
+
+    # 交换窗口在纸带上的相对位置
+    bind = $mod SHIFT, H, scroller:movewindow, l
+    bind = $mod SHIFT, L, scroller:movewindow, r
+    bind = $mod SHIFT, K, scroller:movewindow, u
+    bind = $mod SHIFT, J, scroller:movewindow, d
+
+    # 纸带视图等比缩放
+    bind = $mod, equal, scroller:zoom, +0.1
+    bind = $mod, minus, scroller:zoom, -0.1
+
+    # 预设列宽快速循环切换
+    bind = $mod, R, scroller:cyclewidth, next
+
+    # -- 工作区快速跳转 --
+    bind = $mod, Tab, workspace, previous [cite: 12]
+    bind = $mod, 1, workspace, 1 [cite: 12]
+    bind = $mod, 2, workspace, 2 [cite: 12]
+    bind = $mod, 3, workspace, 3 [cite: 12]
+    bind = $mod, 4, workspace, 4 [cite: 13]
+    bind = $mod, 5, workspace, 5 [cite: 13]
+    bind = $mod, 6, workspace, 6 [cite: 13]
+    bind = $mod, 7, workspace, 7 [cite: 13]
+    bind = $mod, 8, workspace, 8 [cite: 13]
+    bind = $mod, 9, workspace, 9 [cite: 13]
+
+    # 移动窗口到工作区
+    bind = $mod SHIFT, 1, movetoworkspace, 1 [cite: 13]
+    bind = $mod SHIFT, 2, movetoworkspace, 2 [cite: 13]
+    bind = $mod SHIFT, 3, movetoworkspace, 3 [cite: 13]
+    bind = $mod SHIFT, 4, movetoworkspace, 4 [cite: 13]
+    bind = $mod SHIFT, 5, movetoworkspace, 5 [cite: 14]
+    bind = $mod SHIFT, 6, movetoworkspace, 6 [cite: 14]
+    bind = $mod SHIFT, 7, movetoworkspace, 7 [cite: 14]
+    bind = $mod SHIFT, 8, movetoworkspace, 8 [cite: 14]
+    bind = $mod SHIFT, 9, movetoworkspace, 9 [cite: 14]
+
+    # -- DMS 硬件控制 --
+    bind = , xf86audioraisevolume, exec, dms ipc call audio increment 3 [cite: 17]
+    bind = , xf86audiolowervolume, exec, dms ipc call audio decrement 3 [cite: 17]
+    bind = , xf86audiomute, exec, dms ipc call audio mute [cite: 17]
+    bind = , xf86monbrightnessup, exec, dms ipc call brightness increment 5 [cite: 17, 18]
+    bind = , xf86monbrightnessdown, exec, dms ipc call brightness decrement 5 [cite: 18]
+
+    # -- 鼠标滚轮切换纸带列 --
+    bind = $mod, mouse_down, scroller:movefocus, r
+    bind = $mod, mouse_up, scroller:movefocus, l
+
+    # 鼠标拖拽窗口/调整大小 [cite: 19]
+    bindm = $mod, mouse:272, movewindow [cite: 19]
+    bindm = $mod, mouse:273, resizewindow [cite: 19]
+  '';
+}
+
+=== 文件路径: /etc/nixos/modules/home/fish/default.nix ===
+{ ... }:
+{
+  # ==============================
+  # 1. 自动展开的缩写
+  # 输入别名 → 按空格/回车 → 自动展开成完整命令
+  # ==============================
+  programs.fish = {
+    enable = true;
+
+    # 所有别名 → 全部变成 Fish 自动展开缩写
+    shellAbbrs = {
+      # 基础工具替换
+      cat = "bat";
+      top = "btm";
+      df = "duf";
+      du = "dust";
+      grep = "rg";
+      find = "fd";
+      man = "tldr";
+      cls = "clear";
+      q = "exit";
+
+      # Git 缩写（自动展开）
+      gi = "git init";
+      gs = "git status";
+      ga = "git add .";
+      gc = "git commit -m";
+      gp = "git push";
+      gl = "git pull";
+      gd = "git diff";
+
+      # NixOS 系统命令
+      ns = "sudo nixos-rebuild switch --flake .#nixdevbox";
+      nb = "sudo nixos-rebuild boot --flake .#nixdevbox";
+      nt = "sudo nixos-rebuild test --flake .#nixdevbox";
+      nc = "sudo nix-collect-garbage -d";
+      no = "nix-store --optimise";
+      nsproxy = "nixos-rebuild switch --flake .#router --target-host root@192.168.50.254";
+    };
+
+    # 不显示欢迎语
+    interactiveShellInit = ''
+      # 去掉fish欢迎语
+       set -g fish_greeting ""
+
+       # 终端locale为en
+       export LANG=en_US.UTF-8
+       export LC_ALL=en_US.UTF-8
+
+       # 统一封装，全部使用 --wraps=eza，这样它们就全部拥有了 eza 的完美补全能力
+
+       function ls --wraps=eza --description 'alias ls=eza --icons'
+         eza --icons $argv
+       end
+
+       function ll --wraps=eza --description 'alias ll=eza -lh --icons --git'
+         eza -lh --icons --git $argv
+       end
+
+       function la --wraps=eza --description 'alias la=eza -a --icons'
+         eza -a --icons $argv
+       end
+
+       function lt --wraps=eza --description 'alias lt=eza --tree --icons --level 3'
+         eza --tree --icons --level 3 $argv
+       end
+
+       # 开启终端时运行一次fastfetch
+       if status is-interactive
+         fastfetch
+       end
+    '';
+  };
+
+  # ==============================
+  # 3. zoxide 智能目录跳转
+  # ==============================
+  programs.zoxide = {
+    enable = true;
+    enableFishIntegration = true;
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/home/hyprland/layout.nix ===
+# modules/home/hyprland/layout.nix
+{ config, pkgs, ... }:
+
+{
+  # 🌟 核心修正：使用 extraConfig 绕过 Nix 的属性集转换，给 Hyprland 最纯粹的 conf 文本
+  wayland.windowManager.hyprland.extraConfig = ''
+    # --- 1. 激活原生滚动布局 ---
+    general {
+        layout = scroller
+        gaps_in = 5 [cite: 21]
+        gaps_out = 15 [cite: 21]
+        border_size = 2 [cite: 21]
+        col.active_border = 0xffcba6f7 [cite: 21]
+        col.inactive_border = 0xff45475a [cite: 22]
+    }
+
+    # --- 2. 窗口装饰 ---
+    decoration {
+        rounding = 8 [cite: 30]
+
+        # 顺应 0.55.x 最新阴影语法
+        shadow {
+            enabled = true
+            range = 4
+            render_power = 3
+            color = 0xee1e1e2e
+        }
+
+        blur {
+            enabled = true [cite: 24]
+            size = 5 [cite: 24]
+            passes = 2 [cite: 24]
+        }
+    }
+
+    # --- 3. 原生 scroller 布局专属设置 ---
+    # 彻底告别 scrolling 错误，对齐 0.55.2 官方原生 scroller 语法
+    scroller {
+        column_default_width = one_half
+        focus_wrap = false
+        focus_fit_method = 0
+    }
+  '';
+}
+
+=== 文件路径: /etc/nixos/modules/home/git/default.nix ===
+{ ... }:
+
+{
+  programs.delta = {
+    enable = true;
+    options = {
+      features = "decorations";
+      side-by-side = true; # 并排显示 diff，非常适合阅读代码
+      line-numbers = true;
+    };
+  };
+  programs.git = {
+    enable = true;
+    settings = {
+      core.editor = "nvim";
+
+      # 用户信息
+      user = {
+        name = "kimuxer";
+        email = "604719@qq.com";
+      };
+
+      # ⚡ 安全与效率设置
+      init.defaultBranch = "main"; # 默认分支名设为 main
+      pull.rebase = true; # 拉取时使用 rebase，保持提交历史整洁
+      fetch.prune = true; # fetch 时自动清理远程已删除的分支
+      push.autoSetupRemote = true; # push 时自动追踪远程分支
+
+      # ⚡ 自动签名 (未来如果你想开启 GPG/SSH 签名)
+      # commit.gpgsign = true;
+    };
+
+    # 定义全局忽略文件，防止乱七八糟的系统垃圾进入仓库
+    ignores = [
+      ".direnv/" # 忽略 nix-direnv 环境目录
+      "result" # 忽略 Nix 构建产生的 result 符号链接
+      ".nvimrc" # 忽略个人 IDE 配置
+      "*.log"
+      ".DS_Store"
+    ];
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/home/niri/layout-rules.nix ===
+{ ... }:
+{
+  programs.niri.settings.layer-rules = [
+    {
+      # 匹配 noctalia 的背景层
+      matches = [ { namespace = "^noctalia-backdrop"; } ];
+      # 这里使用 place-within-backdrop
+      place-within-backdrop = true;
+    }
+  ];
+}
+
+=== 文件路径: /etc/nixos/modules/home/niri/keybinds.nix ===
+{ ... }:
+
+{
+  programs.niri.settings.binds = {
+    # === 1. 禁止重复的操作 (repeat=false) ===
+    
+    # 退出 Niri
+    "Ctrl+Shift+Delete" = { action.quit = [ ]; repeat = false; };
+    
+    # -- 应用启动 --
+    "Mod+Return" = { action.spawn = [ "footclient" ]; repeat = false; };
+    "Mod+B"      = { action.spawn = [ "zen" "--class" "zen-browser" ]; repeat = false; };
+    "Mod+E"      = { action.spawn = [ "footclient" "-e" "yazi" ]; repeat = false; };
+    
+    # -- Noctalia 原生 IPC 调用 (替换了 dms) --
+    "Mod+D"           = { action.spawn = [ "noctalia" "msg" "panel-toggle" "launcher" ]; repeat = false; };
+    "Mod+V"           = { action.spawn = [ "noctalia" "msg" "panel-toggle" "clipboard" ]; repeat = false; };
+    "Mod+N"           = { action.spawn = [ "noctalia" "msg" "panel-toggle" "notifications" ]; repeat = false; };
+    "Mod+M"           = { action.spawn = [ "noctalia" "msg" "process-list-toggle" ]; repeat = false; };
+    "Mod+Y"           = { action.spawn = [ "noctalia" "msg" "wallpaper-next" ]; repeat = false; };
+    "Mod+Semicolon"   = { action.spawn = [ "noctalia" "msg" "settings-toggle" ]; repeat = false; };
+
+    # -- 核心布局控制 --
+    "Mod+Space"       = { action.toggle-overview = [ ]; repeat = false; };
+    "Mod+Q"           = { action.close-window = [ ]; repeat = false; };
+    "Mod+T"           = { action.toggle-window-floating = [ ]; repeat = false; };
+    "Mod+F"           = { action.fullscreen-window = [ ]; repeat = false; };
+    "Mod+W"           = { action.toggle-column-tabbed-display = [ ]; repeat = false; };
+    "Mod+O"           = { action.toggle-overview = [ ]; repeat = false; };
+    "Mod+Shift+Slash" = { action.show-hotkey-overlay = [ ]; repeat = false; };
+
+    "Mod+Comma"       = { action.consume-window-into-column = [ ]; repeat = false; };
+    "Mod+Period"      = { action.expel-window-from-column = [ ]; repeat = false; };
+
+    # -- 会话与截图 (使用 Noctalia 原生 IPC) --
+    "Mod+Alt+L"       = { action.spawn = [ "noctalia" "msg" "session-lock" ]; repeat = false; };
+    "Mod+Shift+Q"     = { action.spawn = [ "noctalia" "msg" "session-powermenu" ]; repeat = false; };
+
+    "Ctrl+Shift+1"    = { action.spawn = [ "noctalia" "msg" "screenshot" ]; repeat = false; };
+    "Ctrl+Shift+2"    = { action.spawn = [ "noctalia" "msg" "screenshot-screen" ]; repeat = false; };
+    "Ctrl+Shift+3"    = { action.spawn = [ "noctalia" "msg" "screenshot-window" ]; repeat = false; };
+
+    # -- 工作区快速跳转 --
+    "Mod+Tab" = { action.focus-workspace-previous = [ ]; repeat = false; };
+    "Mod+1" = { action.focus-workspace = 1; repeat = false; };
+    "Mod+2" = { action.focus-workspace = 2; repeat = false; };
+    "Mod+3" = { action.focus-workspace = 3; repeat = false; };
+    "Mod+4" = { action.focus-workspace = 4; repeat = false; };
+    "Mod+5" = { action.focus-workspace = 5; repeat = false; };
+    "Mod+6" = { action.focus-workspace = 6; repeat = false; };
+    "Mod+7" = { action.focus-workspace = 7; repeat = false; };
+    "Mod+8" = { action.focus-workspace = 8; repeat = false; };
+    "Mod+9" = { action.focus-workspace = 9; repeat = false; };
+
+    "Mod+Shift+1" = { action.move-column-to-workspace = 1; repeat = false; };
+    "Mod+Shift+2" = { action.move-column-to-workspace = 2; repeat = false; };
+    "Mod+Shift+3" = { action.move-column-to-workspace = 3; repeat = false; };
+    "Mod+Shift+4" = { action.move-column-to-workspace = 4; repeat = false; };
+    "Mod+Shift+5" = { action.move-column-to-workspace = 5; repeat = false; };
+    "Mod+Shift+6" = { action.move-column-to-workspace = 6; repeat = false; };
+    "Mod+Shift+7" = { action.move-column-to-workspace = 7; repeat = false; };
+    "Mod+Shift+8" = { action.move-column-to-workspace = 8; repeat = false; };
+    "Mod+Shift+9" = { action.move-column-to-workspace = 9; repeat = false; };
+
+
+
+    # === 2. 允许重复的操作 (repeat=true) ===
+
+    # -- 焦点导航 (HJKL) --
+    "Mod+H".action.focus-column-left = [ ];
+    "Mod+L".action.focus-column-right = [ ];
+    "Mod+K".action.focus-window-up = [ ];
+    "Mod+J".action.focus-window-down = [ ];
+    "Mod+Shift+H".action.move-column-left = [ ];
+    "Mod+Shift+L".action.move-column-right = [ ];
+    "Mod+Shift+K".action.move-window-up = [ ];
+    "Mod+Shift+J".action.move-window-down = [ ];
+
+    # -- 布局尺寸微调 --
+    "Mod+Minus".action.set-column-width = "-10%";
+    "Mod+Equal".action.set-column-width = "+10%";
+    "Mod+Shift+Minus".action.set-window-height = "-10%";
+    "Mod+Shift+Equal".action.set-window-height = "+10%";
+
+    # -- 硬件控制 (替换 dms) --
+    "XF86AudioRaiseVolume"  = { action.spawn = [ "noctalia" "msg" "volume-up" ]; };
+    "XF86AudioLowerVolume"  = { action.spawn = [ "noctalia" "msg" "volume-down" ]; };
+    "XF86AudioMute"         = { action.spawn = [ "noctalia" "msg" "volume-mute" ]; };
+    "XF86MonBrightnessUp"   = { action.spawn = [ "noctalia" "msg" "brightness-up" ]; };
+    "XF86MonBrightnessDown" = { action.spawn = [ "noctalia" "msg" "brightness-down" ]; };
+
+    # -- 鼠标控制 --
+    "Mod+WheelScrollDown".action.focus-column-right = [ ];
+    "Mod+WheelScrollUp".action.focus-column-left = [ ];
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/home/niri/window-rules.nix ===
+{ ... }:
+
+{
+  programs.niri.settings.window-rules = [
+    # --- 1. 全局基础规则 (WhiteSur 风格) ---
+    {
+      # 统一所有窗口的圆角为 12px
+      geometry-corner-radius = {
+        top-left = 10.0;
+        top-right = 10.0;
+        bottom-left = 10.0;
+        bottom-right = 10.0;
+      };
+      clip-to-geometry = true;
+    }
+
+    # --- 2. Zen 浏览器专用规则 ---
+    {
+      matches = [{ app-id = "zen"; }];
+      # 打开时自动最大化。
+      # 注意：maximized 会自动避让 DMS 的状态栏，而 fullscreen 会盖住它。
+      open-maximized = true;
+      open-on-workspace = "2";
+      # 浏览器不需要透明，关闭 Niri 的背景绘制以提高性能并消除圆角锯齿
+      draw-border-with-background = false;
+    }
+
+    # --- 3. Kitty 终端特化规则 (核心：解决透明度) ---
+    {
+      matches = [{ app-id = "kitty"; }];
+      # 【极其重要】：必须设为 false，否则 Kitty 的 0.75 透明度会被 Niri 垫在底下的背景盖住
+      draw-border-with-background = false;
+      # 强制终端不参与“非活动变暗”，保持代码始终清晰
+      opacity = 0.95;
+    }
+    {
+      matches = [{ app-id = "footclient"; }];
+      # 【极其重要】：必须设为 false，否则 Kitty 的 0.75 透明度会被 Niri 垫在底下的背景盖住
+      draw-border-with-background = false;
+      # 强制终端不参与“非活动变暗”，保持代码始终清晰
+      opacity = 0.95;
+    }
+
+    # --- 4. 非活动窗口变暗效果 ---
+    {
+      # 当窗口失去焦点时，设置透明度为 0.9，产生层级感
+      matches = [{ is-active = false; }];
+      # 排除 Kitty，因为终端我们通常希望它背景一直透明但文字清晰
+      excludes = [
+        { app-id = "zen"; }
+        { app-id = "com.danklinux.dms"; }
+      ];
+      opacity = 0.8;
+    }
+
+    # --- 5. DMS (Quickshell) 组件适配 ---
+    {
+      # 匹配 DMS 的面板、启动器、锁屏等组件
+      #matches = [{ app-id = "org\\.quickshell$"; }];
+      matches = [{ app-id = "com.danklinux.dms"; }];
+      # 强制浮动，不参与平铺排版
+      open-floating = true;
+      # 禁用装饰：系统组件不应该有聚焦环、边框或阴影
+      focus-ring.enable = false;
+      border.enable = false;
+      shadow.enable = false;
+    }
+
+    {
+      # 匹配 fcitx5 configurations
+      matches = [{ app-id = "org.fcitx."; }];
+      # 强制浮动，不参与平铺排版
+      open-floating = true;
+      # 禁用装饰：系统组件不应该有聚焦环、边框或阴影
+      focus-ring.enable = false;
+      border.enable = false;
+      shadow.enable = false;
+    }
+    # --- 6. 常见弹出窗口处理 ---
+    {
+      # 匹配类似对话框、选择器等窗口
+      matches = [
+        { title = "Open File"; }
+        { title = "Save File"; }
+      ];
+      open-floating = true;
+    }
+  ];
+}
+
+=== 文件路径: /etc/nixos/modules/home/niri/cursor.nix ===
+{ pkgs, ... }:
+
+  let
+    cursorTheme = "Bibata-Modern-Ice";
+    cursorSize = 20;
+  
+  in
+  {
+    gtk.enable = true;
+
+    home.pointerCursor = {
+      package = pkgs.bibata-cursors;
+      name = cursorTheme;
+      size = cursorSize;
+      gtk.enable = true;
+      x11.enable = true;
+    };
+
+    home.sessionVariables = {
+      XCURSOR_THEME = cursorTheme;
+      XCURSOR_SIZE = toString cursorSize;
+    };
+
+
+    programs.niri.settings.cursor = {
+      hide-when-typing = true;
+      theme = cursorTheme;
+      size = cursorSize;
+    };
+
+    dconf.settings."org/gnome/desktop/interface" = {
+      cursor-theme = cursorTheme;
+      cursor-size = cursorSize;
+    };
+  }
+
+=== 文件路径: /etc/nixos/modules/home/apps/default.nix ===
+{ pkgs, inputs, ... }:
+
+{
+
+  home.packages = [
+    pkgs.fastfetch
+    # 浏览器
+    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
+
+    # 代码编辑器
+    #pkgs.zed-editor
+
+    # 聊天
+    pkgs.telegram-desktop
+    pkgs.wechat
+
+    # 影音
+    pkgs.mpv          # 视频播放
+    pkgs.termusic     # tui 音乐播放器
+    pkgs.yt-dlp       # 必须：负责全网搜歌、抓取下载
+    pkgs.ffmpeg       # 必须：负责将抓取的音频转码为 MP3/FLAC 并写入歌曲标签
+  ];
+}
+
+=== 文件路径: /etc/nixos/modules/home/niri/binds.nix ===
+{  ... }:
+
+{
+  programs.niri.settings.binds = {
+    # === 1. 禁止重复的操作 (repeat=false) ===
+    # 目的：确保动作精准，防止连按导致的意外行为
+
+    # 退出NIRI
+    "Ctrl+Shift+Delete" = { action.quit = [ ]; repeat = false; };
+
+    # -- 应用启动与 DMS UI (IPC 调用) --
+    "Mod+Return" = { action.spawn = [ "footclient" ]; repeat = false; };
+    "Mod+D" = { action.spawn = [ "dms" "ipc" "call" "spotlight" "toggle" ]; repeat = false; };
+    "Mod+B" = { action.spawn = [ "zen" "--class" "zen-browser" ]; repeat = false; };
+    "Mod+E" = { action.spawn = [ "footclient" "-e" "yazi" ]; repeat = false; };
+
+    # DMS 功能组件
+    "Mod+V" = { action.spawn = [ "dms" "ipc" "call" "clipboard" "toggle" ]; repeat = false; };
+    "Mod+N" = { action.spawn = [ "dms" "ipc" "call" "notifications" "toggle" ]; repeat = false; };
+    "Mod+M" = { action.spawn = [ "dms" "ipc" "call" "processlist" "focusOrToggle" ]; repeat = false; };
+    "Mod+Y" = { action.spawn = [ "dms" "ipc" "call" "dankdash" "wallpaper" ]; repeat = false; };
+
+    # 调整后的设置键 (L 旁边的分号键)
+    "Mod+Semicolon" = { action.spawn = [ "dms" "ipc" "call" "settings" "focusOrToggle" ]; repeat = false; };
+
+    # -- 核心布局控制 --
+    # 预览模式 (显示所有列和行)
+    "Mod+Space" = { action.toggle-overview = [ ]; repeat = false; };
+
+    "Mod+Q" = { action.close-window = [ ]; repeat = false; };
+    "Mod+T" = { action.toggle-window-floating = [ ]; repeat = false; };
+    "Mod+F" = { action.fullscreen-window = [ ]; repeat = false; };
+    "Mod+W" = { action.toggle-column-tabbed-display = [ ]; repeat = false; };
+    "Mod+O" = { action.toggle-overview = [ ]; repeat = false; }; # 备份预览键
+    "Mod+Shift+Slash" = { action.show-hotkey-overlay = [ ]; repeat = false; };
+
+    # -- 标签页/列合并操作 (玩转 Tabbed 模式必用) --
+    "Mod+Comma" = { action.consume-window-into-column = [ ]; repeat = false; }; # 吸取右侧列
+    "Mod+Period" = { action.expel-window-from-column = [ ]; repeat = false; };  # 踢出当前窗
+
+    # -- 会话与截图 --
+    "Mod+Alt+L" = { action.spawn = [ "dms" "ipc" "call" "lock" "lock" ]; repeat = false; };
+    "Mod+Shift+Q" = { action.spawn = [ "dms" "ipc" "call" "shell" "powermenu" ]; repeat = false; };
+
+    "Ctrl+Shift+1" = { action.spawn = [ "dms" "ipc" "call" "niri" "screenshot" ]; repeat = false; };
+    "Ctrl+Shift+2" = { action.spawn = [ "dms" "ipc" "call" "niri" "screenshotScreen" ]; repeat = false; };
+    "Ctrl+Shift+3" = { action.spawn = [ "dms" "ipc" "call" "niri" "screenshotWindow" ]; repeat = false; };
+
+    # -- 工作区快速跳转 --
+    "Mod+Tab" = { action.focus-workspace-previous = [ ]; repeat = false; };
+    "Mod+1" = { action.focus-workspace = 1; repeat = false; };
+    "Mod+2" = { action.focus-workspace = 2; repeat = false; };
+    "Mod+3" = { action.focus-workspace = 3; repeat = false; };
+    "Mod+4" = { action.focus-workspace = 4; repeat = false; };
+    "Mod+5" = { action.focus-workspace = 5; repeat = false; };
+    "Mod+6" = { action.focus-workspace = 6; repeat = false; };
+    "Mod+7" = { action.focus-workspace = 7; repeat = false; };
+    "Mod+8" = { action.focus-workspace = 8; repeat = false; };
+    "Mod+9" = { action.focus-workspace = 9; repeat = false; };
+
+    "Mod+Shift+1" = { action.move-column-to-workspace = 1; repeat = false; };
+    "Mod+Shift+2" = { action.move-column-to-workspace = 2; repeat = false; };
+    "Mod+Shift+3" = { action.move-column-to-workspace = 3; repeat = false; };
+    "Mod+Shift+4" = { action.move-column-to-workspace = 4; repeat = false; };
+    "Mod+Shift+5" = { action.move-column-to-workspace = 5; repeat = false; };
+    "Mod+Shift+6" = { action.move-column-to-workspace = 6; repeat = false; };
+    "Mod+Shift+7" = { action.move-column-to-workspace = 7; repeat = false; };
+    "Mod+Shift+8" = { action.move-column-to-workspace = 8; repeat = false; };
+    "Mod+Shift+9" = { action.move-column-to-workspace = 9; repeat = false; };
+
+
+    # === 2. 允许重复的操作 (默认 repeat=true) ===
+    # 目的：支持长按快速切换或连续调节
+
+    # -- 焦点导航与移动 (HJKL) --
+    "Mod+H".action.focus-column-left = [ ];
+    "Mod+L".action.focus-column-right = [ ];
+    "Mod+K".action.focus-window-up = [ ];
+    "Mod+J".action.focus-window-down = [ ];
+
+    "Mod+Shift+H".action.move-column-left = [ ];
+    "Mod+Shift+L".action.move-column-right = [ ];
+    "Mod+Shift+K".action.move-window-up = [ ];
+    "Mod+Shift+J".action.move-window-down = [ ];
+
+    # -- 布局尺寸微调 --
+    "Mod+Minus".action.set-column-width = "-10%";
+    "Mod+Equal".action.set-column-width = "+10%";
+    "Mod+Shift+Minus".action.set-window-height = "-10%";
+    "Mod+Shift+Equal".action.set-window-height = "+10%";
+
+    "Mod+R".action.switch-preset-column-width = [ ];
+    "Mod+Shift+R".action.reset-window-height = [ ];
+    "Mod+F11".action.maximize-column = [ ];
+
+    # -- DMS 硬件控制 (带音量/亮度条) --
+    "XF86AudioRaiseVolume".action.spawn = [ "dms" "ipc" "call" "audio" "increment" "3" ];
+    "XF86AudioLowerVolume".action.spawn = [ "dms" "ipc" "call" "audio" "decrement" "3" ];
+    "XF86AudioMute".action.spawn = [ "dms" "ipc" "call" "audio" "mute" ];
+
+    "XF86MonBrightnessUp".action.spawn = [ "dms" "ipc" "call" "brightness" "increment" "5" "" ];
+    "XF86MonBrightnessDown".action.spawn = [ "dms" "ipc" "call" "brightness" "decrement" "5" "" ];
+
+    # -- 鼠标控制 --
+    "Mod+WheelScrollDown".action.focus-column-right = [ ];
+    "Mod+WheelScrollUp".action.focus-column-left = [ ];
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/home/niri/input.nix ===
+{  ... }:
+
+{
+  programs.niri.settings.input = {
+    tablet.enable = false;
+    touch.enable = false;
+    touchpad.enable = false;
+    trackball.enable = false;
+    trackpoint.enable = false;
+
+    # --- 1. 键盘设置 (Keyboard) ---
+    keyboard = {
+      xkb.layout = "us";
+      repeat-delay = 400;
+      repeat-rate = 30;
+    };
+
+    # --- 2. 鼠标设置 (Mouse / Pointer) ---
+    mouse = {
+      accel-speed = 0.2;         # 鼠标灵敏度 (-1.0 到 1.0)。
+      accel-profile = "flat";    # "flat": 禁用加速
+      scroll-factor = 1.5;       # 滚轮缩放系数 (如果你觉得滚轮太快或太慢)
+    };
+
+    warp-mouse-to-focus.enable = true;  # 当你用键盘快捷键 (Mod+HJKL) 切换窗口时，鼠标指针是否自动跳到新窗口中心
+
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/home/niri/layout.nix ===
+{ ... }:
+
+{
+  programs.niri.settings.layout = {
+    gaps = 8;
+    always-center-single-column = true;
+    default-column-display = "normal";
+    center-focused-column = "never";
+    default-column-width.proportion = 0.5;
+
+    shadow = {
+      enable = true;
+      softness = 20.0;
+      spread = 3.0;
+    };
+    preset-column-widths = [
+      { proportion = 1. / 3.; }
+      { proportion = 1. / 2.; }
+      { proportion = 2. / 3.; }
+    ];
+    # --- 标签页列配置 (Tabbed Columns - 重要新特性) ---
+    # Niri 现在支持像浏览器标签一样堆叠窗口。当你按下 Mod+W 切换到标签模式时，
+    # 下面的设置决定了标签栏的外观。
+    tab-indicator = {
+      enable = true;      # 开启标签页支持
+      gap = 4;
+      width = 4;          # 标签栏指示器的高度/宽度
+      hide-when-single-tab = true;
+      position = "top";
+    };
+
+    # --- 聚焦环渐变 (Focus Ring Gradients) ---
+    # 官方文档提到 focus-ring 支持渐变色，这能让你的 UI 更有质感。
+    focus-ring = {
+      enable = true;
+      width = 2;
+    };
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/home/niri/danksearch.nix ===
+{ config, pkgs, inputs, ... }:
+
+{
+  improts = [
+    inputs.danksearch.homeModules.dsearch
+  ];
+  programs.dsearch = {
+    enable = true;
+
+    # 声明式生成 config.toml 配置文件
+    config = {
+      index_path = "${config.home.homeDirectory}/.cache/danksearch/index";
+      listen_addr = "127.0.0.1:43654";
+      max_file_bytes = 2097152;
+      worker_count = 4;
+      index_all_files = true;
+
+      text_extensions = [
+        ".txt" ".md" ".nix" ".sh" ".json" 
+        ".toml" ".yaml" ".yml" ".py" ".go" 
+        ".rs" ".js" ".ts" ".html" ".css"
+      ];
+
+      index_paths = [
+        {
+          path = "${config.home.homeDirectory}";
+          max_depth = 4;
+          exclude_hidden = true;
+          extract_exif = true;
+          exclude_dirs = [
+            "node_modules" "bower_components" "__pycache__" 
+            "site-packages" "venv" ".venv" "target" "dist" 
+            "build" "vendor" ".cache" "result"
+          ];
+        }
+        {
+          path = "${config.home.homeDirectory}/repos";
+          max_depth = 8;
+          exclude_hidden = true;
+          extract_exif = false;
+          exclude_dirs = [
+            "node_modules" "target" "dist" "build" 
+            ".git" ".idea" ".vscode" ".direnv" "result"
+          ];
+        }
+      ];
+    };
+  };
+
+  # ⚡ 修正：利用 Home Manager 显式声明 systemd 用户服务
+  systemd.user.services.dsearch = {
+    Unit = {
+      Description = "DankSearch File Indexer and Search Daemon";
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      # 引用你通过 flake 输入的包中的 dsearch 二进制文件并启动后台模式
+      ExecStart = "${inputs.danksearch.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/dsearch daemon";
+      Restart = "on-failure";
+      RestartSec = "5s";
+    };
+    Install = {
+      WantedBy = [ "default.target" ];
+    };
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/home/niri/output.nix ===
+{ ... }:{
+  programs.niri.settings.outputs = {
+    # 这里的 key 是你的端口名
+    "HDMI-A-1" = {
+      enable = true;
+      mode = {
+          height = 1080;
+          width = 1920;
+          refresh = 60.000;
+      };
+
+      # 对应 KDL 中的 scale 属性
+      scale = 1.0;
+
+      # 如果需要设置位置，可以添加：
+      # position = { x = 0; y = 0; };
+    };
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/home/hyprland/autostart.nix ===
+# modules/home/hyprland/autostart.nix
+{ pkgs, ... }:
+{
+  wayland.windowManager.hyprland.settings = {
+    exec-once = [
+      # 输入法框架
+      "fcitx5 -d --replace"
+
+      # 自动挂载 U 盘
+      "udiskie --smart-tray"
+
+      # DMS 面板（通过 systemd 用户服务启动）
+      "systemctl --user start dms"
+
+      # 网络管理小程序（可选）
+      # "${pkgs.networkmanagerapplet}/bin/nm-applet --indicator"
+
+      # 状态栏（如果你不用 DMS 自带的状态栏）
+      # "${pkgs.waybar}/bin/waybar"
+    ];
+  };
+}
+=== 文件路径: /etc/nixos/modules/home/niri/animations.nix ===
+{  ... }:
+
+{
+  programs.niri.settings.animations = {
+    # ⚡ 基础开关与速率
+    enable = true;
+    slowdown = 0.9;
+
+    # 通知窗口动画
+    config-notification-open-close = {
+      enable = true;
+      kind = {
+        easing = {
+          curve = "ease-out-expo";
+          duration-ms = 250;
+        };
+      };
+    };
+    # 退出窗口动画
+    exit-confirmation-open-close = {
+      enable = true;
+      kind = {
+        spring = {
+          # 刚度 (stiffness) 调低一点，让它感觉像是一个沉重的窗口在慢慢弹出
+          stiffness = 1200;
+          # 阻尼 (damping) 调高一点，让它在弹到位的时候迅速停住，不要乱晃
+          damping-ratio = 1.0; # 设为 1.0 即为“临界阻尼”，没有任何多余的震荡
+          epsilon = 0.001;
+        };
+      };
+    };
+
+    # 横向移动动画
+    horizontal-view-movement = {
+      enable = true;
+      kind = {
+        spring = {
+          # 适当的刚度和阻尼，模拟一种“有质量的视口滑动”
+          stiffness = 1000;
+          damping-ratio = 1.0;
+          epsilon = 0.001;
+        };
+      };
+    };
+
+    # 窗口移动动画
+    window-movement = {
+      enable = true;
+      kind = {
+        easing = {
+          curve = "ease-out-cubic";
+          duration-ms = 150;
+        };
+      };
+    };
+
+    # 概览动画
+    overview-open-close = {
+      enable = true;
+      kind = {
+        easing = {
+          curve = "ease-out-expo";
+          duration-ms = 350;
+        };
+      };
+    };
+
+    # 截图
+    screenshot-ui-open = {
+      enable = true;
+      kind = {
+        easing = {
+          curve = "ease-out-expo";
+          duration-ms = 200;
+        };
+      };
+    };
+
+    # ⚡ 窗口动画节点
+    window-open = {
+      enable = true;
+      kind = {
+        spring = {
+          stiffness = 1000;
+          damping-ratio = 1.0;
+          epsilon = 0.001;
+        };
+      };
+    };
+
+    window-close = {
+      enable = true;
+      kind = {
+        easing = {
+          curve = "ease-out-quad";
+          duration-ms = 150;
+        };
+      };
+    };
+
+    workspace-switch = {
+      enable = true;
+      kind = {
+        easing = {
+          curve = "ease-out-expo";
+          duration-ms = 350;
+        };
+      };
+    };
+
+    window-resize = {
+      enable = true;
+      kind = {
+        easing = {
+          curve = "ease-out-expo";
+          duration-ms = 150;
+        };
+      };
+    };
+  };
+}
+
+=== 文件路径: /etc/nixos/modules/home/foot/default.nix ===
+{ ... }:
+{
+  programs.foot = {
+    enable = true;
+    server.enable = true; # 启用 C/S 模式
+
+    settings = {
+      main = {
+        term = "xterm-256color";
+        font = "JetBrainsMono NF SemiBold:size=11";
+        dpi-aware = "yes"; # 保持自动缩放感知
+        pad = "12x12"; # 设置窗口内边距
+        resize-delay-ms = 50;
+        selection-target = "both";
+      };
+      #colors-dark = {
+        #alpha = "0.85";
+        #alpha-mode = "default";
+      #};          
+
+      mouse = {
+        hide-when-typing = "yes";
+      };
+
+      cursor = {
+        style = "block";
+        blink = "no";
+      };
+      scrollback = {
+        lines = 25000;
+        multiplier = 3.0;
+        indicator-position = "relative";
+        indicator-format="none";
+      };
+      csd = {
+        preferred = "none"; # 这会告诉 foot 不要渲染标题栏
+        size = 0;           # 标题栏高度设为0
+        button-width = 0;   # 按钮宽度设为0
+      };
+    };
+  };
+}
+
+
+
+
+=== 文件路径: /etc/nixos/modules/home/kitty/default.nix ===
+{ ... }:
+{
+  programs.kitty = {
+    enable = true;
+    font = {
+      name = "JetBrainsMono NF SemiBold";
+      size = 10;
+    };
+
+    settings = {
+      window_padding_width = 12;
+      window_border_width = 0;
+      window_margin_width = 0;
+      active_border_color = "none";
+      hide_window_decorations = "yes";
+      confirm_os_window_close = 0;
+      enable_audio_bell = "no";
+
+      tab_bar_style = "hidden";
+      tab_bar_show_action = "no";
+
+      background_opacity = "0.9";
+      dynamic_background_opacity = "yes";
+      background_blur = 0;
+
+      linux_display_server = "wayland";
+      repaint_delay = 16;
+      input_delay = 1;
+      sync_to_monitor = "yes";
+
+      cursor_shape = "block";
+      cursor_blink_interval = 0;
+      copy_on_select = "yes";
+      mouse_hide_wait = "3.0";
+    };
+
+    keybindings = {
+      "ctrl+shift+t" = "no_op";
+      "ctrl+shift+n" = "no_op";
+    };
+  };
+}

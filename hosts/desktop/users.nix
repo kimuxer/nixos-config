@@ -4,11 +4,6 @@
   # 启用 fish  shell
   programs.fish.enable = true;
 
-  nix.settings.trusted-users = [ 
-    "root"
-    "@wheel"
-  ];
-
   # 用户配置
   users.users.kim = {
     isNormalUser = true;
@@ -26,14 +21,6 @@
     ];
   };
   
-  users.users.naiveproxy = {
-    isSystemUser = true; # 创建一个系统用户（无法登录，仅供服务使用）
-    group = "naiveproxy";
-  };
-
-  users.groups.naiveproxy = {};
-
   # 允许 wheel 组免密 sudo（可选，但是非常舒服）
-  security.doas.enable = true;
   security.sudo.wheelNeedsPassword = false;
 }

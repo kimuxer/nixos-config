@@ -11,12 +11,9 @@
       #"loglevel=3" 
       "splash" 
       "nosgx"
-      "nvidia_drm.modeset=1"
-      "nvidia_drm.fbdev=1"
       "video=efifb:off"           # 物理屏蔽 EFI framebuffer
       "video=vesafb:off"          # 物理屏蔽 VESA framebuffer
       "module_blacklist=nouveau"  # 再补一道内核参数拉黑
-#      "ipv6.disable=1"
     ];
 
   #  boot.plymouth = {

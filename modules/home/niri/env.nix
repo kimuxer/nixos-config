@@ -18,7 +18,6 @@
 
     # 输入法
     #XMODIFIERS = "@im=fcitx";
-
     XCURSOR_THEME = "Bibata-Modern-Ice";
     XCURSOR_SIZE = "20";
   };

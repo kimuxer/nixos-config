@@ -1,8 +1,6 @@
 { ... }:
 
 {
-  time.timeZone = "Asia/Shanghai";
-
   networking = {
     hostName = "router";
     useDHCP = false;

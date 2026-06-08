@@ -36,8 +36,9 @@
       # Niri 会话的首选配置（屏幕共享等使用 gnome/gtk）
       niri = {
         default = [ "gnome" "gtk" ];
-        "org.freedesktop.impl.portal.ScreenCast" = [ "gnome" ];
-        "org.freedesktop.impl.portal.Screenshot" = [ "gnome" ];
+        "org.freedesktop.impl.portal.ScreenCast" = [ "gnome" "gtk" ];
+        "org.freedesktop.impl.portal.Screenshot" = [ "gnome" "gtk" ];
+        "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
       };
       # KDE 会话原生配置（自动回退给 kde 自身实现）
       kde = {

@@ -8,7 +8,6 @@
     ./boot.nix
     ./network.nix
     ./users.nix
-    ./packages.nix
     ./naiveproxy.nix
     ./dae.nix
     ./services.nix

@@ -12,5 +12,6 @@
     ./nvf
     ./foot
     ./mako
+    ./themes
   ];
 }

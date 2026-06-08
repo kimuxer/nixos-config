@@ -1,37 +1,14 @@
-{ inputs, pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
+  imports = [
+    ../../modules/shared/core.nix
+    ../../modules/shared/sys-utils.nix
+  ];
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  zramSwap = {
-    enable = true;
-    memoryPercent = 25; # ZRAM 最多占用 25% 的物理内存
-  };
+  services.xserver.enable = false;
 
-  nix = {
-    channel.enable = false;
-
-    settings = {
-      auto-optimise-store = true;
-      experimental-features = [ "nix-command" "flakes" ];
-      nix-path = "nixpkgs=flake:nixpkgs";
-    };
-
-    gc = {
-      automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than 7d";
-    };
-
-    registry = lib.mapAttrs (_: flake: { inherit flake; }) (
-      lib.filterAttrs (_: lib.isType "flake") inputs
-    );
-
-    nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
-  };
-
-  nixpkgs.config.allowUnfree = true;
-
-  system.stateVersion = "26.05";
+  system.stateVersion = "26.11";
 }
