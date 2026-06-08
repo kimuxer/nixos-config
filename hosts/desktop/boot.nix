@@ -11,8 +11,6 @@
       #"loglevel=3" 
       "splash" 
       "nosgx"
-      "video=efifb:off"           # 物理屏蔽 EFI framebuffer
-      "video=vesafb:off"          # 物理屏蔽 VESA framebuffer
       "module_blacklist=nouveau"  # 再补一道内核参数拉黑
     ];
 

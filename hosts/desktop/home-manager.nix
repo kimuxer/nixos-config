@@ -12,6 +12,10 @@
     extraSpecialArgs = { inherit inputs; };
 
     # 定义用户 "kim" 的 Home Manager 配置
-    users.kim = import ../../home;
+    users.kim = {
+      imports = [ ../../home ];
+      
+      xdg.configFile."mimeapps.list".force = true;
+    };
   };
 }

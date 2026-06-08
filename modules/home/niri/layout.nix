@@ -19,8 +19,6 @@
       { proportion = 2. / 3.; }
     ];
     # --- 标签页列配置 (Tabbed Columns - 重要新特性) ---
-    # Niri 现在支持像浏览器标签一样堆叠窗口。当你按下 Mod+W 切换到标签模式时，
-    # 下面的设置决定了标签栏的外观。
     tab-indicator = {
       enable = true;      # 开启标签页支持
       gap = 4;

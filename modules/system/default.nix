@@ -2,7 +2,7 @@
 {
   imports = [
     ./packages.nix
-    ./virtualisation.nix
+#    ./virtualisation.nix
     ./desktop.nix
     ./kanata.nix
     #./naiveproxy.nix

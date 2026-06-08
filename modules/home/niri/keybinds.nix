@@ -25,9 +25,9 @@
     "Mod+Q"           = { action.close-window = [ ]; repeat = false; };
     "Mod+T"           = { action.toggle-window-floating = [ ]; repeat = false; };
     "Mod+F"           = { action.fullscreen-window = [ ]; repeat = false; };
-    "Mod+W"           = { action.toggle-column-tabbed-display = [ ]; repeat = false; };
     "Mod+Shift+Slash" = { action.show-hotkey-overlay = [ ]; repeat = false; };
 
+    "Mod+W"           = { action.toggle-column-tabbed-display = [ ]; repeat = false; };
     "Mod+Comma"       = { action.consume-window-into-column = [ ]; repeat = false; };
     "Mod+Period"      = { action.expel-window-from-column = [ ]; repeat = false; };
 
