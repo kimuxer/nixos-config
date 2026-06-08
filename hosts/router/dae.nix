@@ -64,9 +64,9 @@
       group {
         master_group {
           policy: min_moving_avg
-          check_tolerance: 50ms
+          check_tolerance: 150ms
           tcp_check_url: 'http://cp.cloudflare.com/generate_204'
-          check_interval: 20s
+          check_interval: 30s
 
           # 你的协议分层绝活，完美保留
           filter: name(vps_hy2) [add_latency: -30ms]
@@ -74,7 +74,7 @@
           filter: name(vps_vless) [add_latency: -20ms]
           #filter: name(vps_anytls) [add_latency: -20ms]
           filter: name(vps_vmess) [add_latency: 0ms]
-          filter: name(vps_naive) [add_latency: 0ms]
+          filter: name(vps_naive) [add_latency: 2000ms]
         }
       }
 
