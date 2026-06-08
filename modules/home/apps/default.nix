@@ -17,9 +17,6 @@
     # 浏览器
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
 
-    # 代码编辑器
-    #pkgs.zed-editor
-
     # 聊天
     pkgs.telegram-desktop
     pkgs.wechat
@@ -42,7 +39,6 @@
     pkgs.vscode-extensions.vadimcn.vscode-lldb
   ];
   
-  # 之前在环境文件里的全局个人变量，也安全地放在这里
   home.sessionVariables = {
     NIXOS_OZONE_WL = "1";
     MOZ_ENABLE_WAYLAND = "1";

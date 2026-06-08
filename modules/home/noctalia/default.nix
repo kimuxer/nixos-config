@@ -9,6 +9,7 @@
     systemd.enable = false;
     settings = {
       shell = {
+        lang = "cn";
         time_format = "{:%H:%M}";
         clipboard_auto_paste = "ctrl_shift_v";
 
@@ -37,7 +38,7 @@
           actions = [
             { 
               action = "lock"; 
-              command = "gtklock";
+              #command = "gtklock";
               shortcut = "1";
             }
             { 

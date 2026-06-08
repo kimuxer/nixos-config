@@ -12,12 +12,11 @@
     "Mod+B"      = { action.spawn = [ "zen" "--class" "zen-browser" ]; repeat = false; };
     "Mod+E"      = { action.spawn = [ "footclient" "-e" "yazi" ]; repeat = false; };
     
-    # -- Noctalia 原生 IPC 调用 (替换了 dms) --
     "Mod+D"           = { action.spawn = [ "noctalia" "msg" "panel-toggle" "launcher" ]; repeat = false; };
     "Mod+V"           = { action.spawn = [ "noctalia" "msg" "panel-toggle" "clipboard" ]; repeat = false; };
-    "Mod+N"           = { action.spawn = [ "noctalia" "msg" "panel-toggle" "notifications" ]; repeat = false; };
+    #"Mod+N"           = { action.spawn = [ "noctalia" "msg" "panel-toggle" "notifications" ]; repeat = false; };
     "Mod+M"           = { action.spawn = [ "noctalia" "msg" "process-list-toggle" ]; repeat = false; };
-    "Mod+Y"           = { action.spawn = [ "noctalia" "msg" "wallpaper-next" ]; repeat = false; };
+    "Mod+Y"           = { action.spawn = [ "noctalia" "msg" "panel-toggle" "wallpaper" ]; };
     "Mod+Semicolon"   = { action.spawn = [ "noctalia" "msg" "settings-toggle" ]; repeat = false; };
 
     # -- 核心布局控制 --
@@ -32,15 +31,11 @@
     "Mod+Period"      = { action.expel-window-from-column = [ ]; repeat = false; };
 
     # -- 会话与截图 (使用 Noctalia 原生 IPC) --
-    "Mod+Alt+L"       = { action.spawn = [ "noctalia" "msg" "session-lock" ]; repeat = false; };
-    "Mod+Shift+Q"     = { action.spawn = [ "noctalia" "msg" "session-powermenu" ]; repeat = false; };
+    "Mod+Alt+L"       = { action.spawn = [ "noctalia" "msg" "session" "lock" ]; repeat = false; };
+    "Mod+Shift+Q"     = { action.spawn = [ "noctalia" "msg" "panel-toggle" "session" ]; repeat = false; };
 
-    #"Ctrl+Shift+1"    = { action.spawn = [ "noctalia" "msg" "screenshot" ]; repeat = false; };
-    #"Ctrl+Shift+2"    = { action.spawn = [ "noctalia" "msg" "screenshot-screen" ]; repeat = false; };
-    #"Ctrl+Shift+3"    = { action.spawn = [ "noctalia" "msg" "screenshot-window" ]; repeat = false; };
-    "Ctrl+Shift+1"    = { action.screenshot = [ ]; };
-    "Ctrl+Shift+2"    = { action.screenshot-screen = [ ]; };
-    "Ctrl+Shift+3"    = { action.screenshot-window = [ ]; };
+    "Ctrl+Shift+1"    = { action.spawn = [ "noctalia" "msg" "screenshot-region" ]; };
+    "Ctrl+Shift+2"    = { action.spawn = [ "noctalia" "msg" "screenshot-fullscreen" ]; };
 
     # -- 工作区快速跳转 --
     "Mod+Tab" = { action.focus-workspace-previous = [ ]; repeat = false; };

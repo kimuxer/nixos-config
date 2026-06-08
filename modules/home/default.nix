@@ -11,7 +11,7 @@
     ./yazi
     ./nvf
     ./foot
-    ./mako
+#    ./mako
     ./themes
   ];
 }

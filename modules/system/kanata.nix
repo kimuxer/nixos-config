@@ -5,7 +5,7 @@
     keyboards.default = {
       config = ''
         (defsrc
-          caps ralt 1 2 3 4 5 6 7 8 9 h j k l)
+          caps ralt 1 2 3 4 5 6 7 8 9 h j k l q)
 
         (defalias
           ;; 你原本的配置：单点 Caps，长按 Super (Meta)
@@ -18,7 +18,7 @@
         (deflayer default
           ;; @cap 对应 Caps 逻辑
           ;; @mv_lyr 对应 ralt 逻辑
-          @cap @mv_lyr 1 2 3 4 5 6 7 8 9 h j k l)
+          @cap @mv_lyr 1 2 3 4 5 6 7 8 9 h j k l q)
 
         (deflayer move_layer
           ;; 1. (caps): _ 表示保持 Caps 原有行为
@@ -28,7 +28,9 @@
           ;; 这里的 M 必须和你在 Niri 里的 Mod 定义一致
           M-S-1 M-S-2 M-S-3 M-S-4 M-S-5 M-S-6 M-S-7 M-S-8 M-S-9
           ;; h j k l 窗口互换
-          M-S-h M-S-j M-S-k M-S-l)
+          M-S-h M-S-j M-S-k M-S-l
+          ;; q 呼出电源菜单
+          M-S-q)
       '';
     };
   };
