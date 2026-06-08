@@ -9,14 +9,10 @@
         term = "xterm-256color";
         font = "JetBrainsMono NF SemiBold:size=11";
         dpi-aware = "yes"; # 保持自动缩放感知
-        pad = "12x12"; # 设置窗口内边距
+        pad = "5x5"; # 设置窗口内边距
         resize-delay-ms = 50;
         selection-target = "both";
       };
-      #colors-dark = {
-        #alpha = "0.85";
-        #alpha-mode = "default";
-      #};          
 
       mouse = {
         hide-when-typing = "yes";
@@ -40,6 +36,3 @@
     };
   };
 }
-
-
-

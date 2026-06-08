@@ -26,7 +26,6 @@
     "Mod+T"           = { action.toggle-window-floating = [ ]; repeat = false; };
     "Mod+F"           = { action.fullscreen-window = [ ]; repeat = false; };
     "Mod+W"           = { action.toggle-column-tabbed-display = [ ]; repeat = false; };
-    "Mod+O"           = { action.toggle-overview = [ ]; repeat = false; };
     "Mod+Shift+Slash" = { action.show-hotkey-overlay = [ ]; repeat = false; };
 
     "Mod+Comma"       = { action.consume-window-into-column = [ ]; repeat = false; };
@@ -36,9 +35,12 @@
     "Mod+Alt+L"       = { action.spawn = [ "noctalia" "msg" "session-lock" ]; repeat = false; };
     "Mod+Shift+Q"     = { action.spawn = [ "noctalia" "msg" "session-powermenu" ]; repeat = false; };
 
-    "Ctrl+Shift+1"    = { action.spawn = [ "noctalia" "msg" "screenshot" ]; repeat = false; };
-    "Ctrl+Shift+2"    = { action.spawn = [ "noctalia" "msg" "screenshot-screen" ]; repeat = false; };
-    "Ctrl+Shift+3"    = { action.spawn = [ "noctalia" "msg" "screenshot-window" ]; repeat = false; };
+    #"Ctrl+Shift+1"    = { action.spawn = [ "noctalia" "msg" "screenshot" ]; repeat = false; };
+    #"Ctrl+Shift+2"    = { action.spawn = [ "noctalia" "msg" "screenshot-screen" ]; repeat = false; };
+    #"Ctrl+Shift+3"    = { action.spawn = [ "noctalia" "msg" "screenshot-window" ]; repeat = false; };
+    "Ctrl+Shift+1"    = { action.screenshot = [ ]; };
+    "Ctrl+Shift+2"    = { action.screenshot-screen = [ ]; };
+    "Ctrl+Shift+3"    = { action.screenshot-window = [ ]; };
 
     # -- 工作区快速跳转 --
     "Mod+Tab" = { action.focus-workspace-previous = [ ]; repeat = false; };
