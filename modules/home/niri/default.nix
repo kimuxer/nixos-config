@@ -1,7 +1,7 @@
 { inputs, ... }:
 {
   imports = [
-    inputs.niri.homeModules.niri
+#    inputs.niri.homeModules.niri
 
     ./layout.nix
     ./window-rules.nix
