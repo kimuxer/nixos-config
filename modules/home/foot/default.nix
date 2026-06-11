@@ -25,15 +25,15 @@
         blink = "no";
       };
       scrollback = {
-        lines = 25000;
+        lines = 50000;
         multiplier = 3.0;
         indicator-position = "relative";
-        indicator-format="none";
+        indicator-format = "none";
       };
       csd = {
         preferred = "none"; # 这会告诉 foot 不要渲染标题栏
-        size = 0;           # 标题栏高度设为0
-        button-width = 0;   # 按钮宽度设为0
+        size = 0; # 标题栏高度设为0
+        button-width = 0; # 按钮宽度设为0
       };
     };
   };

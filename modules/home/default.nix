@@ -11,7 +11,8 @@
     ./yazi
     ./nvf
     ./foot
-#    ./mako
     ./themes
   ];
+
+  home.stateVersion = "26.11";
 }

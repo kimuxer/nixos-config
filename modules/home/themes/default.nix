@@ -20,7 +20,7 @@
   # 声明式配置用户的 Qt 环境
   qt = {
     enable = true;
-    platformTheme.name = "qt6ct";
+    platformTheme.name = "qtct";
     style.name = "kvantum";
   };
 
@@ -28,5 +28,11 @@
   home.packages = with pkgs; [
     qt6Packages.qtstyleplugin-kvantum
     libsForQt5.qtstyleplugin-kvantum # 如果有旧版 Qt5 软件需要的话
+    catppuccin-kvantum
   ];
+
+  xdg.configFile."Kvantum/kvantum.kvconfig".text = ''
+    [General]
+    theme=catppuccin-mocha-lavender
+  '';
 }

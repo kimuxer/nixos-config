@@ -1,11 +1,5 @@
-{ config, pkgs, ...}:
+{ config, pkgs, ... }:
 {
-  # 显式添加内核参数
-  boot.kernelParams =[ 
-    "nvidia-drm.modeset=1" 
-    "nvidia-drm.fbdev=1" 
-  ];
-
   services.xserver.videoDrivers = [ "nvidia" ];
 
   hardware.graphics = {

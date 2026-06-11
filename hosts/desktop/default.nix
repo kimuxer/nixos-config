@@ -6,7 +6,6 @@
     ./env.nix
     ./network.nix
     ./users.nix
-    ./home-manager.nix
-    ./hardware  
+    ./hardware
   ];
 }

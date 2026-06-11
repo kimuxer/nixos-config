@@ -47,24 +47,6 @@
        export LANG=en_US.UTF-8
        export LC_ALL=en_US.UTF-8
 
-       # 统一封装，全部使用 --wraps=eza，这样它们就全部拥有了 eza 的完美补全能力
-
-       function ls --wraps=eza --description 'alias ls=eza --icons'
-         eza --icons $argv
-       end
-
-       function ll --wraps=eza --description 'alias ll=eza -lh --icons --git'
-         eza -lh --icons --git $argv
-       end
-
-       function la --wraps=eza --description 'alias la=eza -a --icons'
-         eza -a --icons $argv
-       end
-
-       function lt --wraps=eza --description 'alias lt=eza --tree --icons --level 3'
-         eza --tree --icons --level 3 $argv
-       end
-
        # 开启终端时运行一次fastfetch
        if status is-interactive
          fastfetch
