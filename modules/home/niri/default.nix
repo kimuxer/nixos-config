@@ -1,6 +1,8 @@
-{ ... }:
+{ inputs, ... }:
 {
   imports = [
+    inputs.niri.homeModules.niri
+
     ./layout.nix
     ./window-rules.nix
     ./layout-rules.nix
@@ -15,8 +17,14 @@
     prefer-no-csd = true;
     hotkey-overlay.skip-at-startup = true;
     spawn-at-startup = [
-      { command =[ "fcitx5" "-d" "--replace" ]; }
-      { command =[ "noctalia" ]; }
+      {
+        command = [
+          "fcitx5"
+          "-d"
+          "--replace"
+        ];
+      }
+      { command = [ "noctalia" ]; }
     ];
   };
 }

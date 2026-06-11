@@ -7,5 +7,7 @@
     ./network.nix
     ./users.nix
     ./hardware
+    ../../modules/system
+    ../../modules/shared
   ];
 }

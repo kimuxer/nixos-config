@@ -30,4 +30,21 @@
   };
   
   environment.defaultPackages = lib.mkForce [ ];
+
+  environment.systemPackages = with pkgs; [
+    sops
+    git
+    curl
+    wget
+    unzip
+    p7zip
+    jq
+    file
+    killall
+    hwinfo
+    pciutils
+    usbutils
+    parted
+    smartmontools
+  ];
 }

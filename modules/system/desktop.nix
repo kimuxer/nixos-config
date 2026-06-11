@@ -8,6 +8,7 @@
 {
   imports = [
     inputs.silentSDDM.nixosModules.default
+    inputs.niri.nixosModules.niri
   ];
 
   # ============================
@@ -75,7 +76,10 @@
   # ============================
   # Niri 窗口管理器
   # ============================
-  programs.niri.enable = true;
+  programs.niri = {
+    enable = true;
+    package = inputs.niri.packages.${pkgs.system}.niri;
+  };
 
   # ============================
   # 启用 KDE Plasma 6 桌面环境
