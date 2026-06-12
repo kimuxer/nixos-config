@@ -29,12 +29,20 @@
     enableFishIntegration = true;
   };
 
+  programs.satty = {
+    enable = true;
+    settings = {
+      general = {
+        output-filename = "~/Pictures/Screenshots/satty-%Y%m%d-%H%M%S.png";
+        early-exit = true;
+        actions-on-enter = [ "save-to-file" "save-to-clipboard" "exit" ];
+      };
+    };
+  };
+
   home.packages = [
     # 浏览器
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
-
-    # noctalia 截图编辑
-    pkgs.satty
 
     # 聊天
     pkgs.telegram-desktop
