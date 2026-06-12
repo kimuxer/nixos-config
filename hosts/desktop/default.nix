@@ -2,12 +2,8 @@
 {
   imports = [
     ./base.nix
-    ./boot.nix
-    ./env.nix
-    ./network.nix
-    ./users.nix
-    ./hardware
+    ./hardware.nix
+    ./hardware-configuration.nix
     ../../modules/system
-    ../../modules/shared
   ];
 }

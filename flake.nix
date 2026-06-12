@@ -78,7 +78,6 @@
           specialArgs = { inherit inputs; };
 
           modules = [
-            ./modules/shared
             ./hosts/router
           ];
         };

@@ -33,6 +33,9 @@
     # 浏览器
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
 
+    # noctalia 截图编辑
+    pkgs.satty
+
     # 聊天
     pkgs.telegram-desktop
     pkgs.wechat

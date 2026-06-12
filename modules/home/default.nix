@@ -3,7 +3,7 @@
   imports = [
     ./niri
     ./noctalia
-    ./apps
+    ./packages
     ./fish
     ./git
     ./zed-editor
@@ -12,6 +12,7 @@
     ./nvf
     ./foot
     ./themes
+    ./starship
   ];
 
   home.stateVersion = "26.11";

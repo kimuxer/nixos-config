@@ -2,7 +2,7 @@
 {
   imports = [
 #    inputs.niri.homeModules.niri
-
+    ./env.nix
     ./layout.nix
     ./window-rules.nix
     ./layout-rules.nix

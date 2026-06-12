@@ -16,11 +16,6 @@ in
     x11.enable = true;
   };
 
-  home.sessionVariables = {
-    XCURSOR_THEME = cursorTheme;
-    XCURSOR_SIZE = toString cursorSize;
-  };
-
   programs.niri.settings.cursor = {
     hide-when-typing = true;
     theme = cursorTheme;

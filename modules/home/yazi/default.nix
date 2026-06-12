@@ -58,7 +58,7 @@
         # block = true 表示等待编辑器关闭再回到 Yazi
         edit = [
           {
-            run = ''${"EDITOR:-nvim"} "$@"'';
+            run = ''\${EDITOR:-nvim} "$@"'';
             block = true;
             desc = "editor";
           }

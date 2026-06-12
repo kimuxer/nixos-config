@@ -11,24 +11,9 @@
   ];
 
   # ============================
-  # 基础系统服务
+  # 桌面环境基础服务
   # ============================
-  security.polkit.enable = true;
-  services.gnome.gnome-keyring.enable = true;
-  services.dbus.enable = true;
-  services.upower.enable = true;
-  services.gvfs.enable = true;
-  services.udisks2.enable = true;
-  services.tumbler.enable = true;
-  programs.dconf.enable = true;
-  services.fwupd.enable = true;
-  programs.nix-ld.enable = true;
-  services.tuned.enable = true;
-  programs.ssh.extraConfig = ''
-    Host *
-      ServerAliveInterval 30
-      ServerAliveCountMax 3
-  '';
+  services.desktopManager.plasma6.enable = true;
 
   # ============================
   # Wayland XDG Portal 隔离设计
@@ -73,6 +58,29 @@
   };
 
   # ============================
+  # 桌面环境基础环境变量
+  # ============================
+  systemd.services.sddm.environment = {
+    WLR_NO_HARDWARE_CURSORS = "1";
+  };
+
+  environment.variables = {
+    LIBVA_DRIVER_NAME = "nvidia";
+    GBM_BACKEND = "nvidia-drm";
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    XCURSOR_THEME = "Bibata-Modern-Ice";
+    XCURSOR_SIZE = "20";
+  };
+
+  environment.sessionVariables = {
+    NIXOS_OZONE_WL = "1";
+    MOZ_ENABLE_WAYLAND = "1";
+    _JAVA_AWT_WM_NONREPARENTING = "1";
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+  };
+
+  # ============================
   # Niri 窗口管理器
   # ============================
   programs.niri = {
@@ -81,21 +89,17 @@
   };
 
   # ============================
-  # 启用 KDE Plasma 6 桌面环境
-  # ============================
-  services.desktopManager.plasma6.enable = true;
-
-  # ============================
   # Display Manager 登录器
   # ============================
-  services = {
-    displayManager.defaultSession = "niri";
-    displayManager.sddm = {
+  services.displayManager = {
+    defaultSession = "niri";
+    sddm = {
       enable = true;
       wayland.enable = true;
       wayland.compositor = "kwin";
     };
   };
+
   systemd.services.sddm.environment = {
     XCURSOR_THEME = "Bibata-Modern-Ice";
     XCURSOR_SIZE = "20";

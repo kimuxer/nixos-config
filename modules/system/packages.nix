@@ -6,5 +6,6 @@
     btrfs-assistant
     snapper
     kdePackages.kwin # sddm 合成器
+    bibata-cursors
   ];
 }

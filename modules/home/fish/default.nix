@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   # ==============================
   # 1. 自动展开的缩写
@@ -35,22 +35,25 @@
       nt = "sudo nixos-rebuild test --flake .#nixdevbox";
       nc = "sudo nix-collect-garbage -d";
       no = "nix-store --optimise";
-      nsproxy = "nixos-rebuild switch --flake .#router --target-host root@192.168.50.254";
+      nsproxy = "nixos-rebuild switch --flake .#router --target-host root@192.168.10.1";
     };
 
     # 不显示欢迎语
     interactiveShellInit = ''
       # 去掉fish欢迎语
-       set -g fish_greeting ""
+      set -g fish_greeting ""
 
-       # 终端locale为en
-       export LANG=en_US.UTF-8
-       export LC_ALL=en_US.UTF-8
+      # 终端locale为en
+      export LANG=en_US.UTF-8
+      export LC_ALL=en_US.UTF-8
 
-       # 开启终端时运行一次fastfetch
-       if status is-interactive
-         fastfetch
-       end
+      # 启用 Starship
+      eval "$(${pkgs.starship}/bin/starship init fish)"
+
+      # 开启终端时运行一次fastfetch
+      if status is-interactive
+        fastfetch
+      end
     '';
   };
 

@@ -1,38 +1,54 @@
 { pkgs, ... }:
+let
+  themeName = "adw-gtk3-dark";
+  iconThemeName = "Papirus-Dark";
+  cursorThemeName = "Bibata-Modern-Ice";
+  cursorSize = 20;
+  kvantumTheme = "catppuccin-mocha-lavender";
+in
 {
   gtk = {
     enable = true;
     theme = {
-      name = "adw-gtk3-dark";
+      name = themeName;
       package = pkgs.adw-gtk3;
     };
     iconTheme = {
-      name = "Papirus-Dark";
+      name = iconThemeName;
       package = pkgs.papirus-icon-theme;
-    };
-    cursorTheme = {
-      name = "Bibata-Modern-Ice";
-      package = pkgs.bibata-cursors;
-      size = 20;
     };
   };
 
-  # 声明式配置用户的 Qt 环境
   qt = {
     enable = true;
     platformTheme.name = "qtct";
     style.name = "kvantum";
   };
 
-  # 顺便把光标包和额外所需的主题工具放进用户个人包
+  home.pointerCursor = {
+    enable = true;
+    name = cursorThemeName;
+    package = pkgs.bibata-cursors;
+    size = cursorSize;
+    gtk.enable = true;
+  };
+
   home.packages = with pkgs; [
+    qt6ct
+    libsForQt5.qt5ct
     qt6Packages.qtstyleplugin-kvantum
-    libsForQt5.qtstyleplugin-kvantum # 如果有旧版 Qt5 软件需要的话
+    libsForQt5.qtstyleplugin-kvantum
     catppuccin-kvantum
   ];
 
   xdg.configFile."Kvantum/kvantum.kvconfig".text = ''
     [General]
-    theme=catppuccin-mocha-lavender
+    theme=${kvantumTheme}
   '';
+
+  home.sessionVariables = {
+    GTK_THEME = themeName;
+    XCURSOR_THEME = cursorThemeName;
+    XCURSOR_SIZE = toString cursorSize;
+  };
 }
