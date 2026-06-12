@@ -1,7 +1,7 @@
 { inputs, ... }:
 {
   imports = [
-#    inputs.niri.homeModules.niri
+    #    inputs.niri.homeModules.niri
     ./env.nix
     ./layout.nix
     ./window-rules.nix
@@ -10,7 +10,7 @@
     ./input.nix
     ./output.nix
     ./keybinds.nix
-    #./cursor.nix
+    ./cursor.nix
   ];
 
   programs.niri.settings = {
