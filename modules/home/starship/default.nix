@@ -6,7 +6,6 @@
     enableBashIntegration = true;
     enableFishIntegration = true;
     enableTransience = true;
-
     presets = [ "nerd-font-symbols" ];
 
     settings = {

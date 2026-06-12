@@ -105,7 +105,7 @@
           enable_builtin_templates = true;
           enable_community_templates = true;
           # run: noctalia theme --list-templates
-          builtin_ids = [ "niri" "foot" "starship" "qt" "gtk3" "gtk4" "cava" ];   
+          builtin_ids = [ "niri" "foot" "qt" "gtk3" "gtk4" "cava" ];   
           community_ids = [ "neovim" "papirus-icons" "telegram" "yazi" "zed" "zen-browser" ];
         };
       };
