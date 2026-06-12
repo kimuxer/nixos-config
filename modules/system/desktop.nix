@@ -70,6 +70,7 @@
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
     XCURSOR_THEME = "Bibata-Modern-Ice";
     XCURSOR_SIZE = "20";
+    SOPS_AGE_KEY_FILE = "/var/lib/sops-nix/key.txt";
   };
 
   environment.sessionVariables = {

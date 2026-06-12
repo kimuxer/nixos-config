@@ -43,9 +43,6 @@
       # 去掉fish欢迎语
       set -g fish_greeting ""
       
-      #定义sops密钥文件路径
-      set -gx SOPS_AGE_KEY_FILE /var/lib/sops-nix/key.txt
-
       # 终端locale为en
       export LANG=en_US.UTF-8
       export LC_ALL=en_US.UTF-8
