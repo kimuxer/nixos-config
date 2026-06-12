@@ -1,29 +1,10 @@
-{ pkgs, ... }:
+{ ... }:
 
-let
-  cursorTheme = "Bibata-Modern-Ice";
-  cursorSize = 20;
-
-in
 {
-  gtk.enable = true;
-
-  home.pointerCursor = {
-    package = pkgs.bibata-cursors;
-    name = cursorTheme;
-    size = cursorSize;
-    gtk.enable = true;
-    x11.enable = true;
-  };
-
   programs.niri.settings.cursor = {
     hide-when-typing = true;
-    theme = cursorTheme;
-    size = cursorSize;
+    theme = "Bibata-Modern-Ice";
+    size = 20;
   };
 
-  dconf.settings."org/gnome/desktop/interface" = {
-    cursor-theme = cursorTheme;
-    cursor-size = cursorSize;
-  };
 }

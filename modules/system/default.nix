@@ -2,6 +2,7 @@
 {
   imports = [
     ../shared
+    ./homemanager.nix
     ./core.nix
     ./packages.nix
     ./desktop.nix

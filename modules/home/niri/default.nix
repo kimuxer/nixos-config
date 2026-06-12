@@ -10,7 +10,7 @@
     ./input.nix
     ./output.nix
     ./keybinds.nix
-    ./cursor.nix
+    #./cursor.nix
   ];
 
   programs.niri.settings = {

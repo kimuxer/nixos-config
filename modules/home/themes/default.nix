@@ -7,6 +7,10 @@ let
   kvantumTheme = "catppuccin-mocha-lavender";
 in
 {
+  dconf.settings."org/gnome/desktop/interface" = {
+    cursor-theme = cursorThemeName;
+    cursor-size = cursorSize;
+  };
   gtk = {
     enable = true;
     theme = {
@@ -34,7 +38,7 @@ in
   };
 
   home.packages = with pkgs; [
-    qt6ct
+    qt6Packages.qt6ct
     libsForQt5.qt5ct
     qt6Packages.qtstyleplugin-kvantum
     libsForQt5.qtstyleplugin-kvantum
