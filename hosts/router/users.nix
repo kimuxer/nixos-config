@@ -12,13 +12,13 @@
   services.openssh = {
     enable = true;
     settings = {
-      PermitRootLogin = "yes";
+      PermitRootLogin = "prohibit-password"; 
       PasswordAuthentication = false;
+      PermitEmptyPasswords = false;
     };
   };
 
   users.users.root = {
-    initialPassword = "root"; # 初始临时密码（第一次登录用）
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOxnON3MkP3jq6+UKldz4ChA2OSf07KryKUsJBXeB5wD 604719@qq.com"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIpvPtSvAEllUr4VsEJBcsCs9CHhIvz4vwml/j3mV2v0 win-desktop"

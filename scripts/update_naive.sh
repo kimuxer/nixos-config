@@ -4,7 +4,8 @@
 set -euo pipefail
 
 # 指向你的 naive.nix 文件路径（根据实际位置微调）
-SED_FILE="/home/kim/nixos/modules/system/naiveproxy.nix"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SED_FILE="${SCRIPT_DIR}/../hosts/router/naiveproxy.nix"
 
 # 1. 确保配置文件确实存在
 if [ ! -f "$SED_FILE" ]; then
