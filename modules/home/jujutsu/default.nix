@@ -18,7 +18,7 @@
 
       # Git 安全防护
       git = {
-        protected-branches = ["main", "master"];
+        protected-branches = ["main" "master"];
       };
 
       # 提效缩写
