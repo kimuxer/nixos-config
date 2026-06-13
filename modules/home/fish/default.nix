@@ -28,7 +28,7 @@
       jf = "jj git fetch";
       jsq = "jj squash";     # 向前合并 
       ja = "jj abandon";     # 放弃修改
-      jr = "jj rebase -s "   # jj rebase -s nyytxyrv -d main
+      jr = "jj rebase -s ";   # jj rebase -s nyytxyrv -d main
 
       # Git 缩写（自动展开）
       gi = "git init";
