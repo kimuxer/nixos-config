@@ -1,4 +1,4 @@
-{ inputs, config, ... }:
+{ inputs, ... }:
 {
   imports = [
     inputs.nvf.homeManagerModules.default
@@ -9,18 +9,16 @@
     enable = true;
 
     settings.vim = {
-      lineNumberMode = "relative";
       viAlias = true;
       vimAlias = true;
       syntaxHighlighting = true;
       options = {
         mouse = "a";
         tabstop = 2;
-        autoindent = false;
         shiftwidth = 0;
+        autoindent = true;
         smartindent = false;
-        cindent = false;
-        indentexpr = "";
+        cursorlineopt = "both";
       };
 
       # === 核心插件区 ===
@@ -57,11 +55,13 @@
         providers.wl-copy.enable = true;
       };
 
-      dashboard.alpha = {
+      dashboard.dashboard-nvim = {
         enable = true;
-        theme = "theta";
-        opts.leader = "SPC";
-      };
+        setupOpts = {
+            theme  = "hyper";
+            change_to_vcs_root = true; # 开启自动切到项目根目录
+          };
+        };
 
       filetree.neo-tree = {
         enable = true;
@@ -70,22 +70,6 @@
           git_status_async = true;
         };
       };
-
-#      luaConfigRC = {
-#        my-custom-config = {
-#          after = [ "pluginConfigs" ]; # 确保它在插件加载后执行
-#          data = ''
-#            vim.api.nvim_create_autocmd("FileType", {
-#              pattern = "alpha",
-#              callback = function()
-#                vim.keymap.set("n", "c", function()
-#                  vim.cmd("edit ${config.home.homeDirectory}/nixos/modules/home/nvf/default.nix")
-#                end, { buffer = true, desc = "Edit nvf config" })
-#              end,
-#            })
-#          '';
-#        };
-#      };
     };
   };
 }

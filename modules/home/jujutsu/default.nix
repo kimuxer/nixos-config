@@ -12,7 +12,7 @@
 
       # 界面与编辑器
       ui = {
-        editor = "zed --wait";
+        editor = "nvim";
         graph-style = "curved";
       };
 

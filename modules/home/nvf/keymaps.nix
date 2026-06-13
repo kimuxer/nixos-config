@@ -31,5 +31,6 @@
     { key = "<leader>ln"; mode = "n"; desc = "Toggle line number"; action = "<cmd>set nu! rnu!<CR>"; }
     { key = "<leader>cl"; mode = "n"; desc = "Clear search highlight"; action = "<cmd>nohl<CR>"; }
     { key = "<leader>e"; mode = "n"; desc = "Run neo-tree"; action = "<cmd>Neotree<CR>"; }
+   # { key = "<leader>c"; mode = "n"; desc = "Edit nvf config"; action = "<cmd>edit $HOME/nixos/modules/home/nvf/default.nix<CR>"; }
   ];
 }
