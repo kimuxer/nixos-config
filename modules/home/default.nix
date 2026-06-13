@@ -13,6 +13,7 @@
     ./foot
     ./themes
     ./starship
+    ./jujutsu
   ];
 
   home.stateVersion = "26.11";
