@@ -40,6 +40,16 @@
     };
   };
 
+  programs.zoxide = {
+    enable = true;
+    enableFishIntegration = true;
+  };
+
+  programs.fzf = {
+    enable = true;
+    enableFishIntegration = true;
+  };
+
   home.packages = [
     # 浏览器
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default

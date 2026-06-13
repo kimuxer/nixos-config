@@ -42,7 +42,7 @@
     interactiveShellInit = ''
       # 去掉fish欢迎语
       set -g fish_greeting ""
-      
+
       # 终端locale为en
       export LANG=en_US.UTF-8
       export LC_ALL=en_US.UTF-8
@@ -55,13 +55,5 @@
         fastfetch
       end
     '';
-  };
-
-  # ==============================
-  # 3. zoxide 智能目录跳转
-  # ==============================
-  programs.zoxide = {
-    enable = true;
-    enableFishIntegration = true;
   };
 }

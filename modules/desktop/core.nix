@@ -14,11 +14,18 @@
 
   programs.dconf.enable = true;
   programs.nix-ld.enable = true;
-  programs.fish.enable = true;
 
   programs.ssh.extraConfig = ''
     Host *
       ServerAliveInterval 30
       ServerAliveCountMax 3
   '';
+
+  programs.fish.enable = true;
+  programs.nix-index = {
+    enable = true;
+    enableFishIntegration = true;
+  };
+  programs.command-not-found.enable = true;
+
 }

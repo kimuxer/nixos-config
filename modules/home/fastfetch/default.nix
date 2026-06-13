@@ -1,8 +1,15 @@
 { ... }:
 
 let
-  # 依然保持用 let 绑定路径，这是最稳妥的
-  logoFile = ./logo.txt;
+  logoContent = ''
+   _  ___      ____  ____
+  / |/ (_)_ __/ __ \/ __/
+ /    / /\ \ / /_/ /\ \
+/_/|_/_//_\_\\____/___/
+'';
+
+# 在 Nix store 中创建一个临时文件
+logoFile = pkgs.writeText "fastfetch-logo.txt" logoContent;
 in
 {
   programs.fastfetch = {
@@ -13,7 +20,7 @@ in
       "$schema" = "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json";
 
       logo = {
-        source = "${logoFile}";
+        source = "${logoFile}";;
         position = "top";
         padding = {
           left = 3; # 顶部距离
