@@ -58,6 +58,7 @@
       matches = [
         { title = "Open File"; }
         { title = "Save File"; }
+        { app-id = "satty"; }
       ];
       open-floating = true;
     }

@@ -1,4 +1,8 @@
-{ inputs, ... }:
+{ inputs, config, ... }:
+
+let
+  directory = "${config.home.homeDirectory}/Pictures/wallpapers";
+in
 {
   imports = [
     inputs.noctalia.homeModules.default
@@ -9,7 +13,8 @@
     systemd.enable = false;
     settings = {
       shell = {
-        lang = "cn";
+        lang = "zh_CN";
+        app_icon_colorize = true;
         time_format = "{:%H:%M}";
         clipboard_auto_paste = "ctrl_shift_v";
 
@@ -24,24 +29,24 @@
           wallpaper_placement = "attached";
           session_placement = "attached";
         };
-        
+
         screenshot = {
           save_to_file = true;
           copy_to_clipboard = true;
           freeze_screen = true;
-      
+
           pipe_to_command = true;
-          pipe_command = "satty -f -"; 
+          pipe_command = "satty -f -";
         };
 
         session = {
           actions = [
-            { 
-              action = "lock"; 
+            {
+              action = "lock";
               shortcut = "1";
             }
-            { 
-              action = "logout"; 
+            {
+              action = "logout";
               shortcut = "2";
             }
             {
@@ -63,6 +68,8 @@
           position = "top";
           thickness = 24;
           radius = 5;
+          border_width = 1.0;
+          border_color = "outline";
           scale = 0.8;
           contact_shadow = true;
           widget_spacing = 11;
@@ -90,22 +97,22 @@
           title_scroll = "on_hover";
         };
       };
-      
+
       wallpaper = {
-        directory = "/home/kim/Pictures/wallpapers";
+        directory = directory;
         automation.enabled = true;
       };
 
       theme = {
-        mode = "dark"; 
-        source = "wallpaper";      
-        wallpaper_scheme = "m3-tonal-spot"; 
+        mode = "dark";
+        source = "wallpaper";
+        wallpaper_scheme = "m3-tonal-spot";
 
         templates = {
           enable_builtin_templates = true;
           enable_community_templates = true;
           # run: noctalia theme --list-templates
-          builtin_ids = [ "niri" "foot" "qt" "gtk3" "gtk4" "cava" ];   
+          builtin_ids = [ "niri" "foot" "qt" "gtk3" "gtk4" "cava" ];
           community_ids = [ "neovim" "papirus-icons" "telegram" "yazi" "zed" "zen-browser" ];
         };
       };

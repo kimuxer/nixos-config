@@ -1,19 +1,12 @@
 # Nix 模块导入：引入 pkgs 包管理器，其他参数忽略
 { pkgs, ... }:
 {
-  # 配置 Yazi 终端文件管理器
   programs.yazi = {
-    # 启用 Yazi
     enable = true;
-
-    # 启用 Fish shell 集成（退出 Yazi 后自动切换目录）
     enableFishIntegration = true;
 
-    # 终端输入 y 启动 Yazi（你之前问的那个配置）
     shellWrapperName = "y";
 
-    # 额外安装的依赖工具（用于预览各种文件）
-    # Yazi 预览功能强依赖这些工具
     extraPackages = with pkgs; [
       ffmpegthumbnailer # 视频文件预览
       imagemagick # 图片预览、格式转换
@@ -22,9 +15,7 @@
       unrar # RAR 压缩包解压与预览
     ];
 
-    # Yazi 核心设置（对应 yazi.toml）
     settings = {
-      # 文件管理器主界面配置
       manager = {
         ratio = [
           1
@@ -43,7 +34,7 @@
           "scroll"
           "move"
           "click"
-        ]; # 开启完整鼠标支持
+        ];
       };
 
       # 文件预览相关设置
@@ -54,11 +45,9 @@
 
       # 打开方式配置：设置默认编辑器
       opener = {
-        # 使用 $EDITOR 打开文件，未设置则默认用 nvim
-        # block = true 表示等待编辑器关闭再回到 Yazi
         edit = [
           {
-            run = ''\${EDITOR:-nvim} "$@"'';
+            run = '${EDITOR:-nvim} "$@"';
             block = true;
             desc = "editor";
           }
