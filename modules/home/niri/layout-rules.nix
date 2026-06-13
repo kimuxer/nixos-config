@@ -7,5 +7,9 @@
       # 这里使用 place-within-backdrop
       place-within-backdrop = true;
     }
+#    {
+
+#       matches = [ { namespace = "^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd)$"; } ];
+#    }
   ];
 }

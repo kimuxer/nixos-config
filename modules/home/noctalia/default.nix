@@ -15,8 +15,10 @@ in
       shell = {
         telemetry_enabled = true;
         lang = "zh_CN";
+        font_family = "Inter SemiBold";
         avatar_path = "~/Pictures/avatar.png";
         app_icon_colorize = true;
+        app_icon_color = "on_surface";
         time_format = "{:%H:%M}";
         clipboard_auto_paste = "ctrl_shift_v";
 
