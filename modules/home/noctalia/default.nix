@@ -13,7 +13,9 @@ in
     systemd.enable = false;
     settings = {
       shell = {
+        telemetry_enabled = true;
         lang = "zh_CN";
+        avatar_path = "~/Pictures/avatar.png";
         app_icon_colorize = true;
         time_format = "{:%H:%M}";
         clipboard_auto_paste = "ctrl_shift_v";
@@ -32,6 +34,7 @@ in
 
         screenshot = {
           save_to_file = true;
+          directory = "~/Pictures/Screenshots";
           copy_to_clipboard = true;
           freeze_screen = true;
 
@@ -68,7 +71,7 @@ in
           position = "top";
           thickness = 24;
           radius = 5;
-          border_width = 1.5;
+          border_width = 2.0;
           border_color = "outline";
           scale = 0.8;
           contact_shadow = true;

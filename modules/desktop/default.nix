@@ -12,6 +12,6 @@
     ./kanata.nix
     ./fonts.nix
     ./starship.nix
-    ./virtualisation.nix
+#    ./virtualisation.nix
   ];
 }

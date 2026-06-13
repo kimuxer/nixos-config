@@ -38,7 +38,7 @@ in
            height = 800;
          };
          # 尝试告知 compositor 让它浮动
-         floating-hack = true;
+#         floating-hack = true;
        };
 
        keybinds = {
