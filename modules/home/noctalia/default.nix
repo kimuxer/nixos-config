@@ -68,7 +68,7 @@ in
           position = "top";
           thickness = 24;
           radius = 5;
-          border_width = 1.0;
+          border_width = 1.5;
           border_color = "outline";
           scale = 0.8;
           contact_shadow = true;
