@@ -20,6 +20,16 @@
       cls = "clear";
       q = "exit";
 
+      # jj 缩写
+      jn = "jj new";
+      jd = "jj describe -m ";
+      jb = "jj bookmark move --to @";
+      jp = "jj git push";
+      jf = "jj git fetch";
+      jsq = "jj squash";     # 向前合并 
+      ja = "jj abandon";     # 放弃修改
+      jr = "jj rebase -s "   # jj rebase -s nyytxyrv -d main
+
       # Git 缩写（自动展开）
       gi = "git init";
       gs = "git status";
