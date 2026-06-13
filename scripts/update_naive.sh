@@ -5,7 +5,7 @@ set -euo pipefail
 
 # 指向你的 naive.nix 文件路径（根据实际位置微调）
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SED_FILE="${SCRIPT_DIR}/../hosts/router/naiveproxy.nix"
+SED_FILE="${SCRIPT_DIR}/../modules/router/naiveproxy.nix"
 
 # 1. 确保配置文件确实存在
 if [ ! -f "$SED_FILE" ]; then
@@ -39,7 +39,7 @@ echo "⏳ 正在拉取临时文件并自动计算哈希 (SHA256 SRI)..."
 HASH=$(nix-prefetch-url --type sha256 "$URL" 2>/dev/null)
 SRI_HASH=$(nix hash to-sri --type sha256 "$HASH")
 
-echo "✅ 计算完成! 
+echo "✅ 计算完成!
    -> 新版本: $VERSION
    -> 新哈希: $SRI_HASH"
 

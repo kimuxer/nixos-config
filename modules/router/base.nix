@@ -1,8 +1,12 @@
 { pkgs, ... }:
 
 {
+  services.xserver.enable = false;
+
+  system.stateVersion = "26.11";
+
   boot = {
-    # 1. 引导加载器配置 (systemd-boot)
+    kernelPackages = pkgs.linuxPackages_latest;
     loader = {
       systemd-boot = {
         enable = true;

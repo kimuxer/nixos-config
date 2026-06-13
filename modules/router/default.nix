@@ -4,9 +4,8 @@
   imports = [
     inputs.disko.nixosModules.disko
     ./disko.nix
-    ../../modules/shared
+    ../shared
     ./base.nix
-    ./boot.nix
     ./network.nix
     ./users.nix
     ./naiveproxy.nix

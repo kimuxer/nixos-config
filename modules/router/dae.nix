@@ -7,7 +7,7 @@
   ];
 
   # 1. 密钥管理（保持原样，相对路径指向你的秘密大本营）
-  sops.defaultSopsFile = ../../secrets/secrets.yaml;
+  sops.defaultSopsFile = ../secrets/secrets.yaml;
   sops.defaultSopsFormat = "yaml";
   sops.age.keyFile = "/var/lib/sops-nix/key.txt";
 

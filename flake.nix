@@ -56,7 +56,7 @@
           };
 
           modules = [
-            ./hosts/desktop
+            ./modules/desktop
           ];
         };
 
@@ -66,7 +66,7 @@
           specialArgs = { inherit inputs; };
 
           modules = [
-            ./hosts/router
+            ./modules/router
           ];
         };
       };
