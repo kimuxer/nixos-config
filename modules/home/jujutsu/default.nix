@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 
 {
   programs.jujutsu = {
@@ -12,21 +12,25 @@
 
       # 界面与编辑器
       ui = {
-        editor = "nvim";
+        editor = "hx";
         graph-style = "curved";
+        default-command = "log";
       };
 
       # Git 安全防护
       git = {
-        protected-branches = ["main" "master"];
+        protected-branches = [
+          "main"
+          "master"
+        ];
       };
 
       # 提效缩写
       aliases = {
-        "l" = ["log"];
-        "st" = ["status"];
-        "sw" = ["new"];
-        "sq" = ["squash"];
+        "l" = [ "log" ];
+        "st" = [ "status" ];
+        "sw" = [ "new" ];
+        "sq" = [ "squash" ];
       };
     };
   };

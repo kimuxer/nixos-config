@@ -1,7 +1,5 @@
 { ... }:
 {
-  xdg.configFile."foot/foot.ini".force = true;
-
   programs.foot = {
     enable = true;
     server.enable = true; # 启用 C/S 模式

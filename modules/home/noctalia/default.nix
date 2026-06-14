@@ -81,9 +81,21 @@ in
           margin_edge = 1; # 留空边距
           margin_ends = 1; # 缩短两端边距
 
-          start = [ "launcher" "workspaces" "active_window" ];
+          start = [
+            "launcher"
+            "workspaces"
+            "active_window"
+          ];
           center = [ "clock" ];
-          end = [ "media" "tray" "notifications" "clipboard" "volume" "control-center" "session"];
+          end = [
+            "media"
+            "tray"
+            "notifications"
+            "clipboard"
+            "volume"
+            "control-center"
+            "session"
+          ];
         };
       };
 
@@ -117,8 +129,22 @@ in
           enable_builtin_templates = true;
           enable_community_templates = true;
           # run: noctalia theme --list-templates
-          builtin_ids = [ "niri" "foot" "qt" "gtk3" "gtk4" "cava" ];
-          community_ids = [ "neovim" "papirus-icons" "telegram" "yazi" "zed" "zen-browser" ];
+          builtin_ids = [
+            "niri"
+            "foot"
+            "qt"
+            "gtk3"
+            "gtk4"
+            "cava"
+            "helix"
+          ];
+          community_ids = [
+            "papirus-icons"
+            "telegram"
+            "yazi"
+            "zed"
+            "zen-browser"
+          ];
         };
       };
 
