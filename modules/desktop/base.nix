@@ -44,6 +44,11 @@
   networking.networkmanager.enable = true;
   services.openssh.enable = false;
 
+  i18n.defaultLocale = "en_US.UTF-8";
+  i18n.extraLocaleSettings = {
+    LC_CTYPE = "zh_CN.UTF-8";                          
+  };
+
   users.users.kim = {
     isNormalUser = true;
     description = "Kimuxer";

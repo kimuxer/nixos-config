@@ -15,6 +15,7 @@
     ./starship
     ./jujutsu
     ./helix
+    ./rime
   ];
 
   home.stateVersion = "26.11";

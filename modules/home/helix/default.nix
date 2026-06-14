@@ -9,7 +9,7 @@
       editor = {
         line-number = "relative"; # 开启相对行号
         scrolloff = 5; # 光标距离边缘剩 5 行时开始滚动
-        mouse = false; # 禁用鼠标
+        #mouse = false; # 禁用鼠标
 
         cursorline = true; # 高亮当前光标所在行
         color-modes = true; # 模式切换时状态栏变色
