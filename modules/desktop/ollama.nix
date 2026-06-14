@@ -7,7 +7,7 @@
     package = pkgs.ollama-cuda;
 
     loadModels = [
-      "qwen3.5:9b"
+      "deepseek-r1:14b"
     ];
   };
 }
