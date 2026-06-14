@@ -1,23 +1,21 @@
 { inputs, pkgs, config, ... }:
 
+let
+  proxySecrets = ../../secrets/proxy.yaml;
+in
 {
   imports = [
     inputs.daeuniverse.nixosModules.dae
-    inputs.sops-nix.nixosModules.sops
   ];
 
-  # 1. 密钥管理（保持原样，相对路径指向你的秘密大本营）
-  sops.defaultSopsFile = ../secrets/secrets.yaml;
-  sops.defaultSopsFormat = "yaml";
-  sops.age.keyFile = "/var/lib/sops-nix/key.txt";
-
-  sops.secrets.vps_ip = { };
-  sops.secrets.vps_domain = { };
-  sops.secrets."nodes/vless" = { };
-  sops.secrets."nodes/hy2" = { };
-  sops.secrets."nodes/tuic" = { };
-  sops.secrets."nodes/anytls" = { };
-  sops.secrets."nodes/vmess" = { };
+  # 1. 密钥管理
+  sops.secrets.vps_ip = { sopsFile = proxySecrets; };
+  sops.secrets.vps_domain = { sopsFile = proxySecrets; };
+  sops.secrets."nodes/vless" = { sopsFile = proxySecrets; };
+  sops.secrets."nodes/hy2" = { sopsFile = proxySecrets; };
+  sops.secrets."nodes/tuic" = { sopsFile = proxySecrets; };
+  sops.secrets."nodes/anytls" = { sopsFile = proxySecrets; };
+  sops.secrets."nodes/vmess" = { sopsFile = proxySecrets; };
 
   # 2. 动态渲染 dae 配置文件
   sops.templates."config.dae" = {

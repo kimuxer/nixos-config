@@ -1,7 +1,7 @@
-# /etc/nixos/system/services/naive.nix
 { config, pkgs, lib, ... }:
 
 let
+  proxySecrets = ../../secrets/proxy.yaml;
   # 1. 免编译预构建包
   naiveproxy-bin = pkgs.stdenv.mkDerivation rec {
     pname = "naiveproxy";
@@ -30,10 +30,9 @@ in
   # 1. 放入系统环境以便命令行随时可以调用调试
   environment.systemPackages = [ naiveproxy-bin ];
 
-  # 2. 自动复用你在全局（如 dae.nix）中定义好的 sops.defaultSopsFile 路径！
-  # 并在运行期将所有人限制为 naiveproxy，保证安全
+  # 2. 并在运行期将所有人限制为 naiveproxy，保证安全
   sops.secrets.naive_proxy = {
-    sopsFile = config.sops.defaultSopsFile;
+    sopsFile = proxySecrets;
     owner = "naiveproxy";
     group = "naiveproxy";
   };
@@ -61,7 +60,6 @@ in
       Type = "simple";
       # 动态读取解密出的 proxy 链接并直接启动
       ExecStart = "${naiveproxy-bin}/bin/naive ${config.sops.templates."naiveproxy.json".path}";
-      #ExecStart = "${pkgs.bash}/bin/bash -c '${naiveproxy-bin}/bin/naive --listen=${listenPort} --proxy=$(cat ${config.sops.secrets.naive_proxy.path})'";
       Restart = "on-failure";
       RestartSec = 5;
 

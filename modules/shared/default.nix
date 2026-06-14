@@ -1,5 +1,9 @@
 { inputs, pkgs, lib, ... }:
 {
+  imports = [
+    ./sops.nix
+  ];
+
   nix = {
     channel.enable = false;
     settings = {
@@ -23,12 +27,12 @@
 
   nixpkgs.config.allowUnfree = true;
   time.timeZone = "Asia/Shanghai";
-  
+
   zramSwap = {
     enable = true;
     memoryPercent = 25;
   };
-  
+
   environment.defaultPackages = lib.mkForce [ ];
 
   environment.systemPackages = with pkgs; [
