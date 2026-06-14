@@ -21,14 +21,15 @@
       q = "exit";
 
       # jj 缩写
+      js = "jj status";
       jn = "jj new";
-      jd = "jj describe -m ";
-      jb = "jj bookmark move --to @";
+      jd = "jj describe -m";
+      jm = "jj bookmark move main --to @";
       jp = "jj git push";
       jf = "jj git fetch";
       jsq = "jj squash";     # 向前合并 
       ja = "jj abandon";     # 放弃修改
-      jr = "jj rebase -s ";   # jj rebase -s nyytxyrv -d main
+      jr = "jj rebase -s @ -d";   # jj rebase -s nyytxyrv -d main
 
       # Git 缩写（自动展开）
       gi = "git init";
