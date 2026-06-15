@@ -1,5 +1,5 @@
+# -- modules/desktop/virtualisation.nix --
 { pkgs, ... }:
-
 {
   # 1. 开启 libvirtd 虚拟化守护进程
   virtualisation.libvirtd = {

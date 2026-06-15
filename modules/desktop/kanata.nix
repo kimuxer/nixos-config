@@ -1,3 +1,4 @@
+# -- modules/desktop/kanata.nix --
 { ... }:
 {
   services.kanata = {
@@ -10,7 +11,7 @@
         (defalias
           ;; 你原本的配置：单点 Caps，长按 Super (Meta)
           cap (tap-hold-press 150 150 caps lmet)
-          
+
           ;; 新增：按住 ralt 进入 move_layer 层
           mv_lyr (layer-while-held move_layer)
         )

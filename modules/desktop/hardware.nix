@@ -1,5 +1,5 @@
+# -- modules/desktop/hardware.nix --
 { config, pkgs, ... }:
-
 let
   # Btrfs 公共挂载参数（你写的完全正确）
   commonOptions = [

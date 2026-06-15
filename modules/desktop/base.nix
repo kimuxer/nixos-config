@@ -1,22 +1,13 @@
+# -- modules/desktop/base.nix --
 { pkgs, ... }:
 
 {
   boot = {
     kernelPackages = pkgs.linuxPackages_zen;
-    initrd = {
-      systemd.enable = true;
-      kernelModules = [
-        "nvidia"
-        "nvidia_modeset"
-        "nvidia_uvm"
-        "nvidia_drm"
-      ];
-    };
 
     kernelParams = [
       "splash"
       "nosgx"
-      "nvidia-drm.modeset=1"
       "nvidia-drm.fbdev=1"
       "module_blacklist=nouveau"
     ];
@@ -42,11 +33,10 @@
 
   networking.hostName = "nixdevbox";
   networking.networkmanager.enable = true;
-  services.openssh.enable = false;
 
   i18n.defaultLocale = "en_US.UTF-8";
   i18n.extraLocaleSettings = {
-    LC_CTYPE = "zh_CN.UTF-8";                          
+    LC_CTYPE = "zh_CN.UTF-8";
   };
 
   users.users.kim = {

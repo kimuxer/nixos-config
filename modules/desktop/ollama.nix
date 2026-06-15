@@ -1,5 +1,5 @@
-{ config, pkgs, ... }:
-
+# -- modules/desktop/ollama.nix --
+{ pkgs, ... }:
 {
   # 启用并配置 Ollama
   services.ollama = {

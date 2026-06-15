@@ -1,8 +1,8 @@
+# -- modules/desktop/starship.nix --
 { ... }:
-
 {
   programs.bash.blesh.enable = true;
-  
+
   programs.starship = {
     enable = true;
     presets = [ "nerd-font-symbols" ];

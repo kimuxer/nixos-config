@@ -1,5 +1,6 @@
-# homemanager.nix
-{ inputs, ... }: {
+# -- modules/desktop/homemanager.nix --
+{ inputs, ... }:
+{
   imports = [
     inputs.home-manager.nixosModules.home-manager
   ];
@@ -9,11 +10,11 @@
     useUserPackages = true;
     backupFileExtension = "backup";
     overwriteBackup = true;
-    
+
     extraSpecialArgs = { inherit inputs; };
-    
+
     users.kim = {
-      imports = [ ../../modules/home ]; 
+      imports = [ ../../modules/home ];
     };
   };
 }

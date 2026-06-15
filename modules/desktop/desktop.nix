@@ -1,3 +1,4 @@
+# -- modules/desktop/desktop.nix --
 {
   pkgs,
   inputs,

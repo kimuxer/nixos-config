@@ -1,5 +1,5 @@
+# -- modules/desktop/packages.nix --
 { pkgs, ... }:
-
 {
   environment.systemPackages = with pkgs; [
     udiskie

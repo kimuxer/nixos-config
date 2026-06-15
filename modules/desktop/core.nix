@@ -1,5 +1,5 @@
+# -- modules/desktop/core.nix --
 { pkgs, ... }:
-
 {
   # 通用系统基础能力
   security.polkit.enable = true;
@@ -11,6 +11,7 @@
   services.tumbler.enable = true;
   services.fwupd.enable = true;
   services.tuned.enable = true;
+  services.openssh.enable = false;
 
   programs.dconf.enable = true;
   programs.nix-ld.enable = true;

@@ -1,3 +1,4 @@
+# -- modules/desktop/default.nix --
 { ... }:
 {
   imports = [
