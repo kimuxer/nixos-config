@@ -3,7 +3,10 @@
 {
   # 通用系统基础能力
   security.polkit.enable = true;
-  services.dbus.enable = true;
+  services.dbus = {
+    enable = true;
+    packages = [ pkgs.gsettings-desktop-schemas ];
+  };
   services.gnome.gnome-keyring.enable = true;
   services.upower.enable = true;
   services.gvfs.enable = true;

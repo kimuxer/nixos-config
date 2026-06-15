@@ -35,7 +35,6 @@
       # Niri 会话的首选配置（屏幕共享等使用 gnome/gtk）
       niri = {
         default = [
-          "gnome"
           "gtk"
         ];
         "org.freedesktop.impl.portal.ScreenCast" = [
@@ -47,7 +46,6 @@
           "gtk"
         ];
         "org.freedesktop.impl.portal.FileChooser" = [
-          "gnome"
           "gtk"
         ];
       };
@@ -72,7 +70,7 @@
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
     MOZ_ENABLE_WAYLAND = "1";
-    MOZ_DISABLE_RDD_SANDBOX = "1";
+    #MOZ_DISABLE_RDD_SANDBOX = "1";
     _JAVA_AWT_WM_NONREPARENTING = "1";
     EDITOR = "hx";
     VISUAL = "hx";

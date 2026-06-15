@@ -57,9 +57,12 @@
       matches = [
         { title = "Open File"; }
         { title = "Save File"; }
-        { title = "^Firefox"; }
         { app-id = "satty"; }
+        { app-id="xdg-desktop-portal-gtk"; }
       ];
+
+      default-column-width.fixed = 850;
+      default-window-height.fixed = 550;
       open-floating = true;
     }
   ];

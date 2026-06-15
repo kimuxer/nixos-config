@@ -8,6 +8,8 @@ let
 in
 {
   dconf.settings."org/gnome/desktop/interface" = {
+    gtk-theme = themeName;
+    icon-theme = iconThemeName;
     cursor-theme = cursorThemeName;
     cursor-size = cursorSize;
   };
@@ -49,6 +51,23 @@ in
     [General]
     theme=${kvantumTheme}
   '';
+  xdg.userDirs = {
+    enable = true;
+    createDirectories = true; # 如果英文文件夹不存在，HM 会自动帮你创建它们
+
+    # 1. 把你需要的英文常用目录指定好
+    download = "$HOME/Downloads";
+    desktop = "$HOME/Desktop";
+    documents = "$HOME/Documents";
+    
+    # 2. 如果你不需要“视频、音乐、公共、模板”这些烦人的默认目录
+    # 直接把它们指向你的 $HOME（家目录），GTK 就会自动在左侧边栏隐藏掉它们！
+    music = "$HOME";
+    pictures = "$HOME";
+    videos = "$HOME";
+    templates = "$HOME";
+    publicShare = "$HOME";
+  };
 
   home.sessionVariables = {
     GTK_THEME = themeName;
