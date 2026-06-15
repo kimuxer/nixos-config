@@ -59,9 +59,6 @@
   # ============================
   # 桌面环境基础环境变量
   # ============================
-  systemd.services.sddm.environment = {
-    WLR_NO_HARDWARE_CURSORS = "1";
-  };
 
   environment.variables = {
     LIBVA_DRIVER_NAME = "nvidia";
@@ -74,6 +71,7 @@
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
     MOZ_ENABLE_WAYLAND = "1";
+    MOZ_DISABLE_RDD_SANDBOX = "1";
     _JAVA_AWT_WM_NONREPARENTING = "1";
     EDITOR = "hx";
     VISUAL = "hx";

@@ -1,13 +1,13 @@
 # /home/kim/nixos/modules/home/rime/default.nix
 { pkgs, ... }:
 {
-  i18n.inputMethod = {                                                                                        
-    enable = true;                                                                                            
-    type = "fcitx5";                                                                                          
-    fcitx5 = {                                                                                                
-      waylandFrontend = true;                                                                                 
+  i18n.inputMethod = {
+    enable = true;
+    type = "fcitx5";
+    fcitx5 = {
+      waylandFrontend = true;
       addons = with pkgs; [
-        fcitx5-rime                                                                                           
+        fcitx5-rime
       ];
     };
   };
@@ -16,28 +16,27 @@
   home.file = {
     ".local/share/fcitx5/rime/wubi_pinyin.schema.yaml".source = pkgs.fetchurl {
       url = "https://raw.githubusercontent.com/rime/rime-wubi/master/wubi_pinyin.schema.yaml";
-      sha256 = "sha256-KcjP/Fe7HhF5JyuZ2TI3Jt4J5TMedI+0oC1G0SE+q+g="; 
+      sha256 = "sha256-KcjP/Fe7HhF5JyuZ2TI3Jt4J5TMedI+0oC1G0SE+q+g=";
     };
 
     ".local/share/fcitx5/rime/wubi86.dict.yaml".source = pkgs.fetchurl {
       url = "https://raw.githubusercontent.com/rime/rime-wubi/master/wubi86.dict.yaml";
-      sha256 = "sha256-+DPYa3I0H+guBppCW2Yl8p74XxvA809vt5df5RSIi1o="; 
+      sha256 = "sha256-+DPYa3I0H+guBppCW2Yl8p74XxvA809vt5df5RSIi1o=";
     };
 
     ".local/share/fcitx5/rime/wubi86.schema.yaml".source = pkgs.fetchurl {
       url = "https://raw.githubusercontent.com/rime/rime-wubi/master/wubi86.schema.yaml";
-      sha256 = "sha256-zbWqwamqBxVS1f3/3+WmYYtCmxk1i4seADEw6DXVoWY="; 
+      sha256 = "sha256-zbWqwamqBxVS1f3/3+WmYYtCmxk1i4seADEw6DXVoWY=";
     };
 
     ".local/share/fcitx5/rime/wubi_trad.schema.yaml".source = pkgs.fetchurl {
       url = "https://raw.githubusercontent.com/rime/rime-wubi/master/wubi_trad.schema.yaml";
-      sha256 = "sha256-pG9BbH1nkWo13lS3LiNrU8IoHamrQ57sC1to2zB495Q="; 
+      sha256 = "sha256-pG9BbH1nkWo13lS3LiNrU8IoHamrQ57sC1to2zB495Q=";
     };
     ".local/share/fcitx5/rime/default.custom.yaml".text = ''
       patch:
         schema_list:
           - schema: wubi_pinyin  # 启用五笔拼音
-          - schema: wubi
     '';
   };
 }

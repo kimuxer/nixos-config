@@ -6,42 +6,21 @@
       isDefault = true;
 
       settings = {
-        # 极简 UI
-        "browser.startup.page" = 1;
-        "browser.startup.homepage" = "https://github.com";
-        "browser.tabs.inTitlebar" = 1;
-        "browser.toolbars.bookmarks.visibility" = "never";
-        "browser.uidensity" = 1;
-        "extensions.autoDisableScopes" = 0;
+        # 1. 布局：自动开启垂直标签并关闭新手气泡引导
+        "sidebar.verticalTabs" = true;
+        "sidebar.verticalTabs.dragToPinPromo.dismissed" = true;
 
-        # 性能与隐私
-        "network.trr.mode" = 2;
-        "browser.search.suggest.enabled" = false;
-        "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
-      };
+        # 2. 1080 Ti 显卡硬解与 WebRender 全局渲染加速
+        "gfx.webrender.all" = true;
+        "media.hardware-video-decoding.force-enabled" = true;
+        "media.ffmpeg.vaapi.enabled" = true;
+        "layers.acceleration.force-enabled" = true;
 
-      # 自定义 CSS 完美隐藏顶部标签栏与侧边栏页眉，完美适配侧边栏标签插件
-      userChrome = ''
-        #TabsToolbar {
-          position: absolute !important;
-          visibility: collapse !important;
-        }
-        #sidebar-box #sidebar-header {
-          display: none !important;
-        }
-      '';
-
-      # 高级搜索（极其方便，在地址栏输入 @np 即可搜包）
-      search = {
-        force = true;
-        default = "Google";
-        engines = {
-          "Nix Packages" = {
-            urls = [{ template = "https://search.nixos.org/packages?query={searchTerms}"; }];
-            icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-            definedAliases = [ "@np" ];
-          };
-        };
+        # 3. 体验与广告净化：拒绝风险警告提示、全面砍掉新标签页广告和赞助链接
+        "browser.aboutConfig.showWarning" = false;
+        "browser.vpn_promo.enabled" = false;
+        "browser.newtabpage.activity-stream.feeds.topsites" = false;
+        "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
       };
     };
   };

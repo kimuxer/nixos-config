@@ -66,9 +66,6 @@ in
   };
 
   home.packages = [
-    # 浏览器
-    pkgs.firefox
-
     # 聊天
     pkgs.telegram-desktop
     pkgs.wechat
