@@ -85,7 +85,6 @@ in
     pkgs.dust
     pkgs.duf
     pkgs.nixd
-    pkgs.nil
     pkgs.llvmPackages.lldb
     pkgs.vscode-extensions.vadimcn.vscode-lldb
   ];
