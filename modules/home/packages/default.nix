@@ -67,7 +67,7 @@ in
 
   home.packages = [
     # 浏览器
-    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
+    pkgs.firefox
 
     # 聊天
     pkgs.telegram-desktop

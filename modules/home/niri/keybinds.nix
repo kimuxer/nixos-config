@@ -7,7 +7,7 @@
 
     # 应用启动
     "Mod+Return" = { action.spawn = [ "footclient" ]; };
-    "Mod+B"      = { action.spawn = [ "zen" "--class" "zen-browser" ]; };
+    "Mod+B"      = { action.spawn = [ "firefox" ]; };
     "Mod+E"      = { action.spawn = [ "footclient" "-e" "yazi" ]; };
 
     # Noctalia 面板与设置

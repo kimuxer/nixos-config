@@ -17,9 +17,6 @@
     noctalia.url = "github:noctalia-dev/noctalia";
     noctalia.inputs.nixpkgs.follows = "nixpkgs";
 
-    zen-browser.url = "github:youwen5/zen-browser-flake";
-    zen-browser.inputs.nixpkgs.follows = "nixpkgs";
-
     # 透明代理
     daeuniverse.url = "github:daeuniverse/flake.nix";
     daeuniverse.inputs.nixpkgs.follows = "nixpkgs";

@@ -9,7 +9,7 @@
     ./zed-editor
     ./fastfetch
     ./yazi
-#    ./nvf
+    ./firefox
     ./foot
     ./themes
     ./starship

@@ -143,7 +143,7 @@ in
             "telegram"
             "yazi"
             "zed"
-            "zen-browser"
+            "firefox"
           ];
         };
       };
