@@ -8,23 +8,15 @@
       waylandFrontend = true;
       addons = with pkgs; [
         fcitx5-rime
-        rime-data
       ];
     };
   };
 
   # 安装wubi_pinyin
   home.file = {
-    ".local/share/fcitx5/rime/default.yaml".source = "${pkgs.rime-data}/share/rime-data/default.yaml";
-
     ".local/share/fcitx5/rime/pinyin_simp.schema.yaml".source = pkgs.fetchurl {
       url = "https://raw.githubusercontent.com/rime/rime-pinyin-simp/refs/heads/master/pinyin_simp.schema.yaml";
       sha256 = "sha256-cmdyGQoyWuS/I2kV59YqI/7djPHainQ3CiD4cZbGd3U=";
-    };
-
-    ".local/share/fcitx5/rime/pinyin_simp.dict.yaml".source = pkgs.fetchurl {
-      url = "https://raw.githubusercontent.com/rime/rime-pinyin-simp/refs/heads/master/pinyin_simp.dict.yaml";
-      sha256 = "sha256-40FZg0Og8PILW7GqzDSn87t4h97uyz9geWJiqqKYPms=";
     };
 
     ".local/share/fcitx5/rime/wubi_pinyin.schema.yaml".source = pkgs.fetchurl {
