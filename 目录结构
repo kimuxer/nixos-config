@@ -1,54 +1,57 @@
 nixos-config/
 ├── flake.nix                  # Flake 入口，统一管理所有主机配置
 ├── flake.lock                 # 自动生成的依赖锁文件
+├── .sops.yaml                 # SOPS 加密配置
 ├── README.md                  # 项目说明
 ├── 常用命令.md                # 常用操作命令记录
 ├── assets/                    # 静态资源
 │
-├── hosts/                     # 每台机器的特定配置
-│   ├── desktop/
-│   │   ├── base.nix           # 桌面主机基础配置
-│   │   ├── default.nix        # 桌面主机总入口
-│   │   ├── hardware.nix       # 硬件相关配置
-│   │   └── hardware-configuration.nix
-
-│   └── router/
-│       ├── base.nix
-│       ├── boot.nix
-│       ├── dae.nix            # DAE 代理配置
-│       ├── default.nix        # 软路由总入口
-│       ├── disko.nix          # 磁盘布局
-│       ├── naiveproxy.nix     # NaiveProxy 配置
-│       ├── network.nix        # 路由网络配置
-│       ├── services.nix       # 路由服务配置
-│       └── users.nix          # 路由器用户配置
-│
-├── modules/                   # 可复用模块
+├── modules/                   # 配置模块
+│   ├── desktop/               # 桌面主机配置
+│   │   ├── base.nix
+│   │   ├── core.nix
+│   │   ├── default.nix
+│   │   ├── desktop.nix
+│   │   ├── fonts.nix
+│   │   ├── hardware-configuration.nix
+│   │   ├── hardware.nix
+│   │   ├── homemanager.nix
+│   │   ├── kanata.nix
+│   │   ├── ollama.nix
+│   │   ├── packages.nix
+│   │   ├── starship.nix
+│   │   └── virtualisation.nix
+│   │
+│   ├── router/                # 软路由主机配置
+│   │   ├── base.nix
+│   │   ├── dae.nix
+│   │   ├── default.nix
+│   │   ├── disko.nix
+│   │   ├── naiveproxy.nix
+│   │   ├── network.nix
+│   │   ├── services.nix
+│   │   └── users.nix
+│   │
 │   ├── home/                  # Home Manager 用户级模块
 │   │   ├── default.nix
 │   │   ├── fastfetch/
 │   │   ├── fish/
 │   │   ├── foot/
 │   │   ├── git/
+│   │   ├── helix/
+│   │   ├── jujutsu/
 │   │   ├── niri/
 │   │   ├── noctalia/
 │   │   ├── nvf/
 │   │   ├── packages/
+│   │   ├── rime/
 │   │   ├── starship/
 │   │   ├── themes/
 │   │   ├── yazi/
 │   │   └── zed-editor/
-│   ├── shared/                # 跨机器共享基础配置
-│   │   └── default.nix
-│   └── system/                # 系统级通用模块
-│       ├── core.nix
-│       ├── default.nix
-│       ├── desktop.nix
-│       ├── fonts.nix
-│       ├── kanata.nix
-│       ├── packages.nix
-│       ├── starship.nix
-│       └── virtualisation.nix
+│   │
+│   └── shared/                # 跨机器共享基础配置
+│       └── default.nix
 │
 ├── secrets/                   # sops 加密文件
 │   └── secrets.yaml
