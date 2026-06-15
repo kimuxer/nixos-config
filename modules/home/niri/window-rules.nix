@@ -14,9 +14,9 @@
       clip-to-geometry = true;
     }
 
-    # --- 2. Zen 浏览器专用规则 ---
+    # --- 2. FireFox 浏览器专用规则 ---
     {
-      matches = [{ app-id = "zen"; }];
+      matches = [{ app-id = "firefox"; }];
       open-maximized = true;
       open-on-workspace = "2";
       # 浏览器不需要透明，关闭 Niri 的背景绘制以提高性能并消除圆角锯齿
@@ -36,8 +36,7 @@
       matches = [{ is-active = false; }];
       # 排除 Kitty，因为终端我们通常希望它背景一直透明但文字清晰
       excludes = [
-        { app-id = "zen"; }
-        { app-id = "com.danklinux.dms"; }
+        { app-id = "firefox"; }
       ];
       opacity = 0.8;
     }
@@ -58,6 +57,7 @@
       matches = [
         { title = "Open File"; }
         { title = "Save File"; }
+        { title = "^Firefox"; }
         { app-id = "satty"; }
       ];
       open-floating = true;

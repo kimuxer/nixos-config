@@ -40,8 +40,16 @@
     };
     ".local/share/fcitx5/rime/default.custom.yaml".text = ''
       patch:
+        style:
+          - horizontal: false
         schema_list:
           - schema: wubi_pinyin  # 启用五笔拼音
+    '';
+  
+    # 强制 Fcitx5 的皮肤候选词菜单变为竖排
+    ".config/fcitx5/conf/classicui.conf".text = ''
+      # 候选词列表方向 (Vertical 或 Horizontal)
+      Vertical Candidate List=True
     '';
   };
 }
