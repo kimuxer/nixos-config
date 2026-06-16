@@ -18,7 +18,7 @@ let
 
       # 瘦身手术：删掉不属于 Rime 核心的说明文档、图片和第三方键盘配置
       rm -rf ./.git ./.github ./仓键盘布局 ./imgs
-      rm -f README.md LICENSE *.md
+      rm -f README.md LICENSE *.md .gitignore
 
       # 重点：把极点五笔全家桶全部打包进 Nix Store
       cp -r ./* $out/share/rime-data
