@@ -9,6 +9,8 @@
       waylandFrontend = true;
       addons = with pkgs; [
         fcitx5-rime
+        fcitx5-gtk
+        qt6Packages.fcitx5-qt
       ];
 
       settings.globalOptions = {
