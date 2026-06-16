@@ -1,0 +1,36 @@
+# default.custom.yaml
+# save it to:
+#   ~/.local/share/fcitx5/rime  (linux)
+
+patch:
+  schema_list:
+    - schema: wubi86_jidian_pinyin # 五笔拼音混输
+    - schema: wubi86_jidian_trad_pinyin # 五笔拼音混输 - 简入繁出
+
+  # Menu
+  menu:
+    page_size: 6
+
+  #-----------------------------------------------
+  # 中英文切换自定义
+  #-----------------------------------------------
+  # inline_ascii  在输入法的临时英文编辑区内输入字母，数字，符号，空格等，回车上屏后自动复位到中文
+  # commit_text   已输入的候选文字上屏并切换至英文输入模式
+  # commit_code   已输入的编码字符上屏并切换至英文输入模式
+  # -----------------------------------------------
+  # 参考链接： https://gist.github.com/lotem/2981316
+
+  ascii_composer:
+    good_old_caps_lock: true # 保持大写键的传统切换大写功能
+    switch_key:
+      Shift_L: inline_ascii
+      Shift_R: inline_ascii
+      Caps_Lock: noop # 禁用大写键切中英，防止误触
+      Control_L: noop
+      Control_R: noop
+
+  recognizer:
+    patterns: # 一些常见的英文组合，当正则匹配到这些时，都不会生成候选词，而只输入英文
+      email: "^[-_.0-9A-Za-z]+@.*$"
+      uppercase: "[A-Z][-_+.'0-9A-Za-z]*$"
+      url: "^(www[.]|https?:|ftp[.:]|mailto:|file:|localhost).*$|^[a-z]+[.].+$"

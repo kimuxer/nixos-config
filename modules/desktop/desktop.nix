@@ -70,7 +70,6 @@
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
     MOZ_ENABLE_WAYLAND = "1";
-    #MOZ_DISABLE_RDD_SANDBOX = "1";
     _JAVA_AWT_WM_NONREPARENTING = "1";
     EDITOR = "hx";
     VISUAL = "hx";

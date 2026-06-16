@@ -18,5 +18,10 @@
     ./rime
   ];
 
+  xdg.userDirs = {
+    enable = true;
+    createDirectories = true;
+  };
+
   home.stateVersion = "26.11";
 }
