@@ -24,14 +24,6 @@
           "master"
         ];
       };
-
-      # 提效缩写
-      aliases = {
-        "l" = [ "log" ];
-        "st" = [ "status" ];
-        "sw" = [ "new" ];
-        "sq" = [ "squash" ];
-      };
     };
   };
 
