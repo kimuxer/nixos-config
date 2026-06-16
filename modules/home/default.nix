@@ -22,6 +22,7 @@
     enable = true;
     createDirectories = true;
   };
-
+  home.username = "kim";
+  home.homeDirectory = "/home/kim";
   home.stateVersion = "26.11";
 }

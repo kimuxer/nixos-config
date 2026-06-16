@@ -24,13 +24,13 @@
       jjs = "jj status";
       jjn = "jj new";
       jjd = "jj describe";
-      jdm = "jj describe -m";
-      jbm = "jj bookmark move main --to @";
+      jjdm = "jj describe -m";
+      jjbm = "jj bookmark move main --to @";
       jjc = "jj git clone";
       jjp = "jj git push";
       jjf = "jj git fetch";
-      jsq = "jj squash";     # 向前合并
-      jdel = "jj abandon";     # 放弃修改
+      jjsq = "jj squash";     # 向前合并
+      jjdel = "jj abandon";     # 放弃修改
       jjr = "jj rebase -s @ -d";   # jj rebase -s 源节点 -d 目标节点
 
       # Git 缩写（自动展开）
