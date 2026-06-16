@@ -1,15 +1,16 @@
 # default.custom.yaml
 # save it to:
-#   ~/.local/share/fcitx5/rime  (linux)
+#   ~/.local/share/fcitx5/rime
 
 patch:
+  # 菜单中可选的方案列表，可根据喜好自行调整顺序，第一位为默认方案
   schema_list:
     - schema: wubi86_jidian_pinyin # 五笔拼音混输
     - schema: wubi86_jidian_trad_pinyin # 五笔拼音混输 - 简入繁出
 
   # Menu
   menu:
-    page_size: 6
+    page_size: 6 # 候选词数量，最多支持 10 个
 
   #-----------------------------------------------
   # 中英文切换自定义
@@ -21,11 +22,11 @@ patch:
   # 参考链接： https://gist.github.com/lotem/2981316
 
   ascii_composer:
-    good_old_caps_lock: true # 保持大写键的传统切换大写功能
+    good_old_caps_lock: true # true: 在保持 cap 键原有的特征， false: 点击不会切换大小写
     switch_key:
-      Shift_L: inline_ascii
+      Caps_Lock: noop # 如果想用 cap 键切换中英文输入，就修改为上面三种的任一一种，否则用 noop
+      Shift_L: inline_ascii # macOs 上 shift 键不区别左右，设置参数同上
       Shift_R: inline_ascii
-      Caps_Lock: noop # 禁用大写键切中英，防止误触
       Control_L: noop
       Control_R: noop
 
