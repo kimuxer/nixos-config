@@ -42,6 +42,10 @@ engine:
     - table_translator
 
 speller:
+  alphabet: zyxwvutsrqponmlkjihgfedcba
+  # 这里的 delimiter 定义了编码的分隔符，通常五笔用分号或不需要
+  algebra:
+    - derive/^([a-z]+)$/$1/
 
 translator:
   dictionary: wubi86_jidian             # 翻译器将调取此字典文件
