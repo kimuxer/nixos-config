@@ -3,6 +3,6 @@
 // =========================================================================
 cursor {
     hide-when-typing
-    theme "Bibata-Modern-Ice"
-    size 20
+    xcursor-theme "Bibata-Modern-Ice"
+    xcursor-size 20
 }

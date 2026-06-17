@@ -12,7 +12,6 @@ layout {
 
     // 🛠️ 2. 窗口高档阴影视觉调校
     shadow {
-        enable
         softness 20.0
         spread 3.0
     }
@@ -26,7 +25,6 @@ layout {
 
     // 🛠️ 4. 26.x 极其惊艳的新特性：标签页式并排窗口指示器（Tabbed Columns）
     tab-indicator {
-        enable
         gap 4
         width 4
         hide-when-single-tab
@@ -35,7 +33,6 @@ layout {
 
     // ⚡ 冰蓝色聚焦框边缘描边
     focus-ring {
-        enable
         width 2
     }
 }

@@ -38,7 +38,6 @@
           };
         };
         extraConfig = ''
-          randomise_memory: yes
           term_font: ${../../assets/LB_OCR.F16}
         '';
 

@@ -6,31 +6,20 @@
     keyboards.default = {
       config = ''
         (defsrc
-          space ralt 1 2 3 4 5 6 7 8 9 h j k l q)
+          caps ralt 1 2 3 4 5 6 7 8 9 h j k l q)
 
         (defalias
-          ;; 你原本的配置：单点 Caps，长按 Super (Meta)
-          spc (tap-hold 150 150 space lmet)
-
-          ;; 新增：按住 ralt 进入 move_layer 层
+          caps (tap-hold-press 120 150 caps lmet)
           mv_lyr (layer-while-held move_layer)
         )
 
         (deflayer default
-          ;; @spc 对应 space 逻辑
-          ;; @mv_lyr 对应 ralt 逻辑
-          @spc @mv_lyr 1 2 3 4 5 6 7 8 9 h j k l q)
+          @caps @mv_lyr 1 2 3 4 5 6 7 8 9 h j k l q)
 
         (deflayer move_layer
-          ;; 1. (space): _ 表示保持 space 原有行为
-          ;; 2. (ralt): _ 表示保持 RAlt 原有行为（作为层触发键，这里必须是透明/保持，否则层会立刻断开）
           _ _
-          ;; M-S-1 代表 Super(Meta) + Shift + 1
-          ;; 这里的 M 必须和你在 Niri 里的 Mod 定义一致
           M-S-1 M-S-2 M-S-3 M-S-4 M-S-5 M-S-6 M-S-7 M-S-8 M-S-9
-          ;; h j k l 窗口互换
           M-S-h M-S-j M-S-k M-S-l
-          ;; q 呼出电源菜单
           M-S-q)
       '';
     };

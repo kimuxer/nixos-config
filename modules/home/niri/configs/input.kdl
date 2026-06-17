@@ -3,11 +3,11 @@
 // =========================================================================
 input {
     // 🛠️ 1. 禁用所有不用的多余外设（在 KDL 中使用 block 阻止其加载）
-    tablet { block; }
-    touch { block; }
-    touchpad { block; }
-    trackball { block; }
-    trackpoint { block; }
+//    tablet { block; }
+//    touch { block; }
+//    touchpad { block; }
+//    trackball { block; }
+//    trackpoint { block; }
 
     // 🛠️ 2. 键盘高级调校 (键盘连发速度控制)
     keyboard {

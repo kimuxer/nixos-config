@@ -4,12 +4,8 @@
 
 // --- 1. 统一全局窗口圆角与裁剪 ---
 window-rule {
-    geometry-corner-radius
-    top-left=6.0
-    top-right=6.0
-    bottom-left=6.0
-    bottom-right=6.0
-    clip-to-geometry
+    geometry-corner-radius 6
+    clip-to-geometry true
 }
 
 // --- 2. 让普通应用窗口在失去焦点、或者带有透明度时，背景展现写实的高斯模糊
@@ -25,7 +21,7 @@ window-rule {
 // --- 3. FireFox 浏览器专用规则 ---
 window-rule {
     match app-id="firefox"
-    open-maximized
+    open-maximized true
     open-on-workspace "2"
     draw-border-with-background false
 }
@@ -47,10 +43,7 @@ window-rule {
 // --- 6. Fcitx5 输入法配置窗口特化规则 ---
 window-rule {
     match app-id="org.fcitx."
-    open-floating
-    focus-ring { enable false; }
-    border { enable false; }
-    shadow { enable false; }
+    open-floating true
 }
 
 // --- 7. 常见弹出窗口、文件选择器与 Satty 截图窗口处理 ---
@@ -62,7 +55,7 @@ window-rule {
 
     default-column-width { fixed 850; }
     default-window-height { fixed 550; }
-    open-floating
+    open-floating true
 }
 
 blur {

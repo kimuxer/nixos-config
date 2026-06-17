@@ -20,10 +20,8 @@
       prefer-no-csd
       hotkey-overlay { skip-at-startup; }
 
-      spawn-at-startup {
-        run "fcitx5" "-d" "--replace"
-        run "noctalia"
-      }
+      spawn-at-startup "fcitx5" "-d" "--replace"
+      spawn-at-startup "noctalia"
     '';
     # Copy configs to ~/.config/niri/configs
     ".config/niri/configs" = {
