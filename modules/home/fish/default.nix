@@ -16,7 +16,8 @@
       du = "dust";
       grep = "rg";
       find = "fd";
-      man = "tldr";
+      man = "tealdeer";
+      tldr = "tealdeer";
       cls = "clear";
       q = "exit";
 
@@ -59,9 +60,6 @@
       # 终端locale为en
       export LANG=en_US.UTF-8
       export LC_ALL=en_US.UTF-8
-
-      # 启用 Starship
-      eval "$(${pkgs.starship}/bin/starship init fish)"
 
       # 开启终端时运行一次fastfetch
       if status is-interactive
