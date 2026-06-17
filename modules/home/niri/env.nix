@@ -7,8 +7,8 @@
     # Niri 会话内强制使用的图形后端
     SDL_VIDEODRIVER = "wayland";
     CLUTTER_BACKEND = "wayland";
-    GDK_BACKEND = "wayland,x11";
-    QT_QPA_PLATFORM = "wayland;xcb";
+    GDK_BACKEND = "wayland";
+    QT_QPA_PLATFORM = "wayland";
 
     # ⚡ 仅在 Niri 会话中禁用 Qt 应用的客户端窗口装饰，防止双重标题栏
     QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
