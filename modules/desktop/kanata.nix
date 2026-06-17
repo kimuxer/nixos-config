@@ -6,23 +6,23 @@
     keyboards.default = {
       config = ''
         (defsrc
-          caps ralt 1 2 3 4 5 6 7 8 9 h j k l q)
+          space ralt 1 2 3 4 5 6 7 8 9 h j k l q)
 
         (defalias
           ;; 你原本的配置：单点 Caps，长按 Super (Meta)
-          cap (tap-hold-press 150 150 caps lmet)
+          spc (tap-hold 150 150 space lmet)
 
           ;; 新增：按住 ralt 进入 move_layer 层
           mv_lyr (layer-while-held move_layer)
         )
 
         (deflayer default
-          ;; @cap 对应 Caps 逻辑
+          ;; @spc 对应 space 逻辑
           ;; @mv_lyr 对应 ralt 逻辑
-          @cap @mv_lyr 1 2 3 4 5 6 7 8 9 h j k l q)
+          @spc @mv_lyr 1 2 3 4 5 6 7 8 9 h j k l q)
 
         (deflayer move_layer
-          ;; 1. (caps): _ 表示保持 Caps 原有行为
+          ;; 1. (space): _ 表示保持 space 原有行为
           ;; 2. (ralt): _ 表示保持 RAlt 原有行为（作为层触发键，这里必须是透明/保持，否则层会立刻断开）
           _ _
           ;; M-S-1 代表 Super(Meta) + Shift + 1
