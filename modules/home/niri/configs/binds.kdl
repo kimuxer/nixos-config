@@ -1,0 +1,81 @@
+// =========================================================================
+// niri : binds.kdl
+// =========================================================================
+binds {
+    // 🛠️ 1. 系统会话控制
+    "Ctrl+Shift+Delete" { quit; }
+
+    // 🛠️ 2. 常用应用启动 (在 KDL 中数组直接平铺，不需要括号和逗号)
+    "Mod+Return" { spawn "footclient"; }
+    "Mod+B"      { spawn "firefox"; }
+    "Mod+E"      { spawn "footclient" "-e" "yazi"; }
+
+    // 🛠️ 3. Noctalia 面板组件控制
+    "Mod+D"         { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
+    "Mod+V"         { spawn "noctalia" "msg" "panel-toggle" "clipboard"; }
+    "Mod+M"         { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
+    "Mod+Y"         { spawn "noctalia" "msg" "panel-toggle" "wallpaper"; }
+    "Mod+Semicolon" { spawn "noctalia" "msg" "settings-toggle"; }
+
+    // 🛠️ 4. 核心平铺布局与窗口控制
+    "Mod+Space"       { toggle-overview; }
+    "Mod+Q"           { close-window; }
+    "Mod+T"           { toggle-window-floating; }
+    "Mod+F"           { fullscreen-window; }
+    "Mod+Shift+Slash" { show-hotkey-overlay; }
+
+    "Mod+W"      { toggle-column-tabbed-display; }
+    "Mod+Comma"  { consume-window-into-column; }
+    "Mod+Period" { expel-window-from-column; }
+
+    // 🛠️ 5. 锁屏与锁屏控制
+    "Mod+Alt+L"   { spawn "noctalia" "msg" "session" "lock"; }
+    "Mod+Shift+Q" { spawn "noctalia" "msg" "panel-toggle" "session"; }
+
+    // 🛠️ 6. 截图生态管道联动 (Noctalia 接收完直接通过 std 管道喂给你的 1200x800 Satty)
+    "Ctrl+Shift+1" { spawn "noctalia" "msg" "screenshot-region"; }
+    "Ctrl+Shift+2" { spawn "noctalia" "msg" "screenshot-fullscreen"; }
+
+    // 🛠️ 7. 工作区快速跳转
+    "Mod+Tab" { focus-workspace-previous; }
+    "Mod+1" { focus-workspace 1; }
+    "Mod+2" { focus-workspace 2; }
+    "Mod+3" { focus-workspace 3; }
+    "Mod+4" { focus-workspace 4; }
+    "Mod+5" { focus-workspace 5; }
+    "Mod+6" { focus-workspace 6; }
+    "Mod+7" { focus-workspace 7; }
+    "Mod+8" { focus-workspace 8; }
+    "Mod+9" { focus-workspace 9; }
+
+    "Mod+Shift+1" { move-column-to-workspace 1; }
+    "Mod+Shift+2" { move-column-to-workspace 2; }
+    "Mod+Shift+3" { move-column-to-workspace 3; }
+    "Mod+Shift+4" { move-column-to-workspace 4; }
+    "Mod+Shift+5" { move-column-to-workspace 5; }
+    "Mod+Shift+6" { move-column-to-workspace 6; }
+    "Mod+Shift+7" { move-column-to-workspace 7; }
+    "Mod+Shift+8" { move-column-to-workspace 8; }
+    "Mod+Shift+9" { move-column-to-workspace 9; }
+
+    // 🛠️ 8. 焦点导航与位置移动 (对应你的 HJKl 黄金飞梭键位)
+    "Mod+H" { focus-column-left; }
+    "Mod+L" { focus-column-right; }
+    "Mod+K" { focus-window-up; }
+    "Mod+J" { focus-window-down; }
+
+    "Mod+Shift+H" { move-column-left; }
+    "Mod+Shift+L" { move-column-right; }
+    "Mod+Shift+K" { move-window-up; }
+    "Mod+Shift+J" { move-window-down; }
+
+    // 🛠️ 9. 布局长宽尺寸微调 (数字百分比字符串直接输入)
+    "Mod+Minus"       { set-column-width "-10%"; }
+    "Mod+Equal"       { set-column-width "+10%"; }
+    "Mod+Shift+Minus" { set-window-height "-10%"; }
+    "Mod+Shift+Equal" { set-window-height "+10%" ; }
+
+    // 🛠️ 10. 鼠标滚轮导航
+    "Mod+WheelScrollDown" { focus-column-right; }
+    "Mod+WheelScrollUp"   { focus-column-left; }
+}

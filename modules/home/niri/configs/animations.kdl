@@ -1,0 +1,58 @@
+// =========================================================================
+//  niri : animations.kdl
+// =========================================================================
+
+animations {
+    enable
+    slowdown 0.9
+
+    config-notification-open-close {
+        enable
+        easing curve="ease-out-expo" duration-ms=250
+    }
+
+    exit-confirmation-open-close {
+        enable
+        spring stiffness=1200 damping-ratio=1.0 epsilon=0.001
+    }
+
+    horizontal-view-movement {
+        enable
+        spring stiffness=1000 damping-ratio=1.0 epsilon=0.001
+    }
+
+    window-movement {
+        enable
+        easing curve="ease-out-cubic" duration-ms=150
+    }
+
+    overview-open-close {
+        enable
+        easing curve="ease-out-expo" duration-ms=350
+    }
+
+    screenshot-ui-open {
+        enable
+        easing curve="ease-out-expo" duration-ms=200
+    }
+
+    window-open {
+        enable
+        spring stiffness=1000 damping-ratio=1.0 epsilon=0.001
+    }
+
+    window-close {
+        enable
+        easing curve="ease-out-quad" duration-ms=150
+    }
+
+    workspace-switch {
+        enable
+        easing curve="ease-out-expo" duration-ms=350
+    }
+
+    window-resize {
+        enable
+        easing curve="ease-out-expo" duration-ms=150
+    }
+}

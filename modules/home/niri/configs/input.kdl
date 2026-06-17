@@ -1,0 +1,31 @@
+// =========================================================================
+// niri : input.kdl
+// =========================================================================
+input {
+    // 🛠️ 1. 禁用所有不用的多余外设（在 KDL 中使用 block 阻止其加载）
+    tablet { block; }
+    touch { block; }
+    touchpad { block; }
+    trackball { block; }
+    trackpoint { block; }
+
+    // 🛠️ 2. 键盘高级调校 (键盘连发速度控制)
+    keyboard {
+        xkb {
+            layout "us"
+        }
+        // 延时 400ms 触发连发，每秒连发 30 次，配合你的 SpaceFN 打字极度跟手
+        repeat-delay 400
+        repeat-rate 30
+    }
+
+    // 🛠️ 3. 鼠标轨迹与平滑度控制
+    mouse {
+        accel-speed 0.2
+        accel-profile "flat" // 锁定平面无加速度，打游戏、点代码极其精准
+        scroll-factor 1.5    // 滚轮速度放大 1.5 倍，刷长代码不费手指
+    }
+
+    // 焦点切换时，鼠标指针自动瞬移过去
+    warp-mouse-to-focus
+}

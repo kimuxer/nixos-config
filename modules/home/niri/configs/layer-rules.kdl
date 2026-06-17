@@ -1,0 +1,19 @@
+// =========================================================================
+// niri : layer-rules.kdl
+// =========================================================================
+
+// 1. 匹配 Noctalia 的背景层
+layer-rule {
+    match namespace="^noctalia-backdrop$"
+    place-within-backdrop true
+}
+
+// 2. 匹配 Noctalia 的状态栏、通知、Dock 栏和面板（使用你精简后的无双引号纯净正则）
+layer-rule {
+    match namespace="^noctalia-(bar-[a-zA-Z0-9_-]+|notification|dock|panel|attached-panel|osd)$"
+    background-effect {
+        xray false
+        // 如果想完全关掉模糊，可以取消下面这一行的注释：
+        // blur false
+    }
+}

@@ -1,0 +1,41 @@
+// =========================================================================
+// niri : layout.kdl
+// =========================================================================
+layout {
+    gaps 8
+    always-center-single-column
+    default-column-display "normal"
+    center-focused-column "never"
+
+    // 🛠️ 1. 扁平化拆解：对应原配置的 default-column-width.proportion
+    default-column-width { proportion 0.5; }
+
+    // 🛠️ 2. 窗口高档阴影视觉调校
+    shadow {
+        enable
+        softness 20.0
+        spread 3.0
+    }
+
+    // 🛠️ 3. 核心修复：将 Nix 的数学除法计算式完美转化为符合 KDL 静态强类型的浮点数
+    preset-column-widths {
+        proportion 0.3333
+        proportion 0.5
+        proportion 0.6667
+    }
+
+    // 🛠️ 4. 26.x 极其惊艳的新特性：标签页式并排窗口指示器（Tabbed Columns）
+    tab-indicator {
+        enable
+        gap 4
+        width 4
+        hide-when-single-tab
+        position "top"
+    }
+
+    // ⚡ 冰蓝色聚焦框边缘描边
+    focus-ring {
+        enable
+        width 2
+    }
+}

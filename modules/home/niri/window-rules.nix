@@ -2,7 +2,6 @@
 
 {
   programs.niri.settings.window-rules = [
-    # --- 1. 全局基础规则 (WhiteSur 风格) ---
     {
       # 统一所有窗口的圆角为 6px
       geometry-corner-radius = {
@@ -19,7 +18,6 @@
       matches = [{ app-id = "firefox"; }];
       open-maximized = true;
       open-on-workspace = "2";
-      # 浏览器不需要透明，关闭 Niri 的背景绘制以提高性能并消除圆角锯齿
       draw-border-with-background = false;
     }
 
@@ -32,9 +30,8 @@
 
     # --- 4. 非活动窗口变暗效果 ---
     {
-      # 当窗口失去焦点时，设置透明度为 0.9，产生层级感
+      # 当窗口失去焦点时，设置透明度为 0.8
       matches = [{ is-active = false; }];
-      # 排除 Kitty，因为终端我们通常希望它背景一直透明但文字清晰
       excludes = [
         { app-id = "firefox"; }
       ];
@@ -46,7 +43,6 @@
       matches = [{ app-id = "org.fcitx."; }];
       # 强制浮动，不参与平铺排版
       open-floating = true;
-      # 禁用装饰：系统组件不应该有聚焦环、边框或阴影
       focus-ring.enable = false;
       border.enable = false;
       shadow.enable = false;

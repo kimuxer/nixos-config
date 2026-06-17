@@ -1,0 +1,73 @@
+// =========================================================================
+// niri : window-rules.kdl
+// =========================================================================
+
+// --- 1. 统一全局窗口圆角与裁剪 ---
+window-rule {
+    geometry-corner-radius
+    top-left=6.0
+    top-right=6.0
+    bottom-left=6.0
+    bottom-right=6.0
+    clip-to-geometry
+}
+
+// --- 2. 让普通应用窗口在失去焦点、或者带有透明度时，背景展现写实的高斯模糊
+window-rule {
+    background-effect {
+        blur true
+        xray false
+        noise 0.03
+        saturation 1.0
+    }
+}
+
+// --- 3. FireFox 浏览器专用规则 ---
+window-rule {
+    match app-id="firefox"
+    open-maximized
+    open-on-workspace "2"
+    draw-border-with-background false
+}
+
+// --- 4. foot 终端特化规则 ---
+window-rule {
+    match app-id="footclient"
+    draw-border-with-background false
+    opacity 0.95
+}
+
+// --- 5. 非活动窗口变暗效果 (排除 Firefox) ---
+window-rule {
+    match is-active=false
+    exclude app-id="firefox"
+    opacity 0.8
+}
+
+// --- 6. Fcitx5 输入法配置窗口特化规则 ---
+window-rule {
+    match app-id="org.fcitx."
+    open-floating
+    focus-ring { enable false; }
+    border { enable false; }
+    shadow { enable false; }
+}
+
+// --- 7. 常见弹出窗口、文件选择器与 Satty 截图窗口处理 ---
+window-rule {
+    match title="Open File"
+    match title="Save File"
+    match app-id="satty"
+    match app-id="xdg-desktop-portal-gtk"
+
+    default-column-width { fixed 850; }
+    default-window-height { fixed 550; }
+    open-floating
+}
+
+blur {
+    passes 2        // 模糊渲染次数，数值越强越糊
+    offset 3.0      // 采样像素间距
+    noise 0.03      // 极其关键：覆盖一层细微像素噪点颗粒，完美消除毛玻璃色彩断层
+    saturation 1.0  // 色彩饱和度
+}
