@@ -21,10 +21,8 @@
       enable = true;
       kind = {
         spring = {
-          # 刚度 (stiffness) 调低一点，让它感觉像是一个沉重的窗口在慢慢弹出
           stiffness = 1200;
-          # 阻尼 (damping) 调高一点，让它在弹到位的时候迅速停住，不要乱晃
-          damping-ratio = 1.0; # 设为 1.0 即为“临界阻尼”，没有任何多余的震荡
+          damping-ratio = 1.0;
           epsilon = 0.001;
         };
       };
@@ -35,7 +33,6 @@
       enable = true;
       kind = {
         spring = {
-          # 适当的刚度和阻尼，模拟一种“有质量的视口滑动”
           stiffness = 1000;
           damping-ratio = 1.0;
           epsilon = 0.001;
@@ -76,7 +73,7 @@
       };
     };
 
-    # ⚡ 窗口动画节点
+    # 窗口动画配置
     window-open = {
       enable = true;
       kind = {

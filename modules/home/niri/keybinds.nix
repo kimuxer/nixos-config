@@ -76,11 +76,11 @@
     "Mod+Shift+Equal".action.set-window-height = "+10%";
 
     # -- 硬件控制 --
-    "XF86AudioRaiseVolume"  = { action.spawn = [ "noctalia" "msg" "volume-up" ]; };
-    "XF86AudioLowerVolume"  = { action.spawn = [ "noctalia" "msg" "volume-down" ]; };
-    "XF86AudioMute"         = { action.spawn = [ "noctalia" "msg" "volume-mute" ]; };
-    "XF86MonBrightnessUp"   = { action.spawn = [ "noctalia" "msg" "brightness-up" ]; };
-    "XF86MonBrightnessDown" = { action.spawn = [ "noctalia" "msg" "brightness-down" ]; };
+  #  "XF86AudioRaiseVolume"  = { action.spawn = [ "noctalia" "msg" "volume-up" ]; };
+  #  "XF86AudioLowerVolume"  = { action.spawn = [ "noctalia" "msg" "volume-down" ]; };
+  #  "XF86AudioMute"         = { action.spawn = [ "noctalia" "msg" "volume-mute" ]; };
+  #  "XF86MonBrightnessUp"   = { action.spawn = [ "noctalia" "msg" "brightness-up" ]; };
+  #  "XF86MonBrightnessDown" = { action.spawn = [ "noctalia" "msg" "brightness-down" ]; };
 
     # -- 鼠标控制 --
     "Mod+WheelScrollDown".action.focus-column-right = [ ];

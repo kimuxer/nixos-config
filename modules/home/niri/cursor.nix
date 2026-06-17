@@ -6,5 +6,4 @@
     theme = "Bibata-Modern-Ice";
     size = 20;
   };
-
 }

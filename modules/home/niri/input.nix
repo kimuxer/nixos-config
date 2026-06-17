@@ -17,12 +17,12 @@
 
     # --- 2. 鼠标设置 (Mouse / Pointer) ---
     mouse = {
-      accel-speed = 0.2;         # 鼠标灵敏度 (-1.0 到 1.0)。
-      accel-profile = "flat";    # "flat": 禁用加速
-      scroll-factor = 1.5;       # 滚轮缩放系数 (如果你觉得滚轮太快或太慢)
+      accel-speed = 0.2;
+      accel-profile = "flat";
+      scroll-factor = 1.5;
     };
 
-    warp-mouse-to-focus.enable = true;  # 当你用键盘快捷键 (Mod+HJKL) 切换窗口时，鼠标指针是否自动跳到新窗口中心
+    warp-mouse-to-focus.enable = true;
 
   };
 }

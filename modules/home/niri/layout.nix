@@ -20,15 +20,13 @@
     ];
     # --- 标签页列配置 (Tabbed Columns - 重要新特性) ---
     tab-indicator = {
-      enable = true;      # 开启标签页支持
+      enable = true;
       gap = 4;
-      width = 4;          # 标签栏指示器的高度/宽度
+      width = 4;
       hide-when-single-tab = true;
       position = "top";
     };
 
-    # --- 聚焦环渐变 (Focus Ring Gradients) ---
-    # 官方文档提到 focus-ring 支持渐变色，这能让你的 UI 更有质感。
     focus-ring = {
       enable = true;
       width = 2;
