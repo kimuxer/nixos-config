@@ -13,6 +13,11 @@ in
   programs.ripgrep-all.enable = true;
   programs.bottom.enable = true;
 
+  programs.firefox = {
+    enable = true;
+    languagePacks = [ "zh-CN" ];
+  };
+
   programs.eza = {
     enable = true;
     icons = "auto";
