@@ -8,11 +8,10 @@ in
     ".local/share/fcitx5/rime" = {
       source = configsource;
       recursive = true;
+      force = true;
       onChange = ''
-        mkdir -p ~/.local/share/fcitx5/rime
-        chmod -R u+w ~/.local/share/fcitx5/rime
-        rm -f ~/.local/share/fcitx5/rime/*.bin
-        rm -f ~/.local/share/fcitx5/rime/build/*
+        rm -f ~/.local/share/fcitx5/rime/*.bin 2>/dev/null || true
+        rm -rf ~/.local/share/fcitx5/rime/build/* 2>/dev/null || true
       '';
     };
     ".local/share/fcitx5/themes/mint-green-dark" = {
@@ -32,6 +31,7 @@ in
           fcitx5-gtk
           qt6Packages.fcitx5-qt
           fcitx5-rime
+          rime-data;
         ];
         settings = {
           addons = {
