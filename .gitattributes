@@ -1,0 +1,9 @@
+# 强制所有文本文件在检出时保持 LF，严禁 Git 转换为 CRLF
+* text eol=lf
+
+# 显式指定常见配置文件类型严格使用 LF
+*.nix text eol=lf
+*.sh text eol=lf
+*.yaml text eol=lf
+*.conf text eol=lf
+*.md text eol=lf
