@@ -41,7 +41,7 @@ in
           freeze_screen = true;
 
           pipe_to_command = true;
-          pipe_command = "satty -f -";
+          pipe_command = "satty";
         };
 
         session = {

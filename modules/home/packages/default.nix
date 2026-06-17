@@ -35,6 +35,7 @@ in
     enable = true;
     settings = {
       general = {
+        input-filename = "-";
         output-filename = fileName;
         early-exit = [ "all" ];
         actions-on-enter = [
