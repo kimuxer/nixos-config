@@ -1,10 +1,10 @@
 { pkgs, ... }:
 let
-  localThemePath = ./themes/mint-green-dark;
-  activeTheme = builtins.baseNameOf localThemePath;
+  themeName = "mint-green-dark";
+  themeConf = ./themes/${themeName}/theme.conf;
   commonAssets = {
-    panel = ./assets/panel.svg;
-    highlight = ./assets/highlight.svg;
+    panel = ./themes/assets/panel.svg;
+    highlight = ./themes/assets/highlight.svg;
   };
 in
 {
@@ -21,17 +21,17 @@ in
           qt6Packages.fcitx5-qt
         ];
         themes = {
-          "${activeTheme}" = {
+          "${themeName}" = {
             panelImage = commonAssets.panel;
             highlightImage = commonAssets.highlight;
-            theme = localThemePath;
+            theme = themeConf;
           };
         };
         settings = {
           addons = {
             classicui.globalSection = {
-              Theme = activeTheme;
-              DarkTheme = activeTheme;
+              Theme = themeName;
+              DarkTheme = themeName;
               "Vertical Candidate List" = "True";
             };
           };

@@ -43,8 +43,11 @@
 
       box = {
         visible = true;
-        border = "rounded";
-        title = "NixOS fully-potentiated complete ❄️";
+        border = "plain";
+        #border = "rounded";
+        #border = "thick";
+        #border = "double";
+        title = " ❄️ NixOS ";
       };
 
       bar = {
@@ -53,10 +56,10 @@
         hide_delimiters = true;
       };
 
-      palette = {
-        visible = true;
-        type = "Full";
-      };
+      #palette = {
+      #  visible = true;
+      #  type = "Full";
+      #};
 
       randomize = {
         key_color = true;
