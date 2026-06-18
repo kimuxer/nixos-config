@@ -9,6 +9,7 @@
   imports = [
     inputs.silentSDDM.nixosModules.default
     inputs.niri.nixosModules.niri
+    inputs.noctalia-greeter.nixosModules.default
   ];
 
   # ============================
@@ -86,23 +87,39 @@
   # ============================
   # Display Manager 登录器
   # ============================
-  services.displayManager = {
-    defaultSession = "niri";
-    sddm = {
-      enable = true;
-      wayland.enable = true;
-      wayland.compositor = "kwin";
-      settings = {
-        Theme = {
-          CursorTheme = "Bibata-Modern-Ice";
-          CursorSize = "20";
-        };
-      };
-    };
-  };
+  #services.displayManager = {
+  #  defaultSession = "niri";
+  #  sddm = {
+  #    enable = true;
+  #    wayland.enable = true;
+  #    wayland.compositor = "kwin";
+  #    settings = {
+  #      Theme = {
+  #        CursorTheme = "Bibata-Modern-Ice";
+  #        CursorSize = "20";
+  #      };
+  #    };
+  #  };
+  #};
 
-  programs.silentSDDM = {
+  #programs.silentSDDM = {
+  #  enable = true;
+  #  theme = "default-left";
+  #};
+
+  services.greetd.settings.default_session.command = lib.mkForce (
+    "env WLR_NO_HARDWARE_CURSORS=1 ${config.programs.noctalia-greeter.package}/bin/noctalia-greeter-session -- ${config.programs.noctalia-greeter.greeter-args}"
+  );
+
+  programs.noctalia-greeter = {
     enable = true;
-    theme = "default-left";
+    package = inputs.noctalia-greeter.packages.${pkgs.stdenv.hostPlatform.system}.default;
+
+    # Optional configuration
+    greeter-args = "";
+    settings.cursor = {
+      theme = "Bibata-Modern-Ice";
+      size = 20;
+    };
   };
 }

@@ -63,7 +63,7 @@
 
       # 开启终端时运行一次fastfetch
       if status is-interactive
-        fastfetch
+        macchina
       end
     '';
   };

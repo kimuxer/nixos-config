@@ -27,7 +27,7 @@
           };
 
           graphicalTerminal = {
-            margin = 200;
+            margin = 25;
             marginGradient = 15;
             background = "80000000";
             brightBackground = "ffffffff";

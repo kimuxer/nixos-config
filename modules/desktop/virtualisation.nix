@@ -8,8 +8,17 @@
       package = pkgs.qemu_kvm;
       runAsRoot = true;
     };
+    onBoot = "ignore";
+    onShutdown = "shutdown";
   };
-
+  systemd.services.libvirtd = {
+    serviceConfig = {
+      # 1. 允许服务在停止时超时，超时后直接 kill 进程，而不是死等
+      TimeoutStopSec = "5s";
+      # 2. 确保它在关机序列中较早被停止，避免与挂载点或网络服务冲突
+      KillMode = "process";
+    };
+  };
   # 2. 开启 virt-manager 图形化管理客户端
   programs.virt-manager.enable = true;
 
