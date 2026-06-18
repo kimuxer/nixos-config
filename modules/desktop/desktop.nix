@@ -109,6 +109,8 @@
   #  theme = "default-left";
   #};
 
+
+  #   解决 greeter界面 鼠标右下方噪点问题
   services.greetd.settings.default_session.command = lib.mkForce (
     "env WLR_NO_HARDWARE_CURSORS=1 ${config.programs.noctalia-greeter.package}/bin/noctalia-greeter-session -- ${config.programs.noctalia-greeter.greeter-args}"
   );
@@ -118,7 +120,7 @@
     package = inputs.noctalia-greeter.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
     # Optional configuration
-    greeter-args = "";
+    greeter-args = "--session Niri";
     settings.cursor = {
       theme = "Bibata-Modern-Ice";
       size = 20;

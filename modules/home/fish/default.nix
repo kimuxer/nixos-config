@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 {
   # ==============================
   # 1. 自动展开的缩写
@@ -63,7 +63,7 @@
 
       # 开启终端时运行一次fastfetch
       if status is-interactive
-        macchina
+        fastfetch
       end
     '';
   };

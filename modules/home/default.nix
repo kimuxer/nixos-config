@@ -1,14 +1,14 @@
 { ... }:
 {
   imports = [
+    ./fastfetch
     ./fcitx5
+    ./firefox
     ./fish
     ./foot
     ./git
     ./helix
     ./jujutsu
-    ./firefox
-    ./macchina
     ./niri
     ./noctalia
     ./packages

@@ -12,12 +12,10 @@
       show = [
         "Kernel"
         "Distribution"
-        "Packages"
         "WindowManager"
         "Shell"
         "Terminal"
-        "ProcessorLoad"
-        "DiskSpace"
+        "Packages"
       ];
     };
 
@@ -25,26 +23,24 @@
     # 2. 主题配置 (themes/custom-box.toml)
     # ==========================================
     themes.custom-box = {
-      separator = " › ";
+      separator = "";
       hide_ascii = true;
       spacing = 2;
-      padding = 1;
+      padding = 3;
 
       keys = {
         kernel     = "";
         distro     = "";
-        packages   = "";
         wm         = "";
         shell      = "";
         terminal   = "";
-        cpu_load   = "";
-        disk_space = "";
+        packages   = "";
       };
 
       box = {
         visible = true;
-        border = "plain";
-        #border = "rounded";
+        #border = "plain";
+        border = "rounded";
         #border = "thick";
         #border = "double";
         title = " ❄️ NixOS ";
