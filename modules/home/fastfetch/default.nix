@@ -46,47 +46,15 @@ in
       };
 
       modules = [
-        {
-          type = "custom";
-          key = "╭── system ──────┄";
-        }
-        {
-          type = "os";
-          key = "│  ›  ";
-        }
-        {
-          type = "kernel";
-          key = "│  ›  ";
-        }
-        {
-          type = "wm";
-          key = "│  ›  ";
-        }
-        {
-          type = "shell";
-          key = "│  ›  ";
-        }
-        {
-          type = "terminal";
-          key = "│  ›  ";
-        }
-        {
-          type = "packages";
-          key = "│  ›  ";
-        }
-        {
-          type = "disk";
-          key = "│  ›  ";
-          format = "{13} {1} / {2} ({3})";
-        }
-        {
-          type = "custom";
-          key = "╰─┄";
-        }
-        {
-          type = "colors";
-          symbol = "circle";
-        }
+        { type = "custom"; key = "╭── system ──────┄"; }
+        { type = "os"; key = "│    "; }
+        { type = "kernel"; key = "│    "; }
+        { type = "wm"; key = "│    "; }
+        { type = "shell"; key = "│    "; }
+        { type = "terminal"; key = "│    "; }
+        { type = "packages"; key = "│    "; }
+        { type = "custom"; key = "╰─┄"; format = " "; }
+        { type = "colors"; symbol = "circle"; }
         "break"
       ];
     };
