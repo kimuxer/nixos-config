@@ -1,6 +1,6 @@
 { ... }:
 {
-  programs.librewolf = {
+  programs.firefox = {
     enable = true;
 
     # 【语言包支持】通过 Nix 下载简体中文

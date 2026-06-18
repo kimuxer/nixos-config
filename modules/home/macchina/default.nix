@@ -25,7 +25,6 @@
     # 2. 主题配置 (themes/custom-box.toml)
     # ==========================================
     themes.custom-box = {
-      border_style = "rounded";
       separator = " › ";
       hide_ascii = true;
       spacing = 2;
@@ -44,6 +43,7 @@
 
       box = {
         visible = true;
+        border = "rounded";
         title = "NixOS fully-potentiated complete ❄️";
       };
 

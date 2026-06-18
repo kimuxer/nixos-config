@@ -7,7 +7,7 @@
     ./git
     ./helix
     ./jujutsu
-    ./librewolf
+    ./firefox
     ./macchina
     ./niri
     ./noctalia

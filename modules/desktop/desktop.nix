@@ -2,6 +2,8 @@
 {
   pkgs,
   inputs,
+  lib,
+  config,
   ...
 }:
 
