@@ -9,13 +9,13 @@
     ./zed-editor
     ./fastfetch
     ./yazi
-    #./firefox
+    ./librewolf
     ./foot
     ./themes
     ./starship
     ./jujutsu
     ./helix
-    ./rime
+    ./fcitx5
   ];
 
   xdg.userDirs = {

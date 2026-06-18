@@ -1,12 +1,13 @@
 { pkgs, ... }:
-{
-  home.file = {
-    ".local/share/fcitx5/themes/mint-green-dark" = {
-      source = ./themes;
-      recursive = true;
-    };
+let
+  localThemePath = ./themes/mint-green-dark;
+  activeTheme = builtins.baseNameOf localThemePath;
+  commonAssets = {
+    panel = ./assets/panel.svg;
+    highlight = ./assets/highlight.svg;
   };
-
+in
+{
   i18n = {
     inputMethod = {
       type = "fcitx5";
@@ -19,11 +20,18 @@
           qt6Packages.fcitx5-chinese-addons
           qt6Packages.fcitx5-qt
         ];
+        themes = {
+          "${activeTheme}" = {
+            panelImage = commonAssets.panel;
+            highlightImage = commonAssets.highlight;
+            theme = localThemePath;
+          };
+        };
         settings = {
           addons = {
             classicui.globalSection = {
-              Theme = "mint-green-dark";
-              DarkTheme = "mint-green-dark";
+              Theme = activeTheme;
+              DarkTheme = activeTheme;
               "Vertical Candidate List" = "True";
             };
           };
