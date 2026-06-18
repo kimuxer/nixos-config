@@ -1,28 +1,23 @@
 { ... }:
 {
   imports = [
+    ./fcitx5
+    ./fish
+    ./foot
+    ./git
+    ./helix
+    ./jujutsu
+    ./librewolf
+    ./macchina
     ./niri
     ./noctalia
     ./packages
-    ./fish
-    ./git
-    ./zed-editor
-    ./fastfetch
-    ./yazi
-    ./librewolf
-    ./foot
-    ./themes
     ./starship
-    ./jujutsu
-    ./helix
-    ./fcitx5
+    ./themes
+    ./yazi
+    ./zed-editor
   ];
 
-  xdg.userDirs = {
-    enable = true;
-    createDirectories = true;
-  };
-  home.username = "kim";
-  home.homeDirectory = "/home/kim";
+  xdg.userDirs.enable = true;
   home.stateVersion = "26.11";
 }
