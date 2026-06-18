@@ -7,7 +7,7 @@ binds {
 
     // 🛠️ 2. 常用应用启动 (在 KDL 中数组直接平铺，不需要括号和逗号)
     "Mod+Return" { spawn "footclient"; }
-    "Mod+B"      { spawn "firefox"; }
+    "Mod+B"      { spawn "librewolf"; }
     "Mod+E"      { spawn "footclient" "-e" "yazi"; }
 
     // 🛠️ 3. Noctalia 面板组件控制
