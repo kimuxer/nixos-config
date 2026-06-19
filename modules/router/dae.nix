@@ -66,7 +66,6 @@ in
           tcp_check_url: 'http://cp.cloudflare.com/generate_204'
           check_interval: 30s
 
-          # 你的协议分层绝活，完美保留
           filter: name(vps_hy2) [add_latency: -30ms]
           filter: name(vps_tuic) [add_latency: -10ms]
           filter: name(vps_vless) [add_latency: -20ms]

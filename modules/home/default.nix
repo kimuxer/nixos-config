@@ -9,6 +9,7 @@
     ./git
     ./helix
     ./jujutsu
+    ./librewolf
     ./niri
     ./noctalia
     ./packages
