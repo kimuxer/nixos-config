@@ -31,4 +31,9 @@
     enableFishIntegration = true;
     enableBashIntegration = true;
   };
+
+  zramSwap = {
+    enable = true;
+    memoryPercent = 60;
+  };
 }

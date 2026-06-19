@@ -1,4 +1,4 @@
-# -- modules/desktop/homemanager.nix --
+# -- modules/desktop/hm.nix --
 { inputs, ... }:
 {
   imports = [
