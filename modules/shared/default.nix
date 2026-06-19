@@ -1,3 +1,4 @@
+# modules/shared/default.nix
 {
   inputs,
   pkgs,
@@ -7,6 +8,7 @@
 {
   imports = [
     ./sops.nix
+    ./run0.nix
   ];
 
   nix = {

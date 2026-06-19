@@ -52,7 +52,6 @@ in
         { type = "wm"; key = "│    "; }
         { type = "shell"; key = "│    "; }
         { type = "terminal"; key = "│    "; }
-        { type = "packages"; key = "│    "; }
         { type = "custom"; key = "╰─┄"; format = " "; }
         { type = "colors"; symbol = "circle"; }
         "break"

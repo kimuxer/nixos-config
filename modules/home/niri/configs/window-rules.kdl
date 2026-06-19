@@ -20,7 +20,7 @@ window-rule {
 
 // --- 3. FireFox 浏览器专用规则 ---
 window-rule {
-    match app-id="firefox"
+    match app-id="librewolf"
     open-maximized true
     open-on-workspace "2"
     draw-border-with-background false
@@ -36,7 +36,7 @@ window-rule {
 // --- 5. 非活动窗口变暗效果 (排除 Firefox) ---
 window-rule {
     match is-active=false
-    exclude app-id="firefox"
+    exclude app-id="librewolf"
     opacity 0.8
 }
 

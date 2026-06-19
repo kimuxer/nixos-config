@@ -120,7 +120,7 @@
     package = inputs.noctalia-greeter.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
     # Optional configuration
-    greeter-args = "--session Niri";
+    greeter-args = "--session Niri --user kim";
     settings.cursor = {
       theme = "Bibata-Modern-Ice";
       size = 20;

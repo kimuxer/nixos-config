@@ -2,11 +2,12 @@
 // niri : environment.kdl
 // =========================================================================
 environment {
-    // Niri 会话内强制使用的纯 Wayland 图形后端，直接斩断所有老旧 X11 尾巴
     SDL_VIDEODRIVER "wayland"
     CLUTTER_BACKEND "wayland"
     GDK_BACKEND "wayland"
     QT_QPA_PLATFORM "wayland"
+
+    XDG_CURRENT_DESKTOP "niri"
 
     // 仅在 Niri 会话中禁用 Qt 应用的客户端窗口装饰，防止双重标题栏
     QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
