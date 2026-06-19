@@ -25,7 +25,7 @@ fi
 
 # 1. 确保已联网
 echo "正在检测网络连接..."
-if ! ping -c 1 google.com &> /dev/null; then
+if ! ping -c 1 kimdel.top &> /dev/null; then
     echo "未检测到网络!"
     exit 1
 fi
@@ -75,9 +75,9 @@ echo "检查挂载情况:"
 lsblk
 echo
 echo
-# 6. 设置 root 密码
+# 6. 设置 用户 密码
 
-echo "请进入 chroot 环境设置密码:"
+echo "请进入 chroot 环境设置用户密码:"
 echo "--------------------------------------------------------"
 echo "                      nixos-enter"
 echo "--------------------------------------------------------"

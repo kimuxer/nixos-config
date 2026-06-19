@@ -4,8 +4,6 @@ let
   commonOptions = [ "noatime" "compress=zstd" "space_cache=v2" "commit=120" ];
 in
 {
-  imports = [ inputs.disko.nixosModules.disko ];
-
   disko.devices = {
     disk.main = {
       type = "disk";

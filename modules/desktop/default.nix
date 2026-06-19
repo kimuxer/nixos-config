@@ -1,8 +1,10 @@
 # -- modules/desktop/default.nix --
-{ ... }:
+{ inputs, ... }:
 {
   imports = [
+    inputs.disko.nixosModules.disko
     ../shared
+    ./disko.nix
     ./base.nix
     ./hardware.nix
     #./hardware-configuration.nix

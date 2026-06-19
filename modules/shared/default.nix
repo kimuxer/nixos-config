@@ -43,7 +43,6 @@
 
   zramSwap = {
     enable = true;
-    memoryPercent = 25;
   };
 
   environment.defaultPackages = lib.mkForce [ ];

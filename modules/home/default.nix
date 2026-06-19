@@ -3,13 +3,13 @@
   imports = [
     ./fastfetch
     ./fcitx5
-    #./firefox
+    ./firefox
     ./fish
     ./foot
     ./git
     ./helix
     ./jujutsu
-    ./librewolf
+    #./librewolf
     ./niri
     ./noctalia
     ./packages
