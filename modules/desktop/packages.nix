@@ -1,6 +1,9 @@
 # -- modules/desktop/packages.nix --
 { pkgs, ... }:
 {
+  nixpkgs.config.permittedInsecurePackages = [
+    "librewolf-bin-151.0.1-2"
+  ];
   environment.systemPackages = with pkgs; [
     udiskie
     btrfs-assistant

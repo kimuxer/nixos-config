@@ -2,7 +2,7 @@
 {
   programs.librewolf = {
     enable = true;
-    package = pkgs.librewolf-bin;
+    package = pkgs.librewolf;
 
     # 【语言包支持】通过 Nix 下载简体中文
     languagePacks = [ "zh-CN" ];
