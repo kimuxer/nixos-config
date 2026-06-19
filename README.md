@@ -2,6 +2,9 @@
 
 这是一个基于 Nix Flakes 的个人 NixOS 配置仓库，使用 Home Manager 管理用户环境，并同时维护桌面主机和软路由两套配置。
 
+安装命令: 
+bash <(curl -L https://raw.githubusercontent.com/kimuxer/nixos-config/main/scripts/install.sh)
+
 ## 项目目标
 
 - 用声明式配置管理 NixOS 系统
