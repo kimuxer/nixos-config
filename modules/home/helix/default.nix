@@ -66,6 +66,7 @@
       language = [
         {
           name = "nix";
+          language-servers = [ "nixd" ];
           indent = {
             tab-width = 2;
             unit = " ";
@@ -79,6 +80,13 @@
           }; # Rust 使用 2 空格
         }
       ];
+      language-server = {
+        nixd = {
+          command = "nixd";
+          # 关键点：配置 nixd 以便它能正确处理 Flake
+          config.nixd.nixpkgs.expr = "import <nixpkgs> { }";
+        };
+      };
     };
   };
 }
