@@ -30,7 +30,6 @@ in
     enable = true;
     settings = {
       general = {
-        input-filename = "-";
         output-filename = fileName;
         early-exit = [ "all" ];
         actions-on-enter = [
@@ -46,12 +45,6 @@ in
           width = 1200;
           height = 800;
         };
-        # 尝试告知 compositor 让它浮动
-        #         floating-hack = true;
-      };
-
-      keybinds = {
-        "space" = "save-to-file,save-to-clipboard,exit";
       };
     };
   };
