@@ -1,5 +1,5 @@
 # hosts/router/users.nix
-{ ... }:
+{ pkgs, ... }:
 
 {
   programs.neovim = {

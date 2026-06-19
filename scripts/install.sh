@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+# bash <(curl -L https://raw.githubusercontent.com/kimuxer/nixos-config/main/scripts/install.sh)
 if [ "$EUID" -ne 0 ]; then
   # 使用红色文字提示错误
   echo -e "\033[31m--------------------------------------------------------\033[0m"

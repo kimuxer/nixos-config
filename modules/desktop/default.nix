@@ -5,7 +5,7 @@
     ../shared
     ./base.nix
     ./hardware.nix
-    ./hardware-configuration.nix
+    #./hardware-configuration.nix
     ./hm.nix
     ./core.nix
     ./packages.nix
