@@ -112,7 +112,7 @@ in
 
   services.dae = {
     enable = true;
-    package = inputs.daeuniverse.packages.${pkgs.stdenv.hostPlatform.system}.dae;
+    package = inputs.daeuniverse.packages.${pkgs.stdenv.hostPlatform.system}.dae-unstable;
     assets = with pkgs; [
       v2ray-geoip
       v2ray-domain-list-community
