@@ -50,7 +50,7 @@ window-rule {
 window-rule {
     match title="Open File"
     match title="Save File"
-    match title ="我的足迹"
+    match title="我的足迹"
     match app-id="satty"
     match app-id="xdg-desktop-portal-gtk"
 
