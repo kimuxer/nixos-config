@@ -2,7 +2,7 @@
 // niri : layout.kdl
 // =========================================================================
 layout {
-    gaps 8
+    gaps 4
     always-center-single-column
     default-column-display "normal"
     center-focused-column "never"
