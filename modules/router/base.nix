@@ -33,14 +33,8 @@
       # 强制开启 IPv4 和 IPv6 的流量转发（不做软路由就没法转发包了）
       "net.ipv4.ip_forward" = 1;
       "net.ipv6.conf.all.forwarding" = 1;
-
-      # 开启 BBR 拥塞控制算法（让你的 dae 代理和网络转发延迟更低、速度更稳）
-      "net.core.default_qdisc" = "fq";
-      "net.ipv4.tcp_congestion_control" = "bbr";
-
-      # 优化工控机的高并发网络缓存，防止网络流量大时丢包
-      "net.core.rmem_max" = 16777216;
-      "net.core.wmem_max" = 16777216;
+      "net.ipv4.tcp_rmem" = "4096 87380 16777216";
+      "net.ipv4.tcp_wmem" = "4096 65536 16777216";
     };
   };
 }

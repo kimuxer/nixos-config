@@ -111,9 +111,9 @@
 
 
   #   解决 greeter界面 鼠标右下方噪点问题
-  services.greetd.settings.default_session.command = lib.mkForce (
-    "env WLR_NO_HARDWARE_CURSORS=1 ${config.programs.noctalia-greeter.package}/bin/noctalia-greeter-session -- ${config.programs.noctalia-greeter.greeter-args}"
-  );
+  #services.greetd.settings.default_session.command = lib.mkForce (
+  #  "env WLR_NO_HARDWARE_CURSORS=1 ${config.programs.noctalia-greeter.package}/bin/noctalia-greeter-session -- ${config.programs.noctalia-greeter.greeter-args}"
+  #);
 
   programs.noctalia-greeter = {
     enable = true;

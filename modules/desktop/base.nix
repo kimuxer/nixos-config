@@ -19,11 +19,16 @@
         efiSupport = true;
         enableEditor = true;
         maxGenerations = 10;
+        additionalFiles = {
+          "LB_OCR.F16" = ../../assets/LB_OCR.F16;
+        };
 
         style = {
           wallpapers = [ ../../assets/limine_nixos.jpeg ];
           interface = {
             resolution = "1920x1080";
+            branding = "NixOS unstable"
+            brandingColor = "24ffff";
           };
 
           graphicalTerminal = {
@@ -38,7 +43,10 @@
           };
         };
         extraConfig = ''
-          term_font: ${../../assets/LB_OCR.F16}
+          term_font: boot():/limine/LB_OCR.F16
+          term_font_size: 8x16
+          term_font_scale: 2x2
+          term_font_spacing: 1
         '';
 
         extraEntries = ''
@@ -71,8 +79,6 @@
       "libvirtd"
     ];
   };
-
-  security.sudo.wheelNeedsPassword = false;
 
   system.stateVersion = "26.11";
 }

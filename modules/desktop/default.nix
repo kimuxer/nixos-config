@@ -7,7 +7,7 @@
     ./disko.nix
     ./base.nix
     ./hardware.nix
-    #./hardware-configuration.nix
+    ./storage.nix
     ./hm.nix
     ./core.nix
     ./packages.nix

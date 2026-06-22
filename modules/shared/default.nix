@@ -9,6 +9,7 @@
   imports = [
     ./sops.nix
     ./run0.nix
+    ./network.nix
   ];
 
   nix = {

@@ -1,43 +1,26 @@
-# -- modules/desktop/hardware.nix --
 { config, pkgs, modulesPath, lib, ... }:
-#let
-  # Btrfs 公共挂载参数（你写的完全正确）
-#  commonOptions = [
-#    "noatime"
-#    "compress=zstd"
-#    "space_cache=v2"
-#    "commit=120"
-#  ];
 
-#in
 {
-  # SSD 优化
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
+  services.fstrim.enable = true;
 
-  services.snapper = {
-    configs = {
-      home = {
-        SUBVOLUME = "/home";
-        ALLOW_USERS = [ "kim" ];
-        TIMELINE_CREATE = true;
-        TIMELINE_CLEANUP = true;
-        TIMELINE_LIMIT_HOURLY = 5;
-        TIMELINE_LIMIT_DAILY = 3;
-        TIMELINE_LIMIT_WEEKLY = 1;
-        TIMELINE_LIMIT_MONTHLY = 0;
-        TIMELINE_LIMIT_YEARLY = 0;
-      };
-    };
+  security.rtkit.enable = true;
+  services.pulseaudio.enable = false;
+
+  # PipeWire + WirePlumber 全套音频
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    pulse.enable = true;
+    wireplumber.enable = true;
   };
 
   services.xserver.videoDrivers = [ "nvidia" ];
-
-  services.fstrim.enable = true;
 
   hardware.graphics = {
     enable = true;
@@ -52,17 +35,5 @@
     powerManagement.finegrained = false;
     open = false;
     nvidiaSettings = false;
-  };
-
-  services.pulseaudio.enable = false;
-  # 实时权限，防止音频卡顿
-  security.rtkit.enable = true;
-
-  # PipeWire + WirePlumber 全套音频
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    pulse.enable = true;
-    wireplumber.enable = true;
   };
 }

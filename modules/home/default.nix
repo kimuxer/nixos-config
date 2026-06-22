@@ -6,6 +6,7 @@
     ./firefox
     ./fish
     ./foot
+    ./ghostty
     ./git
     ./helix
     ./jujutsu
