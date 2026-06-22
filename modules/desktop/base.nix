@@ -27,7 +27,7 @@
           wallpapers = [ ../../assets/limine_nixos.jpeg ];
           interface = {
             resolution = "1920x1080";
-            branding = "NixOS unstable"
+            branding = "NixOS unstable";
             brandingColor = "24ffff";
           };
 

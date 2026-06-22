@@ -1,12 +1,12 @@
 { ... }:
 {
   imports = [
+    ./alacritty
     ./fastfetch
     ./fcitx5
     ./firefox
     ./fish
     ./foot
-    ./ghostty
     ./git
     ./helix
     ./jujutsu

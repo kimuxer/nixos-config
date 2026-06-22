@@ -1,0 +1,46 @@
+{ ... }:
+{
+  programs.alacritty = {
+    enable = true;
+    settings = {
+      window = {
+        padding = {
+          x = 2;
+          y = 2;
+        };
+        dynamic_padding = true;
+        decorations = "None";
+      };
+      scrolling = {
+        history = 50000;
+        multiplier = 5;
+      };
+
+      font = {
+        size = 11;
+        normal = {
+          family = "JetBrainsMono Nerd Font";
+          style = "SemiBold";
+        };
+      };
+
+      selection = {
+        save_to_clipboard = true;
+      };
+
+      cursor = {
+        style = {
+          shape = "Beam";
+        };
+        unfocused_hollow = true;
+      };
+
+      mouse = {
+        hide_when_typing = true;
+        bindings = [
+          { mouse = "Right"; action = "Paste"; }
+        ];
+      };
+    };  
+  };
+}
