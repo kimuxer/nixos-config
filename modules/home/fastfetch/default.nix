@@ -52,8 +52,8 @@ in
         { type = "wm"; key = "│    "; }
         { type = "shell"; key = "│    "; }
         { type = "terminal"; key = "│    "; }
-        { type = "custom"; key = "╰─┄"; format = " "; }
-        { type = "colors"; symbol = "circle"; }
+        { type = "custom"; key = "│"; }
+        { type = "colors"; key = "╰─┄"; symbol = "circle"; }
         "break"
       ];
     };
