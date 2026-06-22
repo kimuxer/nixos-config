@@ -75,8 +75,6 @@
     NIXOS_OZONE_WL = "1";
     MOZ_ENABLE_WAYLAND = "1";
     _JAVA_AWT_WM_NONREPARENTING = "1";
-    GSK_RENDERER = "gl";
-    __GL_THREADED_OPTIMIZATIONS = "1";
     EDITOR = "hx";
     VISUAL = "hx";
   };
@@ -114,9 +112,10 @@
 
 
   #   解决 greeter界面 鼠标右下方噪点问题
-  #services.greetd.settings.default_session.command = lib.mkForce (
-  #  "env WLR_NO_HARDWARE_CURSORS=1 ${config.programs.noctalia-greeter.package}/bin/noctalia-greeter-session -- ${config.programs.noctalia-greeter.greeter-args}"
-  #);
+#  services.greetd.settings.default_session.command = lib.mkForce (
+#    "env WLR_NO_HARDWARE_CURSORS=1 ${config.programs.noctalia-greeter.package}/bin/noctalia-greeter-session -- ${config.programs.noctalia-greeter.greeter-args}"
+  #  "${config.programs.noctalia-greeter.package}/bin/noctalia-greeter-session -- ${config.programs.noctalia-greeter.greeter-args}"
+#  );
 
   programs.noctalia-greeter = {
     enable = true;

@@ -44,10 +44,10 @@
       gd = "git diff";
 
       # NixOS 系统命令
-      ns = "nixos-rebuild switch --flake .#nixdevbox";
-      nb = "nixos-rebuild boot --flake .#nixdevbox";
-      nt = "nixos-rebuild test --flake .#nixdevbox";
-      nc = "run0 nix-collect-garbage -d";
+      ns = "nixos-rebuild switch --flake .#nixdevbox --elevate=run0";
+      nb = "nixos-rebuild boot --flake .#nixdevbox --elevate=run0";
+      nt = "nixos-rebuild test --flake .#nixdevbox --elevate=run0";
+      nc = "nix-collect-garbage -d --elevate=run0";
       no = "nix-store --optimise";
       #  --elevate=run0
       nsproxy = "nixos-rebuild switch --flake .#router --target-host root@192.168.10.1";

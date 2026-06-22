@@ -44,9 +44,7 @@
         };
         extraConfig = ''
           term_font: boot():/limine/LB_OCR.F16
-          term_font_size: 8x16
-          term_font_scale: 2x2
-          term_font_spacing: 1
+          term_font_spacing: 2
         '';
 
         extraEntries = ''

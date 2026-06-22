@@ -46,14 +46,14 @@ in
       };
 
       modules = [
-        { type = "custom"; key = "╭── system ──────┄"; }
-        { type = "os"; key = "│    "; }
-        { type = "kernel"; key = "│    "; }
-        { type = "wm"; key = "│    "; }
-        { type = "shell"; key = "│    "; }
-        { type = "terminal"; key = "│    "; }
-        { type = "custom"; key = "│"; }
-        { type = "colors"; key = "╰─┄"; symbol = "circle"; }
+        { type = "custom";   key = "╭── system ──────┄"; }
+        { type = "os";       key = "│   "; }
+        { type = "kernel";   key = "│   "; }
+        { type = "wm";       key = "│   "; }
+        { type = "shell";    key = "│   "; }
+        { type = "terminal"; key = "│   "; }
+        { type = "custom";   key = "│    "; }
+        { type = "colors";   key = "╰─┄"; symbol = "circle"; }
         "break"
       ];
     };
