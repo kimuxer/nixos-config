@@ -6,6 +6,7 @@
 
     settings = {
       main = {
+        workers = 4;
         term = "xterm-256color";
         font = "JetBrainsMono NF SemiBold:size=11";
         dpi-aware = "yes"; # 保持自动缩放感知
@@ -25,7 +26,7 @@
       scrollback = {
         lines = 50000;
         multiplier = 3.0;
-        indicator-position = "relative";
+        indicator-position = "none";
         indicator-format = "none";
       };
       csd = {
