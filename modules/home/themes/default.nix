@@ -1,3 +1,4 @@
+# -- modules/home/themes/default.nix --
 { pkgs, ... }:
 let
   themeName = "adw-gtk3-dark";

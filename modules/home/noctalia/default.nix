@@ -6,8 +6,9 @@
 
   programs.noctalia = {
     enable = true;
-    systemd.enable = false;
+    systemd.enable = true;
     settings = {
+      shell.launch_apps_as_systemd_services = true;
       location.address = "Dalian, CN";
     };
   };

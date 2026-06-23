@@ -1,3 +1,4 @@
+# -- modules/home/fcitx5/default.nix --
 { pkgs, ... }:
 let
   themeName = "mint-green-dark";
@@ -35,7 +36,7 @@ in
               "Vertical Candidate List" = "True";
             };
           };
-          
+
           inputMethod = {
             "Groups/0" = {
               "Name" = "Default";
