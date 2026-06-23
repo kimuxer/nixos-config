@@ -2,6 +2,7 @@
 { pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
+    evtest
     udiskie
     btrfs-assistant
     snapper

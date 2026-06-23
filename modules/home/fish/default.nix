@@ -16,8 +16,7 @@
       du = "dust";
       grep = "rg";
       find = "fd";
-      man = "tealdeer";
-      tldr = "tealdeer";
+      man = "tldr";
       cls = "clear";
       q = "exit";
 
