@@ -70,33 +70,34 @@
       };
     };
 
-    languages = {
-      language = [
-        {
-          name = "nix";
-          auto-format = true;
-        }
-      ];
-      language-server = {
-        nixd = {
-          command = "nixd";
-          args = [ "--semantic-tokens=true" ];
-          config.nixd =
-            let
-              myFlake = ''(builtins.getFlake "${osConfig.programs.nh.flake}")'';
-              nixosOpts = "${myFlake}.nixosConfigurations.${osConfig.networking.hostName}.options";
-            in
-            {
-              nixpkgs.expr = "import ${myFlake}.inputs.nixpkgs { }";
-              formatting.command = [ "alejandra" ];
-              options = {
-                nixos.expr = nixosOpts;
-                home-manager.expr = "${nixosOpts}.home-manager.users.type.getSubOptions []";
-              };
-            };
-          };
-        };
-      };
-    };
+    #languages = {
+    #  language = [
+    #    {
+    #      name = "nix";
+    #      auto-format = true;
+    #    }
+    #  ];
+    #  language-server = {
+    #    nixd = {
+    #      command = "nixd";
+    #      args = [ "--semantic-tokens=true" ];
+    #      config.nixd =
+            #let
+            #  myFlake = ''(builtins.getFlake "${osConfig.programs.nh.flake}")'';
+            #  nixosOpts = "${myFlake}.nixosConfigurations.${osConfig.networking.hostName}.options";
+            #in
+    #        {
+              #nixpkgs.expr = "import ${myFlake}.inputs.nixpkgs { }";
+    #          nixpkgs.expr = "import nixpkgs { }";
+    #          formatting.command = [ "alejandra" ];
+    #          options = {
+                #nixos.expr = nixosOpts;
+    #            nixos.expr = "(builtins.getFlake \"${osConfig.programs.nh.flake}\").nixosConfigurations.${osConfig.networking.hostName}.options";
+                #home-manager.expr = "${nixosOpts}.home-manager.users.type.getSubOptions []";
+    #          };
+    #        };
+    #    };
+    #  };
+    #};
   };
 }
