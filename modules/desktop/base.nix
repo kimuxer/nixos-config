@@ -19,33 +19,32 @@
         efiSupport = true;
         enableEditor = true;
         maxGenerations = 10;
-        additionalFiles = {
-          "LB_OCR.F16" = ../../assets/LB_OCR.F16;
-        };
+        #additionalFiles = {
+        #  "LB_OCR.F16" = ../../assets/LB_OCR.F16;
+        #};
 
         style = {
           wallpapers = [ ../../assets/limine_nixos.jpeg ];
           interface = {
             resolution = "1920x1080";
-            branding = "NixOS unstable";
-            brandingColor = "24ffff";
+            branding = " ";
           };
 
           graphicalTerminal = {
-            margin = 25;
-            marginGradient = 15;
-            background = "80000000";
-            brightBackground = "ffffffff";
-            foreground = "24ffff";
-            brightForeground = "ff24ffff";
-            palette = "1e1e2e;f38ba8;a6e3a1;24ffff;89b4fa;f5c2e7;24ffff;24ffff";
-            brightPalette = "24ffff;f38ba8;a6e3a1;24ffff;89b4fa;f5c2e7;24ffff;24ffff";
+            margin = 0;
+            marginGradient = 0;
+            background = "8024273a";
+            brightBackground = "ff5b6078";
+            foreground = "cad3f5";
+            brightForeground = "ffcad3f5";
+            palette = "24273a;ed8796;a6da95;eed49f;8aadf4;f5bde6;8bd5ca;cad3f5";
+            brightPalette = "5b6078;ed8796;a6da95;eed49f;8aadf4;f5bde6;8bd5ca;cad3f5";
           };
         };
-        extraConfig = ''
-          term_font: boot():/limine/LB_OCR.F16
-          term_font_spacing: 2
-        '';
+      #  extraConfig = ''
+      #    term_font: boot():/limine/LB_OCR.F16
+      #    term_font_spacing: 2
+      #  '';
 
         extraEntries = ''
           /windows 11 pro
