@@ -9,7 +9,6 @@
 
 {
   imports = [
-    inputs.silentSDDM.nixosModules.default
     inputs.niri.nixosModules.niri
     inputs.noctalia-greeter.nixosModules.default
   ];
@@ -86,36 +85,6 @@
     enable = true;
     package = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
   };
-
-  # ============================
-  # Display Manager 登录器
-  # ============================
-  #services.displayManager = {
-  #  defaultSession = "niri";
-  #  sddm = {
-  #    enable = true;
-  #    wayland.enable = true;
-  #    wayland.compositor = "kwin";
-  #    settings = {
-  #      Theme = {
-  #        CursorTheme = "Bibata-Modern-Ice";
-  #        CursorSize = "20";
-  #      };
-  #    };
-  #  };
-  #};
-
-  #programs.silentSDDM = {
-  #  enable = true;
-  #  theme = "default-left";
-  #};
-
-
-  #   解决 greeter界面 鼠标右下方噪点问题
-#  services.greetd.settings.default_session.command = lib.mkForce (
-#    "env WLR_NO_HARDWARE_CURSORS=1 ${config.programs.noctalia-greeter.package}/bin/noctalia-greeter-session -- ${config.programs.noctalia-greeter.greeter-args}"
-  #  "${config.programs.noctalia-greeter.package}/bin/noctalia-greeter-session -- ${config.programs.noctalia-greeter.greeter-args}"
-#  );
 
   programs.noctalia-greeter = {
     enable = true;

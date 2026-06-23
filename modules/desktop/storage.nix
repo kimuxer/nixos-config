@@ -1,5 +1,5 @@
+# -- modules/desktop/storage.nix --
 { ... }:
-
 {
   services.snapper = {
     configs = {

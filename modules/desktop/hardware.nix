@@ -1,12 +1,7 @@
-{ config, pkgs, modulesPath, lib, ... }:
+# -- modules/desktop/hardware.nix --
+{ config, pkgs, ... }:
 
 {
-  imports = [
-    (modulesPath + "/installer/scan/not-detected.nix")
-  ];
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-
   services.fstrim.enable = true;
 
   security.rtkit.enable = true;

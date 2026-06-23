@@ -1,7 +1,8 @@
+# -- modules/desktop/disko.nix --
 { inputs, ... }:
 let
   diskid = "/dev/disk/by-id/ata-CT1000MX500SSD1_2138E5D33BCE";
-  commonOptions = [ "noatime" "compress=zstd" "space_cache=v2" "commit=120" ];
+  commonOptions = [ "defaults" "noatime" "compress=zstd" "space_cache=v2" "commit=120" ];
 in
 {
   disko.devices = {
@@ -20,7 +21,7 @@ in
               type = "filesystem";
               format = "vfat";
               mountpoint = "/boot";
-              mountOptions = [ "umask=0077" ];
+              mountOptions = [ "defaults" "umask=0077" ];
             };
           };
 

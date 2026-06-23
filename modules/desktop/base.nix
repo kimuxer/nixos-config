@@ -1,9 +1,20 @@
 # -- modules/desktop/base.nix --
-{ pkgs, ... }:
+{ config, pkgs, modulesPath, lib, ... }:
 
 {
+  imports = [
+    (modulesPath + "/installer/scan/not-detected.nix")
+  ];
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
   boot = {
     kernelPackages = pkgs.linuxPackages_zen;
+    initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
+    initrd.kernelModules = [ ];
+    kernelModules = [ "kvm-intel" ];
+    extraModulePackages = [ ];
 
     kernelParams = [
       "splash"
@@ -19,9 +30,6 @@
         efiSupport = true;
         enableEditor = true;
         maxGenerations = 10;
-        #additionalFiles = {
-        #  "LB_OCR.F16" = ../../assets/LB_OCR.F16;
-        #};
 
         style = {
           wallpapers = [ ../../assets/limine_nixos.jpeg ];
@@ -41,10 +49,6 @@
             brightPalette = "5b6078;ed8796;a6da95;eed49f;8aadf4;f5bde6;8bd5ca;cad3f5";
           };
         };
-      #  extraConfig = ''
-      #    term_font: boot():/limine/LB_OCR.F16
-      #    term_font_spacing: 2
-      #  '';
 
         extraEntries = ''
           /windows 11 pro
