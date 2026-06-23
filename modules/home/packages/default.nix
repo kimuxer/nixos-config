@@ -75,13 +75,10 @@ in
     pkgs.wechat
 
     # 影音
-    pkgs.mpv # 视频播放
     pkgs.termusic # tui 音乐播放器
-    pkgs.yt-dlp # 必须：负责全网搜歌、抓取下载
     pkgs.ffmpeg # 必须：负责将抓取的音频转码为 MP3/FLAC 并写入歌曲标签
     # CLI 工具
     pkgs.wl-clipboard
-    pkgs.fastfetch
     pkgs.procs
     pkgs.dust
     pkgs.duf

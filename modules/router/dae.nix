@@ -88,7 +88,7 @@ in
         domain(suffix: ${config.sops.placeholder.vps_domain}) -> direct
 
         ### [级别3] 强制业务区（软路由上没有桌面应用，这行留着或删掉都行，不影响）
-        pname(termusic, yt-dlp) -> master_group
+        pname(yt-dlp) -> master_group
         domain(suffix: google-analytics.com) -> master_group
 
         ### [级别4] 智能分流区

@@ -6,6 +6,7 @@
   ];
 
   home-manager = {
+    enable = true;
     useGlobalPkgs = true;
     useUserPackages = true;
     backupFileExtension = "backup";

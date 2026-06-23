@@ -9,6 +9,7 @@ binds {
     "Mod+Return" { spawn "alacritty"; }
     "Mod+B"      { spawn "firefox"; }
     "Mod+E"      { spawn "alacritty" "-e" "yazi"; }
+    "Mod+U"      { spawn "alacritty" "-e" "termusic"; }
 
     // 🛠️ 3. Noctalia 面板组件控制
     "Mod+D"         { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
@@ -33,7 +34,7 @@ binds {
     "Mod+Alt+L"   { spawn "noctalia" "msg" "session" "lock"; }
     "Mod+Shift+Q" { spawn "noctalia" "msg" "panel-toggle" "session"; }
 
-    // 🛠️ 6. 截图生态管道联动 (Noctalia 接收完直接通过 std 管道喂给你的 1200x800 Satty)
+    // 🛠️ 6. 截图
     "Ctrl+Shift+1" { spawn "noctalia" "msg" "screenshot-region"; }
     "Ctrl+Shift+2" { spawn "noctalia" "msg" "screenshot-fullscreen"; }
 

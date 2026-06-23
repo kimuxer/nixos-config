@@ -10,12 +10,14 @@
     ./git
     ./helix
     ./jujutsu
+    ./mpv
     ./niri
     ./noctalia
     ./packages
     ./starship
     ./themes
     ./yazi
+    ./yt-dlp
     ./zed-editor
   ];
 

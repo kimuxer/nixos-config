@@ -1,0 +1,48 @@
+{ pkgs, ... }:
+{
+  programs.mpv = {
+    enable = true;
+
+    # 对应 mpv.conf
+    config = {
+      vo = "gpu";
+      hwdec = "auto";
+      alang = "jpn,ja,eng,en";
+      slang = "chi,zh,jpn,ja";
+      keep-open = "yes";
+      autofit = "80%";
+      screenshot-format = "png";
+      screenshot-directory = "~/Pictures/Screenshots";
+      # 开启高画质 profile
+      profile = "gpu-hq";
+    };
+
+    # 对应 input.conf
+    bindings = {
+      "RIGHT" = "seek  5";
+      "LEFT"  = "seek -5";
+      "UP"    = "add volume  2";
+      "DOWN"  = "add volume -2";
+      "q"     = "quit";
+    };
+
+    # 进阶用法：配置特定脚本的选项 (对应 mpv/script-opts/xxx.conf)
+    # 例如：如果你装了 osc 脚本，可以这样配置它
+    scriptOpts = {
+      osc = {
+        layout = "bottombar";
+        visibility = "auto";
+      };
+    };
+
+    # 进阶用法：自定义 profiles
+    profiles = {
+      "extension.mkv" = {
+        sub-font-size = 40;
+      };
+    };
+
+    # 如果以后你想添加额外的脚本（例如播放器插件），直接写在这里
+    # scripts = with pkgs.mpvScripts; [ mpris uosc ];
+  };
+}
