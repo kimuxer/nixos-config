@@ -26,11 +26,6 @@
   '';
 
   programs.fish.enable = true;
-  programs.nix-index = {
-    enable = true;
-    enableFishIntegration = true;
-    enableBashIntegration = true;
-  };
 
   zramSwap = {
     enable = true;

@@ -12,6 +12,7 @@
     ./jujutsu
     ./mpv
     ./niri
+    ./nix-index
     ./noctalia
     ./packages
     ./starship
