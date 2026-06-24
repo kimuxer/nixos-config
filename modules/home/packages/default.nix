@@ -1,3 +1,4 @@
+# -- modules/home/packages/default.nix --
 {
   pkgs,
   inputs,
@@ -69,6 +70,15 @@ in
     };
   };
 
+  programs.nh = {
+    enable = true;
+    flake = "/home/kim/nixos-config";
+    clean = {
+      enable = true;
+      extraArgs = "--keep 5 --keep-since 3d";
+    };
+  };
+
   home.packages = [
     # 聊天
     pkgs.telegram-desktop
@@ -83,6 +93,7 @@ in
     pkgs.dust
     pkgs.duf
     pkgs.nixd
+    pkgs.alejandra   # nix代码格式化工具
     pkgs.llvmPackages.lldb
     pkgs.vscode-extensions.vadimcn.vscode-lldb
   ];

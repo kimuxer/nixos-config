@@ -13,6 +13,7 @@
     kernelPackages = pkgs.linuxPackages_zen;
     initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
     initrd.kernelModules = [ ];
+    blacklistedKernelModules = [ "nouveau" ];
     kernelModules = [ "kvm-intel" ];
     extraModulePackages = [ ];
 
@@ -20,7 +21,6 @@
       "splash"
       "nosgx"
       "nvidia-drm.fbdev=1"
-      "module_blacklist=nouveau"
     ];
 
     loader = {
@@ -59,7 +59,7 @@
     };
   };
 
-  networking.hostName = "nixdevbox";
+  networking.hostName = "nixbox";
   networking.networkmanager.enable = true;
 
   i18n.defaultLocale = "en_US.UTF-8";

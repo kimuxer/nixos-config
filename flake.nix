@@ -45,7 +45,7 @@
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" ];
       flake = {
-        nixosConfigurations.nixdevbox = nixpkgs.lib.nixosSystem {
+        nixosConfigurations.nixbox = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = {
             inherit inputs;

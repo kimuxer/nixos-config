@@ -1,4 +1,12 @@
-{ ... }:
+# -- modules/home/helix/default.nix --
+{
+  inputs,
+  config,
+  osConfig,
+  pkgs,
+  lib,
+  ...
+}:
 {
   programs.helix = {
     enable = true;
@@ -66,25 +74,27 @@
       language = [
         {
           name = "nix";
-          language-servers = [ "nixd" ];
-          indent = {
-            tab-width = 2;
-            unit = " ";
-          }; # Nix 使用 2 空格
-        }
-        {
-          name = "rust";
-          indent = {
-            tab-width = 2;
-            unit = " ";
-          }; # Rust 使用 2 空格
+          auto-format = true;
         }
       ];
       language-server = {
         nixd = {
           command = "nixd";
-          # 关键点：配置 nixd 以便它能正确处理 Flake
-          config.nixd.nixpkgs.expr = "import <nixpkgs> { }";
+          args = [ "--semantic-tokens=true" ];
+          config.nixd =
+            let
+              myFlake = ''(builtins.getFlake "${osConfig.programs.nh.flake}")'';
+              nixosOpts = "${myFlake}.nixosConfigurations.${osConfig.networking.hostName}.options";
+            in
+            {
+              nixpkgs.expr = "import ${myFlake}.inputs.nixpkgs { }";
+              formatting.command = [ "alejandra" ];
+              options = {
+                nixos.expr = nixosOpts;
+                home-manager.expr = "${nixosOpts}.home-manager.users.type.getSubOptions []";
+              };
+            };
+          };
         };
       };
     };

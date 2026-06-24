@@ -1,15 +1,16 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   programs.starship = {
     enable = true;
-    enableBashIntegration = true;
     enableFishIntegration = true;
+    extraPackages = [ pkgs.jj-starship ];
     enableTransience = true;
     presets = [ "nerd-font-symbols" ];
 
     settings = {
-      "$schema" = "https://starship.rs/config-schema.json";
+      git_branch.disabled = true;
+      git_status.disabled = true;
       add_newline = false;
 
       username = {
@@ -23,6 +24,12 @@
       };
 
       hostname.disabled = true;
+
+      custom.jj = {
+        when = "jj-starship detect";
+        shell = [ "jj-starship" ];
+        format = "$output ";
+      };
     };
   };
 }

@@ -1,5 +1,5 @@
 # -- modules/desktop/disko.nix --
-{ inputs, ... }:
+{ ... }:
 let
   diskid = "/dev/disk/by-id/ata-CT1000MX500SSD1_2138E5D33BCE";
   commonOptions = [ "defaults" "noatime" "compress=zstd" "space_cache=v2" "commit=120" ];
