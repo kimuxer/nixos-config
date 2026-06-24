@@ -11,6 +11,7 @@
     ./helix
     ./jujutsu
     ./mpv
+    ./neovim
     ./niri
     ./nix-index
     ./noctalia

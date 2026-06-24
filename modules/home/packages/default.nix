@@ -11,7 +11,7 @@ let
 in
 {
   programs.bat.enable = true;
-  programs.ripgrep-all.enable = true;
+  programs.ripgrep.enable = true;
   programs.bottom.enable = true;
 
   programs.eza = {
