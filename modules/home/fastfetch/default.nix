@@ -33,7 +33,7 @@ in
         { type = "shell";    key = "│  shell "; }
         { type = "terminal"; key = "│  term  "; }
         { type = "memory";   key = "│  mem   "; }
-        { type = "colors";   key = "╰──────n─┄"; symbol = "circle"; }
+        { type = "colors";   key = "╰───────┄"; symbol = "circle"; }
       ];
     };
   };
