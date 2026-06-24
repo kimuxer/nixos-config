@@ -1,10 +1,24 @@
 { pkgs, ... }:
+
+let
+  logoFile = pkgs.writeText "fastfetch-logo.txt" ''
+   _  ___      ____  ____
+  / |/ (_)_ __/ __ \/ __/
+ /    / /\ \ / /_/ /\ \
+/_/|_/_//_\_\\____/___/
+'';
+in
 {
+
   programs.fastfetch = {
     enable = true;
 
     settings = {
-      logo.type = "none";
+      logo = {
+        source = "${logoFile}";
+        position = "top";
+        padding.left = 3;
+      };
 
       display = {
         key.width = 14;
@@ -12,16 +26,7 @@
       };
 
       modules = [
-        {
-          type = "custom";
-          format = ''
-             _  ___      ____  ____
-            / |/ (_)_ __/ __ \/ __/
-           /    / /\ \ / /_/ /\ \
-          /_/|_/_//_\_\\____/___/
-          '';
-        }
-        { type = "custom";   key = "╭─────────────────────────────┄"; }
+        { type = "custom";   key = "╭── system ──────┄"; }
         { type = "os";       key = "│  os    "; }
         { type = "kernel";   key = "│  kernel"; }
         { type = "wm";       key = "│  wm    "; }
