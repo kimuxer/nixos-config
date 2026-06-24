@@ -26,14 +26,14 @@ in
       };
 
       modules = [
-        { type = "custom";   key = "╭── system ──────┄"; }
+        { type = "custom";   key = "╭─ system ──────────────────────────┄"; }
         { type = "os";       key = "│  os    "; }
         { type = "kernel";   key = "│  kernel"; }
         { type = "wm";       key = "│  wm    "; }
         { type = "shell";    key = "│  shell "; }
         { type = "terminal"; key = "│  term  "; }
         { type = "memory";   key = "│  mem   "; }
-        { type = "colors";   key = "╰─┄"; symbol = "circle"; }
+        { type = "colors";   key = "╰──────n─┄"; symbol = "circle"; }
       ];
     };
   };
