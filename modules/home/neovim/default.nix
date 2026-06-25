@@ -16,12 +16,18 @@
       mini.icons.enable = true;
       vimAlias = true;
       syntaxHighlighting = true;
-      ui.noice.enable = true;
+      notify.nvim-notify.enable = true;
       git.gitsigns.enable = true;
       autopairs.nvim-autopairs.enable = true;
       comments.comment-nvim.enable = true;
       tabline.nvimBufferline.enable = true;
       binds.whichKey.enable = true;
+
+      ui.noice = {
+        enable = true;
+      #  lsp.signature.enabled = true;
+      };
+
       extraPackages = [ 
         pkgs.tree-sitter
         pkgs.watchman
