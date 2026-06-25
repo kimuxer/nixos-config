@@ -16,6 +16,7 @@
     ./nix-index
     ./noctalia
     ./packages
+    ./search
     ./starship
     ./themes
     ./yazi

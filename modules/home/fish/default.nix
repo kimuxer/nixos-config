@@ -50,11 +50,12 @@
       #nt = "nixos-rebuild test --flake .#nixdevbox --elevate=run0";
       #nc = "nix-collect-garbage -d --elevate=run0";
       #no = "nix-store --optimise";
-      ns = "nh os switch ~/nixos-config#nixbox";
-      nb = "nh os build ~/nixos-config#nixbox";
-      nt = "nh os test ~/nixos-config#nixbox";
+      ns = "nh os switch";
+      nb = "nh os build";
+      nt = "nh os test";
       nc = "nh clean all";
       no = "nix-store --optimise";
+      nsrouter = "nh os switch --target-host root@192.168.10.1 -- router";
     };
 
     # 不显示欢迎语
