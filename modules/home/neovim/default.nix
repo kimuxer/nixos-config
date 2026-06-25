@@ -1,5 +1,5 @@
 # -- modules/home/neovim/default.nix --
-{ inputs, ... }:
+{ inputs, pkgs, ... }:
 {
   imports = [
     inputs.nvf.homeManagerModules.default
@@ -20,6 +20,7 @@
       autopairs.nvim-autopairs.enable = true;
       comments.comment-nvim.enable = true;
       tabline.nvimBufferline.enable = true;
+      binds.whichKey.enable = true;
 
       visuals = {
         indent-blankline.enable = true;

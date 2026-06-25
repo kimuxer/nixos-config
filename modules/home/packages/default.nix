@@ -1,5 +1,5 @@
 # -- modules/home/packages/default.nix --
-{ pkgs, inputs, config, ... }:
+{ pkgs, ... }:
 {
   programs.bat.enable = true;
   programs.bottom.enable = true;

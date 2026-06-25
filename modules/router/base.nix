@@ -36,5 +36,11 @@
       "net.ipv4.tcp_rmem" = "4096 87380 16777216";
       "net.ipv4.tcp_wmem" = "4096 65536 16777216";
     };
+
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 7d";
+    };
   };
 }

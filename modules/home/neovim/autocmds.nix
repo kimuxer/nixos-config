@@ -1,5 +1,5 @@
 # -- modules/home/neovim/autocmds.nix --
-{ ... }:
+{ config, lib, ... }:
 let
   flakeDirectory = "${config.home.homeDirectory}/nixos-config";
 in
@@ -9,7 +9,7 @@ in
       desc = "Edit nvf config";
       event = [ "FileType" ];
       pattern = [ "alpha" ];
-      callback = # lua
+      callback = lib.generators.mkLuaInline
         ''
           function()
             vim.keymap.set("n", "c", function()
@@ -22,7 +22,7 @@ in
       # 顺便把之前缺失的“恢复光标位置”也用这种方式补上
       event = [ "BufReadPost" ];
       pattern = [ "*" ];
-      callback = # lua
+      callback = lib.generators.mkLuaInline
         ''
           function()
             local mark = vim.api.nvim_buf_get_mark(0, '"')
