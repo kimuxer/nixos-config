@@ -34,6 +34,10 @@ bash <(curl -L https://raw.githubusercontent.com/kimuxer/nixos-config/main/scrip
 ```bash
 sudo nixos-rebuild switch --flake .#nixdevbox
 ```
+或者
+```
+nh os switch
+```
 
 ### 重建软路由
 

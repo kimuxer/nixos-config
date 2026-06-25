@@ -13,6 +13,7 @@
 
     settings.vim = {
       lazy.loader = true;
+      mini.icons.enable = true;
       vimAlias = true;
       syntaxHighlighting = true;
       ui.noice.enable = true;
@@ -21,6 +22,10 @@
       comments.comment-nvim.enable = true;
       tabline.nvimBufferline.enable = true;
       binds.whichKey.enable = true;
+      extraPackages = [ 
+        pkgs.tree-sitter
+        pkgs.watchman
+      ];
 
       visuals = {
         indent-blankline.enable = true;
