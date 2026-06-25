@@ -5,12 +5,16 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
 
+    # 添加 nvf
+    nvf.url = "github:notashelf/nvf";
+    nvf.inputs.nixpkgs.follows = "nixpkgs";
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    #桌面环境与合成器 ( Niri + noctalia )
+    # 桌面环境与合成器 ( Niri + noctalia )
     niri.url = "github:sodiboo/niri-flake";
     niri.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -67,5 +71,4 @@
         };
       };
     };
-
 }

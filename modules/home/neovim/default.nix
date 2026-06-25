@@ -1,24 +1,75 @@
-{ pkgs, ... }:
+# -- modules/home/neovim/default.nix --
+{ inputs, ... }:
 {
-  xdg.configFile."nvim" = {
-    source = ./configs;
-    recursive = true;
-  };
+  imports = [
+    inputs.nvf.homeManagerModules.default
+    ./keymaps.nix
+    ./autocmds.nix
+    ./lsp.nix
+  ];
 
-  programs.neovim = {
+  programs.nvf = {
     enable = true;
-    package = pkgs.neovim-unwrapped;
-    defaultEditor = false;
-    viAlias = true;
-    vimAlias = true;
-    waylandSupport = true;
 
-    extraPackages = with pkgs; [
-      lua-language-server
-    ];
+    settings.vim = {
+      lazy.loader = true;
+      vimAlias = true;
+      syntaxHighlighting = true;
+      ui.noice.enable = true;
+      git.gitsigns.enable = true;
+      autopairs.nvim-autopairs.enable = true;
+      comments.comment-nvim.enable = true;
+      tabline.nvimBufferline.enable = true;
 
-    plugins = with pkgs.vimPlugins; [
-      nvim-lspconfig
-    ];
+      visuals = {
+        indent-blankline.enable = true;
+        nvim-cursorline.enable = true;
+      };
+
+      options = {
+        mouse = "a";
+        tabstop = 2;
+        shiftwidth = 0;
+        smartindent = true;
+        expandtab = true;
+      };
+
+      # === 核心插件区 ===
+      autocomplete.nvim-cmp.enable = true;
+      snippets.luasnip.enable = true;
+      binds.cheatsheet.enable = true;
+      telescope.enable = true;
+
+      treesitter = {
+        enable = true;
+        indent.enable = false;
+      };
+
+      statusline.lualine = {
+        enable = true;
+        theme = "auto";
+      };
+
+      clipboard = {
+        enable = true;
+        registers = "unnamedplus"; # 自动使用系统剪贴板，无需额外配置快捷键
+        providers.wl-copy.enable = true;
+      };
+
+      dashboard.alpha = {
+        enable = true;
+        theme = "theta";
+        opts.leader = "SPC";
+      };
+
+      filetree.neo-tree = {
+        enable = true;
+        setupOpts = {
+          add_blank_line_at_top = true;
+          auto_clean_after_session_restore = true;
+          git_status_async = true;
+        };
+      };
+    };
   };
 }

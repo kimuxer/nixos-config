@@ -12,6 +12,7 @@ in
 {
   programs.bat.enable = true;
   programs.ripgrep.enable = true;
+  programs.fd.enable = true;
   programs.bottom.enable = true;
 
   programs.eza = {
@@ -80,6 +81,10 @@ in
   };
 
   home.packages = [
+    # lsp
+    pkgs.fish-lsp
+    pkgs.nixd
+    pkgs.alejandra
     # 聊天
     pkgs.telegram-desktop
     pkgs.wechat
@@ -92,8 +97,6 @@ in
     pkgs.procs
     pkgs.dust
     pkgs.duf
-    pkgs.nixd
-    pkgs.alejandra   # nix代码格式化工具
     pkgs.llvmPackages.lldb
     pkgs.vscode-extensions.vadimcn.vscode-lldb
   ];
