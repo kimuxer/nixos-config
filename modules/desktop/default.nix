@@ -14,6 +14,7 @@
     ./desktop.nix
     ./kanata.nix
     ./fonts.nix
+    ./nh.nix
     #./virtualisation.nix
   ];
 }
