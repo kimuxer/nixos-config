@@ -52,7 +52,6 @@
 
       clipboard = {
         enable = true;
-        registers = "unnamedplus"; # 自动使用系统剪贴板，无需额外配置快捷键
         providers.wl-copy.enable = true;
       };
 

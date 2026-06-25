@@ -28,6 +28,11 @@
       { mode = "n"; key = "<leader>m<Left>"; action = "<cmd>vertical resize -2<CR>"; desc = "Resize Left"; }
       { mode = "n"; key = "<leader>m<Right>"; action = "<cmd>vertical resize +2<CR>"; desc = "Resize Right"; }
 
+      # 系统剪贴板操作组
+      { mode = ["n" "v"]; key = "<leader>y"; action = "\"+y"; desc = "Yank to clipboard"; }
+      { mode = ["n" "v"]; key = "<leader>Y"; action = "\"+Y"; desc = "Yank line to clipboard"; }
+      { mode = "n"; key = "<leader>p"; action = "\"+p"; desc = "Paste from clipboard"; }
+
       # UI 与工具
       { mode = "n"; key = "<leader>u"; icon = "󰔑 "; desc = "󰔑 UI Toggles"; }
       { mode = "n"; key = "<leader>ul"; action = "<cmd>set nu! rnu!<CR>"; desc = "Toggle Numbers"; }
