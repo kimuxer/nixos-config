@@ -1,5 +1,11 @@
 # -- modules/desktop/base.nix --
-{ config, pkgs, modulesPath, lib, ... }:
+{
+  config,
+  pkgs,
+  modulesPath,
+  lib,
+  ...
+}:
 
 {
   imports = [
@@ -10,8 +16,14 @@
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
   boot = {
-    kernelPackages = pkgs.linuxPackages_zen;
-    initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
+    kernelPackages = pkgs.linuxPackages_latest;
+    initrd.availableKernelModules = [
+      "xhci_pci"
+      "ahci"
+      "usbhid"
+      "usb_storage"
+      "sd_mod"
+    ];
     initrd.kernelModules = [ ];
     blacklistedKernelModules = [ "nouveau" ];
     kernelModules = [ "kvm-intel" ];
