@@ -9,11 +9,10 @@
   ];
 
   programs.nvf = {
+    enable = true;
     settings.vim = {
-      enable = true;
       viAlias = true;
       vimAlias = true;
-      vimDiffAlias = true;
       syntaxHighlighting = true;
 
       options = {
