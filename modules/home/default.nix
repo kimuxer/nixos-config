@@ -11,10 +11,10 @@
     ./helix
     ./jujutsu
     ./mpv
-    ./neovim
     ./niri
     ./nix-index
     ./noctalia
+    ./nvf
     ./packages
     ./search
     ./starship
