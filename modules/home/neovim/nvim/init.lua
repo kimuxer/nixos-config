@@ -1,52 +1,34 @@
-vim.g.mapleader = " "
-vim.g.maplocalleader = ","
+local url = function(plug)
+    return "https://github.com/" .. plug
+end
+vim.pack.add({
+    url("mason-org/mason.nvim"),
+    url("WhoIsSethDaniel/mason-tool-installer.nvim"),
+    url("mason-org/mason-lspconfig.nvim"),
+    url("neovim/nvim-lspconfig"),
+    url("saghen/blink.cmp"),
+    url("folke/which-key.nvim"),
+    -- telescope
 
-require("plugins.init")
-require("config.autocmd")
-require("config.binds")
+    url("nvim-mini/mini.files"),
+    url("nvim-telescope/telescope.nvim"),
+    url("nvim-lua/plenary.nvim"),
+    url("nvim-telescope/telescope-fzf-native.nvim"),
+    -- oil
+    url("stevearc/conform.nvim"),
+    url("nvim-tree/nvim-web-devicons"),
 
--- Colorcheme
-vim.cmd.colorscheme("catppuccin-mocha")
+    url("NeogitOrg/neogit"),
 
--- Line numbers
-vim.opt.cursorline = true
-vim.wo.relativenumber = true
-vim.wo.number = true
-vim.api.nvim_set_hl(0, "LineNr", { fg = "#6c7086" })                    -- overlay0
-vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#cba6f7", bold = true }) -- mauve
+    url("nvim-treesitter/nvim-treesitter"),
 
--- Windows
-vim.opt.splitbelow = true
-vim.opt.splitright = true
-vim.o.winborder = "rounded"
+    url("folke/tokyonight.nvim"),
+    url("folke/noice.nvim"),
+})
 
--- Sane tab management
-vim.opt.tabstop = 2
-vim.opt.softtabstop = 2
-vim.opt.shiftwidth = 2
-vim.opt.expandtab = false
-
--- Undo management
-vim.opt.swapfile = false
-vim.opt.backup = false
-vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
-vim.opt.undofile = true
-
--- Better Highlighting
-vim.opt.hlsearch = false
-vim.opt.incsearch = true
-
--- Nowrap
-vim.opt.wrap = false
-
--- Indent
-vim.o.autoindent = true
-
--- Undotree
-vim.cmd("packadd nvim.undotree")
-vim.keymap.set("n", "<leader>u", require("undotree").open)
-
--- Local project config
-vim.o.exrc = true
-
-vim.opt.mouse = "a"
+require("options")
+require("plugins")
+require("keymap")
+require("commands")
+require("lsp")
+require("ui")

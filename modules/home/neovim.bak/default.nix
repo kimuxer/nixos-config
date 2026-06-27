@@ -15,14 +15,9 @@
     extraPackages = with pkgs; [
       # 核心配置开发工具
       lua-language-server
-      tree-sitter
-
-      # 格式化工具
       nixfmt
       stylua
-      taplo
-      yamlfmt
-      prettierd          # 支持 JavaScript, TypeScript, CSS, HTML, JSON, Markdown 等
+      tree-sitter
       # 插件构建与编译环境
       gcc
       gnumake
