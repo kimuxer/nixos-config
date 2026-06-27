@@ -27,6 +27,19 @@
       gcc
       gnumake
       luarocks
+
+      # 语言语法解析器 (直接作为包安装)
+      tree-sitter-grammars.tree-sitter-lua
+      tree-sitter-grammars.tree-sitter-vim
+      tree-sitter-grammars.tree-sitter-rust
+      tree-sitter-grammars.tree-sitter-nix
+      tree-sitter-grammars.tree-sitter-markdown
+      tree-sitter-grammars.tree-sitter-kdl
+      tree-sitter-grammars.tree-sitter-toml
+      tree-sitter-grammars.tree-sitter-yaml
+      tree-sitter-grammars.tree-sitter-json
+      tree-sitter-grammars.tree-sitter-fish
+      tree-sitter-grammars.tree-sitter-ini
     ];
   };
 }

@@ -1,0 +1,7 @@
+-- 1. 配色方案
+vim.cmd([[colorscheme tokyonight]])
+
+-- 2. mini.files, which-key, neogit
+require("mini.files").setup({})
+require("which-key").setup()
+require("neogit").setup()

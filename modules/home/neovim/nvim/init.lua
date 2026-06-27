@@ -1,30 +1,30 @@
-local url = function(plug)
-    return "https://github.com/" .. plug
-end
+-- init.lua
+-- 1. 加载管理器实现
+require("pack")
+
+-- 2. 一站式声明插件
 vim.pack.add({
-    url("neovim/nvim-lspconfig"),
-    url("saghen/blink.cmp"),
-    url("folke/which-key.nvim"),
-    -- telescope
-
-    url("nvim-mini/mini.files"),
-    url("nvim-telescope/telescope.nvim"),
-    url("nvim-lua/plenary.nvim"),
-    url("nvim-telescope/telescope-fzf-native.nvim"),
-    -- oil
-    url("stevearc/conform.nvim"),
-
-    url("NeogitOrg/neogit"),
-
-    url("nvim-treesitter/nvim-treesitter"),
-
-    url("folke/tokyonight.nvim"),
-    url("folke/noice.nvim"),
+    "neovim/nvim-lspconfig",
+    "saghen/blink.cmp",
+    "folke/which-key.nvim",
+    "nvim-mini/mini.files",
+    "nvim-telescope/telescope.nvim",
+    "nvim-lua/plenary.nvim",
+    "nvim-telescope/telescope-fzf-native.nvim",
+    "stevearc/conform.nvim",
+    "NeogitOrg/neogit",
+    "neovim-treesitter/nvim-treesitter",
+    "folke/tokyonight.nvim",
+    "folke/noice.nvim",
 })
 
-require("options")
-require("plugins")
-require("keymap")
-require("commands")
-require("lsp")
-require("ui")
+-- 3. 加载基础配置模块
+require("config.options")
+require("config.keymap")
+require("config.commands")
+
+-- 4. 自动加载所有插件配置
+local plugin_files = vim.fn.glob(vim.fn.stdpath("config") .. "/lua/plugins/*.lua", true, true)
+for _, file in ipairs(plugin_files) do
+    require("plugins." .. vim.fn.fnamemodify(file, ":t:r"))
+end
