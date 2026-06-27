@@ -2,9 +2,6 @@ local url = function(plug)
     return "https://github.com/" .. plug
 end
 vim.pack.add({
-    url("mason-org/mason.nvim"),
-    url("WhoIsSethDaniel/mason-tool-installer.nvim"),
-    url("mason-org/mason-lspconfig.nvim"),
     url("neovim/nvim-lspconfig"),
     url("saghen/blink.cmp"),
     url("folke/which-key.nvim"),
@@ -16,7 +13,6 @@ vim.pack.add({
     url("nvim-telescope/telescope-fzf-native.nvim"),
     -- oil
     url("stevearc/conform.nvim"),
-    url("nvim-tree/nvim-web-devicons"),
 
     url("NeogitOrg/neogit"),
 

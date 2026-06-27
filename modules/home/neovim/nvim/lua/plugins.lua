@@ -3,6 +3,8 @@ vim.cmd([[colorscheme tokyonight]])
 
 -- 2. Mini.files
 require("mini.files").setup({})
+require("which-key").setup()
+require("neogit").setup()
 
 -- 3. Conform 格式化
 require("conform").setup({
