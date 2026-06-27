@@ -12,6 +12,23 @@
     vimAlias = true;
     vimdiffAlias = true;
 
+    plugins = with pkgs.vimPlugins; [
+      blink-cmp
+      noice-nvim
+      plenary-nvim
+      (nvim-treesitter.withPlugins (p: [
+        p.lua
+        p.nix
+        p.toml
+        p.yaml
+        p.json
+        p.markdown
+        p.rust
+        p.vim
+        p.fish
+      ]))
+    ];
+
     extraPackages = with pkgs; [
       # 核心配置开发工具
       lua-language-server
@@ -27,19 +44,6 @@
       gcc
       gnumake
       luarocks
-
-      # 语言语法解析器 (直接作为包安装)
-      tree-sitter-grammars.tree-sitter-lua
-      tree-sitter-grammars.tree-sitter-vim
-      tree-sitter-grammars.tree-sitter-rust
-      tree-sitter-grammars.tree-sitter-nix
-      tree-sitter-grammars.tree-sitter-markdown
-      tree-sitter-grammars.tree-sitter-kdl
-      tree-sitter-grammars.tree-sitter-toml
-      tree-sitter-grammars.tree-sitter-yaml
-      tree-sitter-grammars.tree-sitter-json
-      tree-sitter-grammars.tree-sitter-fish
-      tree-sitter-grammars.tree-sitter-ini
     ];
   };
 }

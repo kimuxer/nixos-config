@@ -1,5 +1,5 @@
--- 1. Blink.cmp (高性能补全)
-require("blink.cmp").setup({
+-- 1. Blink.cmp 配置
+require('blink.cmp').setup({
     keymap = {
         preset = 'enter',
         ['<Tab>'] = { 'select_next', 'snippet_forward', 'fallback' },
@@ -7,33 +7,57 @@ require("blink.cmp").setup({
         ['<CR>'] = { 'accept', 'fallback' },
     },
     sources = {
-        default = { "lsp", "path", "buffer" },
+        default = { 'lsp', 'path', 'buffer' },
     },
 })
 
 -- 2. LSP 服务器配置
-local lspconfig = require("lspconfig")
-local servers = { "lua_ls", "nixd", "taplo" }
+local capabilities = require('blink.cmp').get_lsp_capabilities()
 
-for _, lsp in ipairs(servers) do
-    lspconfig[lsp].setup({
-        capabilities = require("blink.cmp").get_lsp_capabilities(),
-    })
+vim.lsp.config('lua_ls', {
+    capabilities = capabilities,
+    root_dir = function(bufnr, cb)
+        local fname = vim.api.nvim_buf_get_name(bufnr)
+        cb(vim.fs.root(fname, { '.git', '.luarc.json', '.luarc.jsonc' })
+            or vim.fn.stdpath('config'))
+    end,
+    settings = {
+        Lua = {
+            codeLens = { enable = true },
+            hint = { enable = true, semicolon = 'Disable' },
+        },
+    },
+})
+
+vim.lsp.config('rust_analyzer', {
+    capabilities = capabilities,
+    settings = {
+        ['rust-analyzer'] = {
+            cargo = { allFeatures = false },
+            checkOnSave = { command = 'clippy' },
+        },
+    },
+})
+
+for _, lsp in ipairs({ 'nixd', 'taplo' }) do
+    vim.lsp.config(lsp, { capabilities = capabilities })
 end
 
--- 3. 统一的 LSP 附件事件
-vim.api.nvim_create_autocmd("LspAttach", {
-    group = vim.api.nvim_create_augroup("lsp_attach_disable_fts", { clear = true }),
+vim.lsp.enable({ 'lua_ls', 'nixd', 'taplo', 'rust_analyzer' })
+
+-- 3. LSP 快捷键
+vim.api.nvim_create_autocmd('LspAttach', {
+    group = vim.api.nvim_create_augroup('lsp_attach', { clear = true }),
     callback = function(ev)
-        -- 这里可以设置全局快捷键，例如跳转定义、查看定义等
         local opts = { buffer = ev.buf }
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
     end,
 })
 
+-- 4. 诊断配置
 vim.diagnostic.config({
-    virtual_text = false, -- 禁用原生的行内提示，因为有 tiny-inline-diagnostic 了
-    signs = true,         -- 保留左侧的图标标识
-    underline = true,     -- 保留波浪线
+    virtual_text = false,
+    signs = true,
+    underline = true,
 })
