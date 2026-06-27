@@ -54,6 +54,11 @@
             ./modules/router
           ];
         };
+
+        templates.rust = {
+          path = ./templates/rust;
+          description = "Rust development template";
+        };
       };
     };
 }
