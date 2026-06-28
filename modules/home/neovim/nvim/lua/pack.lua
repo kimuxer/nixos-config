@@ -2,6 +2,7 @@
 local plugins = {
 	"https://github.com/neovim/nvim-lspconfig",
 	"https://github.com/rcarriga/nvim-notify",
+	"https://github.com/nvim-mini/mini.statusline",
 	"https://github.com/nvim-mini/mini.files",
 	"https://github.com/nvim-mini/mini.icons",
 	"https://github.com/nvim-mini/mini.indentscope",

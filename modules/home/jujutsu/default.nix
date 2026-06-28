@@ -12,7 +12,7 @@
 
       # 界面与编辑器
       ui = {
-        editor = "hx";
+        editor = "nvim";
         graph-style = "curved";
         default-command = "log";
       };
