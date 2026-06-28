@@ -2,10 +2,12 @@
 local plugins = {
 	"https://github.com/neovim/nvim-lspconfig",
 	"https://github.com/rcarriga/nvim-notify",
+	"https://github.com/nvim-mini/mini.files",
 	"https://github.com/nvim-mini/mini.icons",
+	"https://github.com/nvim-mini/mini.indentscope",
+	"https://github.com/nvim-mini/mini.pairs",
 	"https://github.com/nvim-tree/nvim-web-devicons",
 	"https://github.com/folke/which-key.nvim",
-	"https://github.com/nvim-mini/mini.files",
 	"https://github.com/nvim-telescope/telescope.nvim",
 	"https://github.com/nvim-telescope/telescope-fzf-native.nvim",
 	"https://github.com/stevearc/conform.nvim",

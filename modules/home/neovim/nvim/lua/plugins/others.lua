@@ -11,3 +11,5 @@ require("which-key").setup({
 require("neogit").setup({})
 require("mini.icons").setup()
 require("nvim-web-devicons").setup()
+require("mini.indentscope").setup()
+require("mini.pairs").setup()
