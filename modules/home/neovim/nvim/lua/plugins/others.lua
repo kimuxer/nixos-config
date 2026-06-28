@@ -3,6 +3,11 @@ vim.cmd([[colorscheme tokyonight]])
 
 -- 2. mini.files, which-key, neogit
 require("mini.files").setup({})
-require("which-key").setup()
-require("neogit").setup()
+require("which-key").setup({
+	icons = {
+		mappings = true,
+	},
+})
+require("neogit").setup({})
 require("mini.icons").setup()
+require("nvim-web-devicons").setup()
