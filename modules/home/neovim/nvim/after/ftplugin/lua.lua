@@ -23,13 +23,3 @@ vim.lsp.enable("lua_ls")
 -- 2. 设置本地缩进
 vim.opt_local.shiftwidth = 2
 vim.opt_local.tabstop = 2
-
-local ok, lazydev = pcall(require, "lazydev")
-if ok then
-    lazydev.setup({
-        library = {
-            { path = "${3rd}/luv/library", words = { "vim%.uv" } },
-        },
-        integrations = { lspconfig = false },
-    })
-end
