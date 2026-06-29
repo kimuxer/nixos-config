@@ -1,6 +1,7 @@
 -- lua/plugin/00-ui.lua
 
 vim.pack.add({
+    "https://github.com/MunifTanjim/nui.nvim",
     "https://github.com/folke/noice.nvim",
     "https://github.com/rcarriga/nvim-notify",
     "https://github.com/sainnhe/gruvbox-material",
@@ -19,9 +20,9 @@ vim.g.gruvbox_material_enable_italic = true
 vim.g.gruvbox_material_background = "hard"
 vim.cmd.colorscheme("gruvbox-material")
 
+-- 删掉 vim.notify = require("notify")，让 noice 自动处理通知
 
-vim.notify = require("notify")
-
+-- 使用 VimEnter 确保 noice 和 notify 环境就绪
 require("noice").setup({
     cmdline = {
         enabled = true,
@@ -33,8 +34,8 @@ require("noice").setup({
             },
         },
     },
-    notify = { enabled = true, view = "notify" },
-    messages = { enabled = false, view = "notify" },
+    notify = { enabled = true },
+    messages = { enabled = true },
     lsp = {
         override = {
             ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
