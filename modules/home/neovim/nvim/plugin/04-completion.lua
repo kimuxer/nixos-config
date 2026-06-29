@@ -1,0 +1,32 @@
+-- lua/plugin/05-completion.lua
+
+-- 1. 通过 vim.pack 安装 Nix 中未包含的 Lua 插件
+vim.pack.add({
+    { src = "https://github.com/L3MON4D3/LuaSnip", version = vim.version.range("2.*") },
+    "https://github.com/rafamadriz/friendly-snippets",
+})
+
+-- 2. 补全引擎配置
+-- 注意：blink-cmp 由 Nix 提供，所以直接 setup 即可
+local blink = require("blink.cmp")
+
+blink.setup({
+    snippets = { preset = "luasnip" },
+    keymap = {
+        preset = "enter",
+        ["<Tab>"] = { "select_next", "snippet_forward", "fallback" },
+        ["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
+        ["<CR>"] = { "accept", "fallback" },
+    },
+    sources = { default = { "lsp", "path", "snippets", "buffer" } },
+    completion = {
+        documentation = { auto_show = true, auto_show_delay_ms = 500, window = { border = "rounded" } },
+    },
+    signature = { enabled = true },
+})
+
+-- 3. 加载代码片段
+require("luasnip.loaders.from_vscode").lazy_load()
+
+-- 4. 导出全局变量，供 after/ftplugin/ 下的 LSP 配置使用
+_G.LSP_CAPS = blink.get_lsp_capabilities()

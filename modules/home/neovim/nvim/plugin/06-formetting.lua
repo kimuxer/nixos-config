@@ -1,4 +1,6 @@
--- 3. Conform 格式化
+-- lua/plugin/02-formatting.lua
+vim.pack.add({ "https://github.com/stevearc/conform.nvim" })
+
 require("conform").setup({
     formatters_by_ft = {
         lua = { "stylua" },
@@ -7,7 +9,12 @@ require("conform").setup({
         nix = { "nixfmt" },
         toml = { "taplo" },
         yaml = { "yamlfmt" },
+        rust = { "rustfmt" },
     },
+    default_format_opts = {
+        lsp_format = "fallback",
+    },
+
 })
 
 vim.api.nvim_create_autocmd("BufWritePre", {

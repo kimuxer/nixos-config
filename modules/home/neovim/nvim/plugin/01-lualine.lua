@@ -1,0 +1,33 @@
+-- lua/plugin/07-lualine.lua
+
+vim.pack.add({
+    "https://github.com/nvim-lualine/lualine.nvim",
+})
+
+require('lualine').setup({
+    options = {
+        theme = 'gruvbox-material',
+        component_separators = { left = '', right = '' },
+        section_separators = { left = '', right = '' },
+        globalstatus = true, -- 使用全局状态栏，而不是每个窗口一个
+    },
+    sections = {
+        lualine_a = { 'mode' },
+        lualine_b = { 'branch', 'diff', 'diagnostics' },
+        lualine_c = { 'filename' },
+        lualine_x = {
+            -- 集成 direnv 状态
+            {
+                function()
+                    local ok, direnv = pcall(require, 'direnv')
+                    return ok and direnv.statusline() or ""
+                end,
+            },
+            'encoding',
+            'fileformat',
+            'filetype'
+        },
+        lualine_y = { 'progress' },
+        lualine_z = { 'location' }
+    },
+})

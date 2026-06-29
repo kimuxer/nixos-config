@@ -4,9 +4,9 @@ vim.cmd([[colorscheme tokyonight]])
 -- 2. mini.files, which-key, neogit
 require("mini.files").setup({})
 require("which-key").setup({
-	icons = {
-		mappings = true,
-	},
+    icons = {
+        mappings = true,
+    },
 })
 require("neogit").setup({})
 require("mini.icons").setup()
@@ -14,3 +14,6 @@ require("nvim-web-devicons").setup()
 require("mini.indentscope").setup()
 require("mini.pairs").setup()
 require("mini.statusline").setup()
+
+-- 初始化 direnv.nvim
+require("direnv").setup({})

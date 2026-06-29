@@ -13,20 +13,7 @@
     vimdiffAlias = true;
 
     plugins = with pkgs.vimPlugins; [
-      blink-cmp
-      noice-nvim
-      plenary-nvim
-      (nvim-treesitter.withPlugins (p: [
-        p.lua
-        p.nix
-        p.toml
-        p.yaml
-        p.json
-        p.markdown
-        p.rust
-        p.vim
-        p.fish
-      ]))
+      blink-cmp     # 等待解决blink.lib
     ];
 
     extraPackages = with pkgs; [

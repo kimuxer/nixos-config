@@ -1,0 +1,74 @@
+-- lua/plugin/04-telescope.lua
+
+vim.pack.add({
+    "https://github.com/nvim-lua/plenary.nvim",
+    "https://github.com/nvim-telescope/telescope.nvim",
+    "https://github.com/nvim-telescope/telescope-fzf-native.nvim",
+    "https://github.com/folke/todo-comments.nvim",
+})
+
+-- 1. 自愈式编译逻辑
+vim.api.nvim_create_autocmd("PackChanged", {
+    callback = function(ev)
+        if ev.data.spec.name == "telescope-fzf-native.nvim" then
+            if ev.data.kind == "install" or ev.data.kind == "update" then
+                vim.notify("Building telescope-fzf-native...", vim.log.levels.INFO)
+                vim.system({ "make" }, { cwd = ev.data.path }, function(obj)
+                    if obj.code == 0 then
+                        vim.schedule(function()
+                            pcall(require("telescope").load_extension, "fzf")
+                            vim.notify("fzf-native build successful!", vim.log.levels.INFO)
+                        end)
+                    end
+                end)
+            end
+        end
+    end,
+})
+
+-- 2. 基础 setup
+require("telescope").setup({
+    defaults = {
+        path_display = { "smart" },
+        mappings = {
+            i = {
+                ["<C-k>"] = require("telescope.actions").move_selection_previous,
+                ["<C-j>"] = require("telescope.actions").move_selection_next,
+                ["<C-q>"] = require("telescope.actions").send_selected_to_qflist +
+                    require("telescope.actions").open_qflist,
+            },
+        },
+    },
+    extensions = { fzf = {} },
+})
+
+-- 3. 尝试加载扩展 (如果还没编译好，这里会失败，由上面的钩子自愈)
+pcall(require("telescope").load_extension, "fzf")
+
+-- 4. Keymaps ...
+local builtin = require("telescope.builtin")
+
+vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Telescope find files" })
+vim.keymap.set("n", "<leader>fs", builtin.live_grep, { desc = "Telescope live grep" })
+-- vim.keymap.set("n", "<leader>fr", builtin.oldfiles, { desc = "Fuzzy find recent files" })
+vim.keymap.set("n", "<leader>fc", builtin.grep_string, { desc = "Find string under cursor in cwd" })
+vim.keymap.set("n", "<leader>fq", builtin.quickfix, { desc = "Lists items in the quickfix list" })
+vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" })
+vim.keymap.set("n", "<leader>fg", builtin.current_buffer_fuzzy_find, { desc = "Telescope file fuzzy finder" })
+vim.keymap.set("n", "<leader>fd", builtin.lsp_document_symbols, { desc = "Telescope LSP document symbols" })
+
+-- This keymap can be used to navigate
+vim.keymap.set("n", "<leader>b", function()
+    builtin.buffers({
+        sort_mru = true,          -- Most Recently Used
+        ignore_current_buffer = true,
+        show_all_buffers = false, -- Do not show unloaded buffers
+    })
+end, { desc = "Navigate into loaded buffers" })
+
+vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
+vim.keymap.set("n", "<leader>en", function()
+    builtin.find_files({
+        cwd = vim.fn.stdpath("config"),
+    })
+end)
