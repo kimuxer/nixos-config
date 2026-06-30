@@ -27,6 +27,7 @@
         mapleader = " ";
         maplocalleader = " ";
       };
+      
       extraPackages = with pkgs; [
         prettierd
         yamlfmt
@@ -34,6 +35,13 @@
         rustfmt
         
       ];
+      
+      luaConfigPre = ''
+        -- 强行堵上 nvf 底层硬编码造成的 default_on_attach 幽灵函数漏洞
+        _G.default_on_attach = function(client, bufnr)
+          -- 留空让它安全通过
+        end
+      '';
     };
   };
   
