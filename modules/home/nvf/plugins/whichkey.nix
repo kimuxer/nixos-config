@@ -1,10 +1,11 @@
 # -- modules/home/nvf/plugins/whichkey.nix --
 { ... }:
 {
-  programs.nvf.settings.vim.binds.whichKey = {
-    enable = true;
-    setupOpts = {
-      spec = { { "<Esc><Esc>", hidden = true } };
+  programs.nvf.settings.vim = {
+    visuals.nvim-web-devicons.enable = true;
+
+    binds.whichKey = {
+      enable = true;
     };
   };
 }

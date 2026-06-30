@@ -1,5 +1,5 @@
 # -- modules/home/nvf/plugins/treesitter.nix --
-{ ... }:
+{ pkgs, ... }:
 {
   programs.nvf.settings.vim.treesitter = {
     enable = true;

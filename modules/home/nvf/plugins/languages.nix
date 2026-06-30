@@ -3,7 +3,7 @@
 {
   programs.nvf.settings.vim.languages = {
     enableFormat = true;
-    enableDAP = true;
+#    enableDAP = true;
 
     nix = {
       enable = true;

@@ -11,12 +11,12 @@
     smartindent = true;
     wrap = false;
     wildignore = [
-      "*/.git/*",
-      "*/build/*",
-      "*/dist/*",
-      "*/node_modules/*",
-      "*/result*",
-      "*/.direnv/*",
-      ];
+      "*/.git/*"
+      "*/build/*"
+      "*/dist/*"
+      "*/node_modules/*"
+      "*/result*"
+      "*/.direnv/*"
+    ];
   };
 }

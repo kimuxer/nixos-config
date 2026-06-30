@@ -13,8 +13,8 @@
     ./mpv
     ./niri
     ./nix-index
-    ./noctalia
-    #./nvf
+    #./noctalia
+    ./nvf
     ./neovim
     ./packages
     ./search
