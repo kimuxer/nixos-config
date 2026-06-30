@@ -3,9 +3,16 @@
 {
   imports = [
     inputs.nvf.homeManagerModules.default
-    ./keymaps.nix
-    ./lsp.nix
-    ./plugins.nix
+    ./ui/ui.nix
+    ./editor/options.nix
+    ./editor/binds.nix
+    ./plugins/whichkey.nix
+    ./plugins/others.nix
+    ./plugins/telescope.nix
+    ./plugins/treesitter.nix
+    ./plugins/formatting.nix
+    ./plugins/completion.nix
+    ./plugins/languages.nix
   ];
 
   programs.nvf = {
@@ -13,27 +20,9 @@
     settings.vim = {
       viAlias = true;
       vimAlias = true;
-      syntaxHighlighting = true;
-
-      options = {
-        mouse = "a";
-        tabstop = 2;
-        shiftwidth = 0;
-        smartindent = true;
-        expandtab = true;
-        cursorline = true;
-      };
-      # 插件
-      lazy.loader = true;
-
-      treesitter = {
-        enable = true;
-        indent.enable = false;
-      };
-
-      clipboard = {
-        enable = true;
-        providers.wl-copy.enable = true;
+      globals = {
+        mapleader = " ";
+        maplocalleader = " ";
       };
     };
   };

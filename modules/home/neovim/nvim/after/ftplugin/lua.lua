@@ -1,4 +1,17 @@
 -- after/ftplugin/lua.lua
+vim.pack.add({
+    "https://github.com/folke/lazydev.nvim",
+})
+local lazydev_config = {
+    library = {
+        { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+    },
+}
+
+local status, lazydev = pcall(require, "lazydev")
+if status then
+    lazydev.setup(lazydev_config)
+end
 
 -- 1. 只有打开 Lua 文件时才开启 lua_ls
 local capabilities = _G.LSP_CAPS or require("blink.cmp").get_lsp_capabilities()

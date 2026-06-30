@@ -9,7 +9,6 @@ vim.pack.add({
     "https://github.com/nvim-mini/mini.indentscope",
     "https://github.com/nvim-mini/mini.pairs",
     "https://github.com/nvim-mini/mini.files",
-    "https://github.com/folke/lazydev.nvim",
 })
 require("mini.files").setup({})
 require("mini.icons").setup()

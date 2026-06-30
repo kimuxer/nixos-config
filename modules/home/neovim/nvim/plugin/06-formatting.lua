@@ -9,7 +9,7 @@ require("conform").setup({
         nix = { "nixfmt" },
         toml = { "taplo" },
         yaml = { "yamlfmt" },
-        rust = { "rustfmt" },
+        -- rust = { "rustfmt" },    --  切换到 after/ftplugin/rust.lua 中配置
     },
     default_format_opts = {
         lsp_format = "fallback",

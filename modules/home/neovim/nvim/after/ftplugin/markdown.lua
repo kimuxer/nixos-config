@@ -1,0 +1,9 @@
+-- after/ftplugin/markdown.lua
+
+-- 直接在这里执行设置即可，它只在打开 markdown 时运行
+vim.opt_local.wrap = true
+vim.opt_local.linebreak = true
+
+local bopts = { buffer = true, silent = true }
+vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, replace_keycodes = false, unpack(bopts) })
+vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, replace_keycodes = false, unpack(bopts) })

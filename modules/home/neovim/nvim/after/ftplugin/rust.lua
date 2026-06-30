@@ -16,3 +16,6 @@ vim.lsp.config("rust_analyzer", {
 
 -- 启动 LSP
 vim.lsp.enable("rust_analyzer")
+
+-- === 新增：为当前 Rust Buffer 设置 formatting ===
+require("conform").formatters_by_ft.rust = { "rustfmt" }
