@@ -1,22 +1,56 @@
+# -- modules/home/nvf/editor/options.nix --
 { ... }:
 {
-  programs.nvf.settings.vim.options = {
-    mouse = "a";
-    tabstop = 2;
-    shiftwidth = 0;
-    cursorline = true;
-    swapfile = false;
-    relativenumber = true;
-    expandtab = true;
-    smartindent = true;
-    wrap = false;
-    wildignore = [
-      "*/.git/*"
-      "*/build/*"
-      "*/dist/*"
-      "*/node_modules/*"
-      "*/result*"
-      "*/.direnv/*"
-    ];
+  programs.nvf.settings.vim = {
+    # ===== 用 nvf 专用开关代替裸写 vim.options =====
+    undoFile.enable = true;   # 持久化撤销历史（自动管理 undodir 路径）
+    searchCase = "smart";     # 智能大小写搜索（等价于 smartcase+ignorecase）
+
+    options = {
+      # ===== 基础行为 =====
+      mouse = "a";
+      autoread = true;
+      confirm = true;
+
+      # ===== 缩进 =====
+      tabstop = 2;
+      shiftwidth = 0;          # 跟随 tabstop
+      smartindent = true;
+      autoindent = true;
+
+      # ===== 显示 =====
+      cursorline = true;
+      wrap = false;
+      termguicolors = true;
+      signcolumn = "yes";
+      scrolloff = 8;
+      sidescrolloff = 8;
+      showmode = false;
+      splitright = true;
+      splitbelow = true;
+
+      # ===== 搜索交互 =====
+      hlsearch = true;         # Neovim 原生默认是关的，这项必须显式开
+      incsearch = true;
+      inccommand = "split";
+
+      # ===== 响应速度 =====
+      updatetime = 250;
+      timeoutlen = 300;
+
+      # ===== 补全菜单 =====
+      completeopt = "menu,menuone,noselect";
+      pumheight = 10;
+
+      # ===== 忽略路径 =====
+      wildignore = [
+        "*/.git/*"
+        "*/build/*"
+        "*/dist/*"
+        "*/node_modules/*"
+        "*/result*"
+        "*/.direnv/*"
+      ];
+    };
   };
 }

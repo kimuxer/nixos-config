@@ -46,7 +46,7 @@
             auto_open = {
               enabled = true;
               trigger = true;
-              luasnip = true;
+              #luasnip = true;
               throttle = 50;
             };
           };

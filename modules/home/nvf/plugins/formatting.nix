@@ -8,10 +8,11 @@
         lua = ["stylua"];
         markdown = ["prettierd"];
         json = ["prettierd"];
-        nix = ["nixfmt"];
+        nix = ["alejandra"];
         toml = ["taplo"];
-        yaml = ["yamlfmt"];
+        yaml = ["prettierd"];
         rust = ["rustfmt"];
+        kdl = ["kdlfmt"];
       };
     };
   };
