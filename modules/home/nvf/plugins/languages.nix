@@ -1,16 +1,9 @@
 # -- modules/home/nvf/plugins/languages.nix
-{pkgs, ...}: 
-let 
-  options = {
-    enable = true;
-    lsp.enable = true;
-    format.enable = true;
-    treesitter.enable = true;
-  };
-in
+{pkgs, ...}:
 {
   programs.nvf.settings.vim = {
     lsp = {
+      enable = true;
       formatOnSave = true;
       #inlayHints.enable = true;
       #lightbulb.enable = true;
@@ -27,17 +20,18 @@ in
 
     languages = {
       enableTreesitter = true;
+      enableFormat = true;
 
       nix = {
         enable = true;
         lsp.servers = ["nixd"];
-        format.enable = true;
-        treesitter.enable = true;
       };
-      fish = options;
-      lua = options;
-      toml = options;
-      rust = options;
+      lua.enable = true;
+      toml.enable = true;
+      rust = {
+        enable = true;
+        extensions.crates-nvim.enable = true;
+      }
     };
 
     treesitter.grammars = with pkgs.vimPlugins.nvim-treesitter.grammarPlugins; [

@@ -28,7 +28,7 @@
         };
 
         # 手动关闭，使用 noice 的 signature help
-        signature.enabled = false;
+        signature.enabled = true;
       };
     };
   };
