@@ -16,13 +16,7 @@
       mode = "n";
       key = "<leader>fm";
       action = "<cmd>lua require('conform').format({ async = true, lsp_format = 'fallback' })<CR>";
-      desc = "[M]ormat buffer";
-    }
-    {
-      mode = "n";
-      key = "<leader>gg";
-      action = "<cmd>Neogit<cr>";
-      desc = "Show Neogit UI";
+      desc = "[M]format buffer";
     }
     # 系统剪贴板
     {

@@ -6,15 +6,18 @@
 }: {
   imports = [
     inputs.nvf.homeManagerModules.default
-    ./ui/ui.nix
+    ./ui/ui2.nix
     ./editor/options.nix
     ./editor/binds.nix
     ./plugins/whichkey.nix
-    ./plugins/others.nix
     ./plugins/telescope.nix
     ./plugins/formatting.nix
     ./plugins/completion.nix
     ./plugins/languages.nix
+    ./plugins/direnv.nix
+    ./plugins/clipboard.nix
+    ./plugins/diagnostics.nix
+    ./plugins/git.nix
   ];
 
   programs.nvf = {

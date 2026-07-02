@@ -6,6 +6,19 @@
 
     binds.whichKey = {
       enable = true;
+
+      register = {
+        "<leader>f" = "+format/find";
+        "<leader>g" = "+neogit";
+        "<leader>b" = "+buffer";
+        "<leader>c" = "+crates";
+        "<leader>l" = "+lsp";
+      };
+
+      setupOpts = {
+        expand = 5;
+        preset = "modern";  # 默认是 "classic"，可选：false | "classic" | "modern" | "helix"
+      };
     };
   };
 }
