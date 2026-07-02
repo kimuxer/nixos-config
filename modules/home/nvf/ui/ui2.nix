@@ -7,13 +7,7 @@
     mini.pairs.enable = true;
     mini.indentscope.enable = true;
     mini.files.enable = true;
-
-    mini.statusline = {
-      enable = true;
-      setupOpts = {
-        use_icons = true;
-      };
-    };
+    statusline.lualine.enable = true;
 
     theme = {
       enable = true;

@@ -5,17 +5,8 @@
     lsp = {
       enable = true;
       formatOnSave = true;
-      #inlayHints.enable = true;
-      #lightbulb.enable = true;
-
-      #   presets = {
-      #  tailwindcss-language-server.enable = true;
-      #  nixd.enable = true;
-      #  taplo.enable = true;
-      #  bash-language-server.enable = true;
-      #  fish-lsp.enable = true;
-      #  lua-language-server.enable = true;
-      #};
+      inlayHints.enable = true;
+      lightbulb.enable = true;
     };
 
     languages = {
@@ -31,7 +22,7 @@
       rust = {
         enable = true;
         extensions.crates-nvim.enable = true;
-      }
+      };
     };
 
     treesitter.grammars = with pkgs.vimPlugins.nvim-treesitter.grammarPlugins; [
