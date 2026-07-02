@@ -3,7 +3,8 @@
   inputs,
   pkgs,
   ...
-}: {
+}:
+{
   imports = [
     inputs.nvf.homeManagerModules.default
     ./ui/ui2.nix
@@ -41,15 +42,28 @@
         stylua
         kdlfmt
         taplo
-        rust-analyzer
+        #rust-analyzer
       ];
 
-       luaConfigPre = ''
-      -- 强行堵上 nvf 底层硬编码造成的 default_on_attach 幽灵函数漏洞
-          _G.default_on_attach = function(client, bufnr)
-          -- 留空让它安全通过
-        end
-       '';
+      luaConfigPre = ''
+        -- 强行堵上 nvf 底层硬编码造成的 default_on_attach 幽灵函数漏洞
+            _G.default_on_attach = function(client, bufnr)
+            -- 留空让它安全通过
+          end
+          -- 原生替代 project.nvim 的功能
+          vim.api.nvim_create_autocmd("BufEnter", {
+            callback = function()
+              -- 只有当还没有切换过且检测到项目根目录时才执行
+              local root = vim.fs.root(0, {".git", ".root", "flake.nix", "Cargo.toml"})
+              if root and vim.fn.getcwd() ~= root then
+                vim.schedule(function()
+                  vim.cmd("cd " .. root)
+                  print("Project root switched to: " .. root)
+                end)
+              end
+            end,
+          })
+      '';
     };
   };
 

@@ -13,8 +13,9 @@
           auto_show_delay_ms = 400;
           window.border = "rounded";
         };
-
-        signature.enabled = true;
+      };
+      signature = {
+        enabled = true;
       };
     };
   };
