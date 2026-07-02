@@ -7,6 +7,7 @@
     mini.pairs.enable = true;
     mini.indentscope.enable = true;
     mini.files.enable = true;
+    mini.comment.enable = true;
     statusline.lualine.enable = true;
 
     theme = {
