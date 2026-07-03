@@ -14,10 +14,6 @@ vim.keymap.set("n", "<leader>fm", function()
     require("conform").format({ async = true, lsp_format = "fallback" })
 end, { desc = "[M]ormat buffer" })
 
--- neogit
-
-vim.keymap.set("n", "<leader>gg", "<cmd>Neogit<cr>", { desc = "Show Neogit UI" })
-
 -- 系统剪贴板
 vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to system clipboard" })
 vim.keymap.set("n", "<leader>Y", [["+Y]], { desc = "Yank line to system clipboard" })

@@ -1,4 +1,4 @@
--- lua/plugin/04-telescope.lua
+-- modules/home/neovim/nvim/plugin/05-telescope.lua
 
 vim.pack.add({
     "https://github.com/nvim-lua/plenary.nvim",
@@ -6,6 +6,8 @@ vim.pack.add({
     "https://github.com/nvim-telescope/telescope-fzf-native.nvim",
     "https://github.com/folke/todo-comments.nvim",
 })
+
+require("todo-comments").setup()
 
 -- 1. 自愈式编译逻辑
 vim.api.nvim_create_autocmd("PackChanged", {
@@ -47,7 +49,7 @@ pcall(require("telescope").load_extension, "fzf")
 
 -- 4. Keymaps ...
 local builtin = require("telescope.builtin")
-
+vim.keymap.set("n", "<leader>ft", "<cmd>TodoTelescope<cr>", { desc = "Find todos in cwd" })
 vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Telescope find files" })
 vim.keymap.set("n", "<leader>fs", builtin.live_grep, { desc = "Telescope live grep" })
 -- vim.keymap.set("n", "<leader>fr", builtin.oldfiles, { desc = "Fuzzy find recent files" })

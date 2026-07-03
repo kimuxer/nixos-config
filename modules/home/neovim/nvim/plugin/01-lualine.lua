@@ -1,4 +1,4 @@
--- lua/plugin/07-lualine.lua
+-- modules/home/neovim/nvim/plugin/01-lualine.lua
 
 vim.pack.add({
     "https://github.com/nvim-lualine/lualine.nvim",

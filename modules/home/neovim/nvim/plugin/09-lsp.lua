@@ -1,0 +1,50 @@
+-- modules/home/neovim/nvim/plugin/09-lsp.lua
+
+vim.lsp.enable({ "lua_ls", "nixd", "rust_analyzer" })
+
+vim.api.nvim_create_autocmd("LspAttach", {
+    group = vim.api.nvim_create_augroup("UserLspConfig", { clear = true }),
+    callback = function(ev)
+        local opts = { buffer = ev.buf, silent = true }
+        local builtin = require("telescope.builtin")
+
+        opts.desc = "Go to definition"
+        vim.keymap.set("n", "gd", builtin.lsp_definitions, opts)
+
+        opts.desc = "Go to declaration"
+        vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
+
+        opts.desc = "Go to implementation"
+        vim.keymap.set("n", "gi", builtin.lsp_implementations, opts)
+
+        opts.desc = "Find references"
+        vim.keymap.set("n", "gA", builtin.lsp_references, opts)
+
+        opts.desc = "Show hover documentation"
+        vim.keymap.set("n", "K", function()
+            vim.lsp.buf.hover({ border = "rounded" })
+        end, opts)
+
+        opts.desc = "Rename symbol"
+        vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+
+        opts.desc = "Code action"
+        vim.keymap.set({ "n", "v" }, "<leader>a", vim.lsp.buf.code_action, opts)
+
+        opts.desc = "Show buffer diagnostics"
+        vim.keymap.set("n", "<leader>D", builtin.diagnostics, opts)
+
+        opts.desc = "Show line diagnostics"
+        vim.keymap.set("n", "<leader>di", vim.diagnostic.open_float, opts)
+
+        opts.desc = "Previous diagnostic"
+        vim.keymap.set("n", "[d", function()
+            vim.diagnostic.jump({ count = -1, float = true })
+        end, opts)
+
+        opts.desc = "Next diagnostic"
+        vim.keymap.set("n", "]d", function()
+            vim.diagnostic.jump({ count = 1, float = true })
+        end, opts)
+    end,
+})

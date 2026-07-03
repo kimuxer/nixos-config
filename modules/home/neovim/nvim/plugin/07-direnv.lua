@@ -1,13 +1,21 @@
--- lua/plugin/06-direnv.lua
+-- modules/home/neovim/nvim/plugin/07-direnv.lua
 
--- 如果你通过 vim.pack 管理，请取消下面这行注释：
-vim.pack.add({ "https://github.com/NotAShelf/direnv.nvim" })
+vim.pack.add({
+    "https://github.com/DrKJeff16/project.nvim",
+    "https://github.com/NotAShelf/direnv.nvim",
+})
+
+require("project").setup({
+    patterns = { ".git", ".envrc", "flake.nix" }, -- 加上 .envrc，纯 direnv 项目（没有 .git）也能识别
+    scope_chdir = "win",                          -- 每个窗口独立 cwd，避免分屏多项目互相干扰
+    silent_chdir = true,
+})
 
 require("direnv").setup({
     -- 核心功能：进入目录时自动加载
     autoload_direnv = true,
 
-    -- 状态栏图标（如果你用 lualine，可以在 lualine 中引用 direnv.statusline()）
+    -- 状态栏图标
     statusline = {
         enabled = true,
         icon = "󱚟",

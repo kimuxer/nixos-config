@@ -1,4 +1,4 @@
--- lua/plugin/02-formatting.lua
+-- modules/home/neovim/nvim/plugin/06-formatting.lua
 vim.pack.add({ "https://github.com/stevearc/conform.nvim" })
 
 require("conform").setup({
@@ -9,7 +9,7 @@ require("conform").setup({
         nix = { "nixfmt" },
         toml = { "taplo" },
         yaml = { "yamlfmt" },
-        -- rust = { "rustfmt" },    --  切换到 after/ftplugin/rust.lua 中配置
+        --rust = { "rustfmt" },
     },
     default_format_opts = {
         lsp_format = "fallback",

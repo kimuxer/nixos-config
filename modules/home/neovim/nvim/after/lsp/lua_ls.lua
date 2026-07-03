@@ -1,0 +1,16 @@
+-- modules/home/neovim/nvim/after/lsp/lua_ls.lua
+return {
+    cmd = { "lua-language-server" },
+    filetypes = { "lua" },
+    root_dir = function(bufnr, cb)
+        local fname = vim.api.nvim_buf_get_name(bufnr)
+        cb(vim.fs.root(fname, { ".git", ".luarc.json", ".luarc.jsonc" })
+            or vim.fn.stdpath("config"))
+    end,
+    settings = {
+        Lua = {
+            codeLens = { enable = true },
+            hint = { enable = true, semicolon = "Disable" },
+        },
+    },
+}

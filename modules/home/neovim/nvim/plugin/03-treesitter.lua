@@ -1,4 +1,4 @@
--- lua/plugin/03-treesitter.lua
+-- modules/home/neovim/nvim/plugin/03-treesitter.lua
 
 -- 1. 使用 vim.pack 安装
 vim.pack.add({

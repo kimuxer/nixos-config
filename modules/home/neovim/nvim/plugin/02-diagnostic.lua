@@ -1,4 +1,4 @@
--- lua/plugin/01-diagnostic.lua
+-- modules/home/neovim/nvim/plugin/02-diagnostic.lua
 
 vim.pack.add({ "https://github.com/rachartier/tiny-inline-diagnostic.nvim" })
 
