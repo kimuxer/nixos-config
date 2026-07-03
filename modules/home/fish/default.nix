@@ -67,6 +67,9 @@
       export LANG=en_US.UTF-8
       export LC_ALL=en_US.UTF-8
 
+      # 添加 Doom Emacs bin 目录到 PATH
+      fish_add_path $HOME/.config/emacs/bin
+
       # 开启终端时运行一次fastfetch
       if status is-interactive
         fastfetch
