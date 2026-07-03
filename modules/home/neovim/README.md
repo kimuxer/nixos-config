@@ -10,20 +10,30 @@ neovim/
 └── nvim/             # Neovim 配置目录 (xdg.configFile 同步至 ~/.config/nvim)
     ├── init.lua      # 入口文件
     ├── lua/
-    │   └── config/   # 全局配置 (options, keymaps)
+    │   └── config/   # 全局配置
+    │       ├── init.lua
+    │       ├── keymaps.lua
+    │       └── options.lua
     ├── plugin/       # 自动加载的插件配置 (按加载顺序)
     │   ├── 00-ui.lua
-    │   ├── 01-diagnostic.lua
-    │   ├── 02-formetting.lua
+    │   ├── 01-lualine.lua
+    │   ├── 02-diagnostic.lua
     │   ├── 03-treesitter.lua
-    │   ├── 04-telescope.lua
-    │   ├── 05-completion.lua
-    │   ├── 06-direnv.lua
-    │   ├── 07-lualine.lua
-    │   └── 08-witch-key.lua
+    │   ├── 04-completion.lua
+    │   ├── 05-telescope.lua
+    │   ├── 06-formatting.lua
+    │   ├── 07-direnv.lua
+    │   ├── 08-whichkey.lua
+    │   └── 09-lsp.lua
     └── after/
+        ├── lsp/      # LSP 服务器配置
+        │   ├── lua_ls.lua
+        │   ├── nixd.lua
+        │   └── rust_analyzer.lua
         └── ftplugin/ # 按文件类型自动加载 (LSP 与局部配置)
             ├── lua.lua
+            ├── markdown.lua
+            ├── nix.lua
             └── rust.lua
 ```
 
@@ -51,4 +61,4 @@ neovim/
 
 - `plugin/` 目录下的所有文件均按字母顺序自动加载，无需在 `init.lua` 中手动 `require`。
 - `after/ftplugin/` 目录下的配置只在特定文件类型打开时生效，是实现“按需启动 LSP”的核心。
-- `nvim-pack-lock.json` 会自动生成，请将其加入版本控制以锁定插件版本。
+- `nvim-pack-lock.json` 可能不存在，根据你的配置方式，请确认是否使用类似机制管理插件。
