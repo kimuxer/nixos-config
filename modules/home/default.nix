@@ -23,6 +23,7 @@
     ./yazi
     ./yt-dlp
     ./zed-editor
+    ./emacs
   ];
 
   xdg.userDirs.enable = true;

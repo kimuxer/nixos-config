@@ -1,26 +1,38 @@
 { pkgs, ... }:
 {
-  nixpkgs.overlays = [ inputs.emacs-overlay.overlays.default ];
-
   programs.emacs = {
     enable = true;
-    package = pkgs.emacs-unstable-pgtk;
+    package = pkgs.emacs31-pgtk;
   };
   services.emacs = {
     enable = true;
     client.enable = true;
-    package = pkgs.emacs-unstable-pgtk;
+    package = pkgs.emacs31-pgtk;
   };
 
   home.packages = with pkgs; [
     # Emacs 基础包
-    emacsGcc
     clang
     cmake
+    (ripgrep.override { withPCRE2 = true; })
+    fd
+    pandoc # 提供 Markdown 编译/预览支持
+    shellcheck # 提供 Shell 脚本的实时语法检查
   ];
 
-  #home.file.".config/doom" = {
-  #   source = ./configs;
-  #   recursive = true;
-  # };
+  xdg.configFile."doom" = {
+    source = ./configs;
+    recursive = true;
+  };
+  # -------------------------------------------------------------
+  # 注入全局和后台守护进程的环境变量，锁定配置目录为 ~/.config/doom
+  # -------------------------------------------------------------
+  systemd.user.sessionVariables = {
+    DOOMDIR = "/home/kim/.config/doom";
+  };
+
+  home.sessionVariables = {
+    DOOMDIR = "/home/kim/.config/doom";
+  };
+  # -------------------------------------------------------------
 }
