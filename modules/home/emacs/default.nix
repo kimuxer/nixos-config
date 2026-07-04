@@ -1,38 +1,53 @@
+# -- modules/home/emacs/default.nix --
 { pkgs, ... }:
 {
   programs.emacs = {
     enable = true;
-    package = pkgs.emacs31-pgtk;
+    package = pkgs.emacs31-nox;
+    # 在这里声明你需要的插件
+    extraPackages = epkgs: with epkgs; [
+      doom-themes
+      doom-modeline
+      evil
+      evil-collection
+      evil-leader
+      magit
+      orderless
+      vertico
+      marginalia
+      inheritenv
+      envrc
+      nix-mode
+      kdl-mode
+      apheleia
+    ];
   };
+
   services.emacs = {
     enable = true;
-    client.enable = true;
-    package = pkgs.emacs31-pgtk;
+    package = pkgs.emacs31-nox;
+    client = {
+      enable = true;
+      arguments = [
+          "-t"
+        ];
+    };
   };
 
+  # 只有那些不需要 Emacs 插件系统加载的外部工具才放在这里
   home.packages = with pkgs; [
-    # Emacs 基础包
     clang
     cmake
-    (ripgrep.override { withPCRE2 = true; })
-    fd
-    pandoc # 提供 Markdown 编译/预览支持
-    shellcheck # 提供 Shell 脚本的实时语法检查
+    shellcheck
+    alejandra
+    shfmt
+    nixd              # nix 语言服务器
+    taplo             # toml 语言服务器
+    bash-language-server  # shell 语言服务器
   ];
 
-  xdg.configFile."doom" = {
+  xdg.configFile."emacs" = {
     source = ./configs;
     recursive = true;
   };
-  # -------------------------------------------------------------
-  # 注入全局和后台守护进程的环境变量，锁定配置目录为 ~/.config/doom
-  # -------------------------------------------------------------
-  systemd.user.sessionVariables = {
-    DOOMDIR = "/home/kim/.config/doom";
-  };
-
-  home.sessionVariables = {
-    DOOMDIR = "/home/kim/.config/doom";
-  };
-  # -------------------------------------------------------------
 }

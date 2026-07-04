@@ -1,0 +1,48 @@
+;;; early-init.el --- 启动早期优化 -*- lexical-binding: t; -*-
+
+;; early-init.el 在 package.el 初始化之前、图形界面创建之前加载，
+;; 这里做的事情比 init.el 里做同样的事情生效更早、更彻底。
+
+;; === 1. GC 优化 ===
+;; 启动阶段把 GC 阈值拉到最大，避免频繁 GC 拖慢启动速度。
+;; 真正的“恢复正常阈值”放在 init.el 的 after-init-hook 里执行。
+(setq gc-cons-threshold most-positive-fixnum
+      gc-cons-percentage 0.6)
+
+;; === 2. 包管理交给 Nix，禁止 Emacs 自己的 package.el 在启动时初始化 ===
+(setq package-enable-at-startup nil)
+
+;; === 3. 静默启动 ===
+(setq inhibit-startup-message t
+      inhibit-startup-screen t
+      inhibit-default-init t
+      inhibit-startup-echo-area-message user-login-name)
+
+;; === 4. 尽早关闭菜单栏，避免终端下“先显示、后隐藏”的闪烁 ===
+;; 你用的是 emacs-nox（编译时不带 X11/GUI 支持），所以：
+;;   - tool-bar / scroll-bar 属于纯图形元素，-nox 编译时压根没有相关代码，
+;;     tool-bar-mode / scroll-bar-mode 大概率是 undefined function，
+;;     设置 default-frame-alist 里的 tool-bar-lines / vertical-scroll-bars
+;;     对 tty frame 也没有意义，这里就不写了。
+;;   - menu-bar 不一样：终端 Emacs 支持纯文本渲染的菜单栏（顶部 File/Edit/...
+;;     那一行），是真实会被画出来、也真实会闪一下的东西，所以只保留这项。
+(push '(menu-bar-lines . 0) default-frame-alist)
+(menu-bar-mode -1)
+
+;; 如果以后换成带 GUI 的 emacs 包（比如从 emacs-nox 换成 emacs-pgtk），
+;; 可以把下面这两行加回来：
+;; (push '(tool-bar-lines . 0) default-frame-alist)
+;; (push '(vertical-scroll-bars) default-frame-alist)
+;; (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+;; (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+
+;; === 5. 避免 early-init 阶段做多余的字体/主题重排（可选但推荐） ===
+;; frame-inhibit-implied-resize 可以防止加载主题、字体后 Emacs 反复调整窗口尺寸
+(setq frame-inhibit-implied-resize t)
+
+;; === 6. 关闭 native-comp 的启动期警告弹窗（如果启用了 native-comp） ===
+(when (boundp 'native-comp-async-report-warnings-errors)
+  (setq native-comp-async-report-warnings-errors 'silent))
+
+(provide 'early-init)
+;;; early-init.el ends here

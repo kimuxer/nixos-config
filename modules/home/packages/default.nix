@@ -3,7 +3,20 @@
 {
   programs.bat.enable = true;
   programs.bottom.enable = true;
-
+  programs.ripgrep.enable = true;
+  programs.fd = {
+    enable = true;
+    hidden = true;
+    ignores = [
+      ".git/"
+      "*.bak"
+      "build/"
+      "dist/"
+      "node_modules/"
+      "result/"
+      ".direnv/"
+    ];
+  };
   programs.eza = {
     enable = true;
     icons = "auto";
@@ -42,10 +55,6 @@
   };
 
   home.packages = [
-    # lsp
-    pkgs.fish-lsp
-    pkgs.nixd
-    pkgs.alejandra
     # 聊天
     pkgs.telegram-desktop
     pkgs.wechat
