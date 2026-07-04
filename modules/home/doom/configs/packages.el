@@ -51,3 +51,4 @@
 ;; (unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
+;; 从 GitHub 拉取第三方的 gruvbox-material 移植包

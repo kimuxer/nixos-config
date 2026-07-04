@@ -4,7 +4,8 @@
 ;; vertico-mode 是 autoload 的函数，直接在 :init 里调用即可触发整个包
 ;; 被加载，不需要 :demand（这是 vertico 官方推荐的写法）
 (use-package vertico
-  :init (vertico-mode 1))
+  :config
+  (vertico-mode 1))
 
 ;; 模糊匹配算法
 ;; 这里必须加 :demand t：这个 use-package 块里没有 :bind/:hook/:commands
@@ -32,7 +33,8 @@
 ;; 在 minibuffer 中提供候选词提示
 ;; 同 vertico，marginalia-mode 是 autoload 函数，:init 调用即可
 (use-package marginalia
-  :init (marginalia-mode 1))
+  :config
+  (marginalia-mode 1))
 
 (provide 'core-completion)
 ;;; core-completion.el ends here

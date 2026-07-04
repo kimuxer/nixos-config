@@ -15,7 +15,7 @@
     ./nix-index
     ./noctalia
     #./nvf
-    #./doom
+    ./doom
     ./neovim
     ./packages
     ./search
@@ -24,7 +24,7 @@
     ./yazi
     ./yt-dlp
     ./zed-editor
-    ./emacs
+    #./emacs
   ];
 
   xdg.userDirs.enable = true;

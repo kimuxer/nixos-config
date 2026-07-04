@@ -20,11 +20,13 @@
 ;; 需要 home.nix 里的 nix-mode 包（提供语法高亮/缩进），
 ;; eglot-ensure 触发时会自动去找 PATH 里的 nixd
 (use-package nix-mode
+  :mode "\\.nix\\'"
   :hook (nix-mode . eglot-ensure))
 
 ;; === 2. kdl-mode ===
 ;; 目前没有成熟的 KDL 语言服务器，这里只启用语法高亮，不接 eglot
-(use-package kdl-mode)
+(use-package kdl-mode
+  :mode "\\.kdl\\'")
 
 ;; === 3. TOML / Shell ===
 ;; 这两个的 major mode 都是 Emacs 内置的（conf-toml-mode / sh-mode），
@@ -65,10 +67,11 @@
 ;; 之后再开（见 envrc 包的 README），所以这里没有直接
 ;; (envrc-global-mode 1)，而是挂在 after-init-hook 的尾部执行，
 ;; 确保它排在 core-ui.el / core-completion.el 里那些全局 mode 后面。
-(use-package envrc)
+(use-package envrc
+  :hook (after-init . envrc-global-mode))
 (use-package inheritenv)  ; envrc 的配套依赖，没有 :config 可写，只是确保被加载
 
-(add-hook 'after-init-hook #'envrc-global-mode 90)
+; (add-hook 'after-init-hook #'envrc-global-mode 90)
 
 ;; === 6. Elisp 本身不需要 LSP ===
 ;; Emacs 自带 elisp-flymake-byte-compile 这个 flymake 后端就足够

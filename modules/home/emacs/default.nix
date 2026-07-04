@@ -5,32 +5,34 @@
     enable = true;
     package = pkgs.emacs31-nox;
     # 在这里声明你需要的插件
-    extraPackages = epkgs: with epkgs; [
-      doom-themes
-      doom-modeline
-      evil
-      evil-collection
-      evil-leader
-      magit
-      orderless
-      vertico
-      marginalia
-      inheritenv
-      envrc
-      nix-mode
-      kdl-mode
-      apheleia
-    ];
+    extraPackages =
+      epkgs: with epkgs; [
+        doom-themes
+        doom-modeline
+        evil
+        evil-collection
+        evil-leader
+        magit
+        orderless
+        vertico
+        marginalia
+        inheritenv
+        envrc
+        nix-mode
+        kdl-mode
+        apheleia
+        corfu
+      ];
   };
 
   services.emacs = {
     enable = true;
-    package = pkgs.emacs31-nox;
+    #    package = pkgs.emacs31-nox;
     client = {
       enable = true;
       arguments = [
-          "-t"
-        ];
+        "-t"
+      ];
     };
   };
 
@@ -41,9 +43,9 @@
     shellcheck
     alejandra
     shfmt
-    nixd              # nix 语言服务器
-    taplo             # toml 语言服务器
-    bash-language-server  # shell 语言服务器
+    nixd # nix 语言服务器
+    taplo # toml 语言服务器
+    bash-language-server # shell 语言服务器
   ];
 
   xdg.configFile."emacs" = {

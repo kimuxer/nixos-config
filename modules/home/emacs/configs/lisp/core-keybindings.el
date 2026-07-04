@@ -21,9 +21,9 @@
 
 (evil-define-key '(normal visual motion) 'global
   ;; -- 文件 --
-  (kbd "SPC f f") #'find-file
-  (kbd "SPC f s") #'save-buffer
-  (kbd "SPC f r") #'recentf-open
+  ;;(kbd "SPC f f") #'find-file
+  ; (kbd "SPC f s") #'save-buffer
+  ; (kbd "SPC f r") #'recentf-open
 
   ;; -- buffer --
   (kbd "SPC b b") #'switch-to-buffer
@@ -51,9 +51,9 @@
   (kbd "SPC c f") #'apheleia-format-buffer
 
   ;; -- Project --
-  (kbd "SPC p f") #'project-find-file
-  (kbd "SPC p p") #'project-switch-project
-  (kbd "SPC p b") #'project-switch-to-buffer
+  ;;(kbd "SPC p f") #'project-find-file
+  ;;(kbd "SPC p p") #'project-switch-project
+  ;;(kbd "SPC p b") #'project-switch-to-buffer
 
   ;; -- 杂项 --
   (kbd "SPC SPC") #'execute-extended-command

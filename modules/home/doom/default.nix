@@ -14,8 +14,8 @@
     # Emacs 基础包
     clang
     cmake
-    (ripgrep.override { withPCRE2 = true; })
-    fd
+    nixfmt
+    nixd
     pandoc # 提供 Markdown 编译/预览支持
     shellcheck # 提供 Shell 脚本的实时语法检查
   ];
@@ -27,12 +27,12 @@
   # -------------------------------------------------------------
   # 注入全局和后台守护进程的环境变量，锁定配置目录为 ~/.config/doom
   # -------------------------------------------------------------
-  systemd.user.sessionVariables = {
-    DOOMDIR = "/home/kim/.config/doom";
-  };
+  #systemd.user.sessionVariables = {
+  #  DOOMDIR = "/home/kim/.config/doom";
+  #};
 
-  home.sessionVariables = {
-    DOOMDIR = "/home/kim/.config/doom";
-  };
+  #home.sessionVariables = {
+  #  DOOMDIR = "/home/kim/.config/doom";
+  #};
   # -------------------------------------------------------------
 }
