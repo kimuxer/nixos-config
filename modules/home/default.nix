@@ -15,6 +15,7 @@
     ./nix-index
     ./noctalia
     #./nvf
+    #./doom
     ./neovim
     ./packages
     ./search
