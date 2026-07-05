@@ -16,10 +16,10 @@
 
     # 这段命令定义了当你在终端按 Alt+C 切换目录时，使用什么工具遍历文件
     # 使用 fd 比 find 快得多，且自动忽略 .git 等目录
-    changeDirWidgetCommand = "fd --type d --hidden --exclude .git";
+    changeDirWidget.command = "fd --type d --hidden --exclude .git";
 
     # 这段命令定义了在搜索文件时的逻辑
-    fileWidgetCommand = "fd --type f --hidden --exclude .git";
+    fileWidget.command = "fd --type f --hidden --exclude .git";
   };
 
   programs.fd = {
