@@ -2,12 +2,14 @@
 {
   programs.emacs = {
     enable = true;
-    package = pkgs.emacs31-pgtk;
+    package = pkgs.emacs31-nox;
   };
   services.emacs = {
     enable = true;
-    client.enable = true;
-    package = pkgs.emacs31-pgtk;
+    client = {
+      enable = true;
+      arguments = [ "-t" ];
+    };
   };
 
   home.packages = with pkgs; [

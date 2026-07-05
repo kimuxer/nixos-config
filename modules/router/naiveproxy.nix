@@ -5,11 +5,11 @@ let
   # 1. 免编译预构建包
   naiveproxy-bin = pkgs.stdenv.mkDerivation rec {
     pname = "naiveproxy";
-    version = "149.0.7827.114-1";
+    version = "150.0.7871.63-1";
 
     src = pkgs.fetchurl {
       url = "https://github.com/klzgrad/naiveproxy/releases/download/v${version}/naiveproxy-v${version}-linux-x64.tar.xz";
-      hash = "sha256-izCOa1VBJ7XrxbtcemznfLSBqo1nvFhDgZcE0jrndzo=";
+      hash = "sha256-DE9QbOZqeIGJL9aTK1QsU/wGrCNRmHdWCWxh51PGh78=";
     };
 
     nativeBuildInputs = [ pkgs.autoPatchelfHook ];
