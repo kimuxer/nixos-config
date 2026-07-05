@@ -5,7 +5,6 @@
     evtest
     udiskie
     btrfs-assistant
-    snapper
     adw-gtk3
     papirus-icon-theme
     bibata-cursors
