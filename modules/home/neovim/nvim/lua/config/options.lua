@@ -3,35 +3,30 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
-vim.opt.swapfile = false
+local wo = vim.wo
+wo.relativenumber = true
+wo.number = true
 
-vim.opt.termguicolors = true
+local opt = vim.opt
+opt.swapfile = false
+opt.termguicolors = true
+opt.cursorline = true
+opt.tabstop = 2
+opt.softtabstop = 2
+opt.shiftwidth = 2
+opt.expandtab = true
+opt.mouse = 'a'
+opt.wrap = false
+opt.breakindent = true
+opt.ignorecase = true
+opt.smartcase = true
+opt.scrolloff = 10
+opt.confirm = true
+opt.encoding = 'utf-8'
+opt.fileencoding = 'utf-8'
+opt.path:append("**")
 
-vim.opt.cursorline = true
-vim.wo.relativenumber = true
-vim.wo.number = true
-vim.opt.tabstop = 2
-vim.opt.softtabstop = 2
-vim.opt.shiftwidth = 2
-vim.opt.expandtab = true
-vim.opt.mouse = 'a'
-vim.opt.wrap = false
-vim.opt.breakindent = true
-
-vim.opt.undofile = true
-
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
-
-vim.opt.scrolloff = 10
-
-vim.opt.confirm = true
-vim.opt.encoding = 'utf-8'
-vim.opt.fileencoding = 'utf-8'
-
-vim.opt.path:append("**")
-
-vim.opt.wildignore:append({
+opt.wildignore:append({
     "*/.git/*",
     "*/build/*",
     "*/dist/*",

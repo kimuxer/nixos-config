@@ -26,17 +26,13 @@
         "rust-src"
         "rustc"
         "rustfmt"
+        "rust-analyzer"
       ];
     in {
       devShells.${system}.default = pkgs.mkShell {
         buildInputs = [
           toolchain
-          pkgs.rust-analyzer-nightly
         ];
-
-        # 使用 fenix 提供的工具链后，RUST_SRC_PATH 通常会自动配置，
-        # 但如果 IDE 有需求，可以显式指定：
-        #RUST_SRC_PATH = "${toolchain}/lib/rustlib/src/rust/library";
       };
     };
 }

@@ -17,6 +17,7 @@
     ./nix-index
     ./noctalia
     ./neovim
+    #./nvf
     ./packages
     ./search
     ./starship
