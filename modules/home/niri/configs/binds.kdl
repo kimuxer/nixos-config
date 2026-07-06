@@ -10,6 +10,7 @@ binds {
     "Mod+B"      { spawn "firefox"; }
     "Mod+E"      { spawn "alacritty" "-e" "yazi"; }
     "Mod+U"      { spawn "alacritty" "-e" "termusic"; }
+    "Mod+O"      { spawn "emacs"; }
 
     // 🛠️ 3. Noctalia 面板组件控制
     "Mod+D"         { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
