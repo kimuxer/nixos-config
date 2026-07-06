@@ -12,7 +12,7 @@
   programs.git = {
     enable = true;
     settings = {
-      core.editor = "hx";
+      core.editor = "nvim";
 
       # 用户信息
       user = {

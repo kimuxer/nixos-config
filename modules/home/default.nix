@@ -19,6 +19,7 @@
     ./neovim
     #./nvf
     ./packages
+    ./satty
     ./search
     ./starship
     ./themes

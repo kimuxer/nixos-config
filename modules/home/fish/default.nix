@@ -19,7 +19,8 @@
       man = "tldr";
       cls = "clear";
       q = "exit";
-      e = "emacsclient";
+      e = "emacs";
+      ec = "emacsclient";
 
       # jj 缩写
       jjs = "jj status";
