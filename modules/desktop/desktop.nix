@@ -63,10 +63,22 @@
     package = inputs.noctalia-greeter.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
     # Optional configuration
-    greeter-args = "--session Niri --user kim";
-    settings.cursor = {
-      theme = "Bibata-Modern-Ice";
-      size = 20;
+    #greeter-args = "--session Niri --user kim";
+    settings = {
+      session.default = "niri";
+      user.default = "kim";
+      appearance = {
+        password_style = "random";
+        hide_logo = true;
+      };
+      cursor = {
+        theme = "Bibata-Modern-Ice";
+        size = 20;
+      };
+      keyboard = {
+        layout = "us";
+        numlock = true;
+      };
     };
   };
 }
