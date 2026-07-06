@@ -1,3 +1,4 @@
+;;; === FILE: modules/home/emacs/configs/lisp/core-evil.el ===
 ;;; core-evil.el --- Vim 模式配置 -*- lexical-binding: t; -*-
 
 ;; 1. evil 依赖的前置变量

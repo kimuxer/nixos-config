@@ -1,3 +1,4 @@
+;;; === FILE: modules/home/emacs/configs/lisp/core-lsp.el ===
 ;;; core-lsp.el --- LSP（基于内置 Eglot）配置 -*- lexical-binding: t; -*-
 
 ;; 用 Eglot 而不是 lsp-mode：Eglot 从 Emacs 29 开始内置，你用的

@@ -1,3 +1,4 @@
+;;; === FILE: modules/home/emacs/configs/lisp/core-magit.el ===
 ;;; core-magit.el --- Magit / Git 相关配置 -*- lexical-binding: t; -*-
 
 ;; 之前 magit 的 use-package 块临时放在 core-keybindings.el 里，

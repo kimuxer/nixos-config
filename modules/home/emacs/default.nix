@@ -1,3 +1,4 @@
+# === FILE: modules/home/emacs/default.nix ===
 # -- modules/home/emacs/default.nix --
 { pkgs, ... }:
 {
@@ -11,7 +12,6 @@
         doom-modeline
         evil
         evil-collection
-        evil-leader
         magit
         orderless
         vertico

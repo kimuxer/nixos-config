@@ -1,3 +1,4 @@
+;;; === FILE: modules/home/emacs/configs/lisp/core-ui.el ===
 ;;; core-ui.el --- 界面配置 -*- lexical-binding: t; -*-
 
 ;; 注意：不再写 :ensure t，因为 Nix 已经提供了这些包

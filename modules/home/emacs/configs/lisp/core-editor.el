@@ -1,3 +1,4 @@
+;;; === FILE: modules/home/emacs/configs/lisp/core-editor.el ===
 ;;; core-editor.el --- 通用编辑体验配置 -*- lexical-binding: t; -*-
 
 ;; 这个文件只放"跟具体某个第三方包无关、Emacs 内置就有"的编辑体验设置。

@@ -1,3 +1,4 @@
+;;; === FILE: modules/home/emacs/configs/lisp/core-completion.el ===
 ;;; core-completion.el --- 补全配置 -*- lexical-binding: t; -*-
 
 ;; 现代化的补全前端
@@ -15,8 +16,14 @@
 ;; 写着 'orderless，但 completion-styles-alist 里根本没有对应的条目
 ;; （因为要 orderless.el 被加载了才会注册），补全会安静地退化成
 ;; 只用 basic 匹配，且不会有任何报错提示。
+;; 不写 :ensure t：整个配置的包都由 Nix 提供并放进 load-path，
+;; package-enable-at-startup 在 early-init.el 里已经设为 nil，package.el
+;; 根本没有被初始化。这种情况下 use-package 的 :ensure t 会去调用
+;; package-installed-p / package-install 之类的函数，轻则不起作用，
+;; 重则直接报错——而且一旦这里报错，本文件里排在 corfu 后面的
+;; orderless、marginalia 也会跟着不被加载（require 'core-completion
+;; 整体失败），补全体验会莫名其妙地全部失效。
 (use-package corfu
-  :ensure t
   :demand t
   :config
   (global-corfu-mode 1)

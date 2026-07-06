@@ -24,27 +24,11 @@
       pkgs.xdg-desktop-portal-gtk
     ];
 
-    # ⚡ 核心隔离配置：根据 XDG_CURRENT_DESKTOP 动态决定调用哪个后端
     config = {
       common = {
         default = [ "gtk" ];
-      };
-      # Niri 会话的首选配置（屏幕共享等使用 gnome/gtk）
-      niri = {
-        default = [
-          "gtk"
-        ];
-        "org.freedesktop.impl.portal.ScreenCast" = [
-          "gnome"
-          "gtk"
-        ];
-        "org.freedesktop.impl.portal.Screenshot" = [
-          "gnome"
-          "gtk"
-        ];
-        "org.freedesktop.impl.portal.FileChooser" = [
-          "gtk"
-        ];
+        "org.freedesktop.impl.portal.ScreenCast" = [ "gnome" ];
+        "org.freedesktop.impl.portal.Screenshot" = [ "gnome" ];
       };
     };
   };

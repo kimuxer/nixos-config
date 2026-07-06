@@ -2,6 +2,8 @@
 {
   imports = [
     ./alacritty
+    ./doom
+    #./emacs
     ./fastfetch
     ./fcitx5
     ./firefox
@@ -14,7 +16,6 @@
     ./niri
     ./nix-index
     ./noctalia
-    ./doom
     ./neovim
     ./packages
     ./search
@@ -23,7 +24,6 @@
     ./yazi
     ./yt-dlp
     ./zed-editor
-    #./emacs
   ];
 
   xdg.userDirs.enable = true;

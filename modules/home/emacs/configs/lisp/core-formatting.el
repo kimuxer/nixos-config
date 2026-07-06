@@ -1,7 +1,10 @@
+;;; === FILE: modules/home/emacs/configs/lisp/core-formatting.el ===
 ;;; core-formatting.el --- 格式化自动化配置 -*- lexical-binding: t; -*-
 
+;; 同 core-completion.el 里 corfu 的道理：不写 :ensure t，
+;; 包是 Nix 提供的，package.el 未初始化，:ensure t 在这里没有意义
+;; 甚至可能报错。
 (use-package apheleia
-  :ensure t
   :demand t
   :config
   ;; 1. 开启全局模式

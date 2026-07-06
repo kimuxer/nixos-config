@@ -1,3 +1,4 @@
+;;; === FILE: modules/home/emacs/configs/init.el ===
 ;;; init.el --- 主配置入口 -*- lexical-binding: t; -*-
 
 ;; === 1. 加载路径 ===
@@ -26,6 +27,9 @@
     core-magit
     core-completion
     core-editor
+    core-formatting  ; 必须在 core-keybindings 之前加载：后者绑定了 apheleia-format-buffer，
+                      ; 如果 core-formatting.el 从未被 require，这个符号就不会被定义，
+                      ; 按 SPC c f 会报 "Symbol's function definition is void" 错误
     core-lsp
     core-keybindings)  ; core-keybindings 放最后，因为它引用了前面模块定义的命令/符号
   "核心模块加载顺序，务必保证依赖在前。")

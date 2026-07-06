@@ -1,3 +1,4 @@
+;;; === FILE: modules/home/emacs/configs/early-init.el ===
 ;;; early-init.el --- 启动早期优化 -*- lexical-binding: t; -*-
 
 ;; early-init.el 在 package.el 初始化之前、图形界面创建之前加载，
@@ -26,8 +27,11 @@
 ;;     对 tty frame 也没有意义，这里就不写了。
 ;;   - menu-bar 不一样：终端 Emacs 支持纯文本渲染的菜单栏（顶部 File/Edit/...
 ;;     那一行），是真实会被画出来、也真实会闪一下的东西，所以只保留这项。
+;; 注意：标准 Emacs 里并没有名为 tty-menu-bar-mode 的变量，之前这里
+;; 写的 (setq tty-menu-bar-mode nil) 只是凭空创建了一个没人用的动态
+;; 变量，不会报错，但也完全不起作用，真正生效的是下面这行 push。
 (push '(menu-bar-lines . 0) default-frame-alist)
-(menu-bar-mode -1)
+(setq tty-menu-open-use-tmm t)
 
 ;; 如果以后换成带 GUI 的 emacs 包（比如从 emacs-nox 换成 emacs-pgtk），
 ;; 可以把下面这两行加回来：

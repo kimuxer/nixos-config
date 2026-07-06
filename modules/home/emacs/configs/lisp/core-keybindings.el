@@ -1,3 +1,4 @@
+;;; === FILE: modules/home/emacs/configs/lisp/core-keybindings.el ===
 ;;; core-keybind.el --- 全局按键绑定 -*- lexical-binding: t; -*-
 
 ;; 放在 my-core-modules 列表最后加载，是因为这里大量用到
@@ -21,9 +22,9 @@
 
 (evil-define-key '(normal visual motion) 'global
   ;; -- 文件 --
-  ;;(kbd "SPC f f") #'find-file
-  ; (kbd "SPC f s") #'save-buffer
-  ; (kbd "SPC f r") #'recentf-open
+  (kbd "SPC f f") #'find-file
+  (kbd "SPC f s") #'save-buffer
+  (kbd "SPC f r") #'recentf-open
 
   ;; -- buffer --
   (kbd "SPC b b") #'switch-to-buffer
@@ -50,10 +51,16 @@
   (kbd "SPC c r") #'eglot-rename
   (kbd "SPC c f") #'apheleia-format-buffer
 
-  ;; -- Project --
-  ;;(kbd "SPC p f") #'project-find-file
-  ;;(kbd "SPC p p") #'project-switch-project
-  ;;(kbd "SPC p b") #'project-switch-to-buffer
+  ;; -- Project（注意：用大写 P，不能用小写 p）--
+  ;; 上面 "SPC p" 已经绑定成了具体命令 my/paste-from-system-clipboard，
+  ;; 而不是一个前缀 keymap。如果这里再定义 "SPC p f" / "SPC p p"，
+  ;; define-key 会把 "SPC p" 从"命令"悄悄改造成"前缀 keymap"，
+  ;; 结果是 SPC p 粘贴功能被顶掉、且没有任何报错提示，非常隐蔽。
+  ;; 这也是之前这三行被注释掉、一直没启用的真正原因。
+  ;; 解决办法很简单：project 前缀换成没被占用的大写 "SPC P" 即可。
+  (kbd "SPC P f") #'project-find-file
+  (kbd "SPC P p") #'project-switch-project
+  (kbd "SPC P b") #'project-switch-to-buffer
 
   ;; -- 杂项 --
   (kbd "SPC SPC") #'execute-extended-command

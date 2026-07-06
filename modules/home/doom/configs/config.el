@@ -82,3 +82,9 @@
 ;; 让内置终端（如 vterm）启动时依然使用 Fish
 (setq-default vterm-shell "/run/current-system/sw/bin/fish")
 (setq-default explicit-shell-file-name "/run/current-system/sw/bin/fish")
+
+(after! fcitx
+  (setq fcitx-remote-command "fcitx5-remote")
+  ;; 终端环境（nox）下强烈建议禁用 dbus，因为 dbus 在终端（或守护进程服务）
+  ;; 环境下可能无法正常通信，调用 fcitx5-remote 命令行工具更加稳定和轻量
+  (setq fcitx-use-dbus nil))
