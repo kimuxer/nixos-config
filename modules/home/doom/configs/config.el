@@ -41,7 +41,11 @@
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
-
+;; 确保 org-babel 支持 nix
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((nix . t)
+   (shell . t)))
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `with-eval-after-load' block, otherwise Doom's defaults may override your
@@ -83,8 +87,8 @@
 (setq-default vterm-shell "/run/current-system/sw/bin/fish")
 (setq-default explicit-shell-file-name "/run/current-system/sw/bin/fish")
 
-(after! fcitx
-  (setq fcitx-remote-command "fcitx5-remote")
-  ;; 终端环境（nox）下强烈建议禁用 dbus，因为 dbus 在终端（或守护进程服务）
-  ;; 环境下可能无法正常通信，调用 fcitx5-remote 命令行工具更加稳定和轻量
-  (setq fcitx-use-dbus nil))
+;;(after! fcitx
+;;  (setq fcitx-remote-command "fcitx5-remote")
+;; 终端环境（nox）下强烈建议禁用 dbus，因为 dbus 在终端（或守护进程服务）
+;; 环境下可能无法正常通信，调用 fcitx5-remote 命令行工具更加稳定和轻量
+;;  (setq fcitx-use-dbus nil))

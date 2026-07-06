@@ -19,8 +19,12 @@
       man = "tldr";
       cls = "clear";
       q = "exit";
-      e = "emacs";
-      ec = "emacsclient";
+
+      # doom emacs
+      dmu = "doom upgrade";
+      dms = "doom sync --dev";
+      dmd = "doom doctor";
+      e = "emacsclient -t";
 
       # jj 缩写
       jjs = "jj status";

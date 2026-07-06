@@ -1,4 +1,4 @@
-{ ... }:
+{ config, ... }:
 
 let
   fileName = "${config.home.homeDirectory}/Pictures/Screenshots/satty-%Y%m%d-%H%M%S.png";
