@@ -25,10 +25,29 @@
       ServerAliveCountMax 3
   '';
 
-  programs.fish.enable = true;
+  programs.nh = {
+    enable = true;
+    flake = "/home/kim/nixos-config";
+    clean = {
+      enable = true;
+      extraArgs = "--keep 5 --keep-since 3d";
+    };
+  };
 
   zramSwap = {
     enable = true;
     memoryPercent = 60;
   };
+
+  programs.fish.enable = true;
+
+  environment.systemPackages = with pkgs; [
+    evtest
+    udiskie
+    btrfs-assistant
+    btrfs-progs
+    adw-gtk3
+    papirus-icon-theme
+    bibata-cursors
+  ];
 }
