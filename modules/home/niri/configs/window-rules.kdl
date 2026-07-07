@@ -63,6 +63,12 @@ window-rule {
     open-floating true
 }
 
+// --- 8. emacs 规则 ---
+window-rule {
+    match app-id="emacs"
+    open-maximized true
+}
+
 blur {
     passes 2        // 模糊渲染次数，数值越强越糊
     offset 3.0      // 采样像素间距
