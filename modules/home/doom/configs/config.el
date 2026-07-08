@@ -32,11 +32,12 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-;; (setq doom-theme 'doom-tokyo-night)
+(setq doom-theme 'doom-tokyo-night)
 ;; 导入noctalia themes 目录加入到自定义主题加载路径中
-(add-to-list 'custom-theme-load-path (expand-file-name "themes/" doom-user-dir))
-(setq doom-theme 'noctalia)
-
+;;(add-to-list 'custom-theme-load-path (expand-file-name "themes/" doom-user-dir))
+;;(setq doom-theme 'noctalia)
+(setq org-src-fontify-natively t)
+(setq org-src-tab-acts-natively t)
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type 'visual)
