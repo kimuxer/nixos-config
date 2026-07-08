@@ -1527,7 +1527,7 @@ Home Manager 用户级配置
 
 ****** core-editor.el
 :PROPERTIES:
-:header-args: :tangle modules/home/emacs/configs/lisp/core-editor.el:noweb yes :mkdirp yes :exports none
+:header-args: :tangle modules/home/emacs/configs/lisp/core-editor.el :noweb yes :mkdirp yes :exports none
 :END:
 
 #+BEGIN_SRC el
@@ -1602,7 +1602,7 @@ Home Manager 用户级配置
 
 ****** core-evil.el
 :PROPERTIES:
-:header-args: :tangle modules/home/emacs/configs/lisp/core-evil.el:noweb yes :mkdirp yes :exports none
+:header-args: :tangle modules/home/emacs/configs/lisp/core-evil.el :noweb yes :mkdirp yes :exports none
 :END:
 
 #+BEGIN_SRC el
@@ -1685,7 +1685,7 @@ Home Manager 用户级配置
 
 ****** core-keybindings.el
 :PROPERTIES:
-:header-args: :tangle modules/home/emacs/configs/lisp/core-keybindings.el: noweb yes :mkdirp yes :exports none
+:header-args: :tangle modules/home/emacs/configs/lisp/core-keybindings.el :noweb yes :mkdirp yes :exports none
 :END:
 
 #+BEGIN_SRC el
