@@ -110,3 +110,43 @@
                   (save-buffer)))
               (kill-buffer (current-buffer)))))))
     result)) ;; 最后返回结果，确保不影响原有功能
+
+(after! org
+  (setq org-startup-folded t)                 ; 打开时全部折叠
+  (setq org-hide-leading-stars t)             ; 隐藏多余的星号
+  (setq org-odd-levels-only nil)              ; 保持层级清晰
+
+  ;; 对于超大 Org 文件
+  (setq org-agenda-files '("~/path/to/flake.org"))
+  (setq org-agenda-skip-unavailable-files t)
+
+  ;; 关闭不必要的 font-lock 范围
+  (setq org-fontify-whole-heading-line nil)
+  (setq org-fontify-done-headline nil)
+
+  ;; 如果文件真的很大（5000+ 行），可以启用
+  (setq org-element-cache-persistent t)
+  (setq org-element-use-cache t))
+
+;; 在 ~/.config/doom/config.el 中
+(after! emacs
+  (setq backup-directory-alist
+        `(("." . ,(expand-file-name "backups/" user-emacs-directory))))
+
+  (setq auto-save-file-name-transforms
+        `((".*" ,(expand-file-name "auto-save/" user-emacs-directory) t))))
+
+;; 增量更新
+(defun +org/tangle-current-file-only ()
+  "只 tangle 光标所在代码块对应的目标文件，其余文件不受影响。"
+  (interactive)
+  (unless (org-in-src-block-p)
+    (user-error "光标不在代码块内，请先移动到目标代码块内部"))
+  (let ((current-prefix-arg '(16)))
+    (call-interactively #'org-babel-tangle)))
+
+(after! org
+  (map! :map org-mode-map
+        :localleader
+        (:prefix ("b" . "babel")
+         :desc "Tangle current block's file only" "T" #'+org/tangle-current-file-only)))
