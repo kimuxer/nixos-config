@@ -23,6 +23,11 @@
 ;;
 ;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
 ;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
+(after! org
+  (set-face-attribute 'org-level-1 nil :height 1.1)
+  (set-face-attribute 'org-level-2 nil :height 1.0)
+  (set-face-attribute 'org-level-3 nil :height 1.0)
+  (set-face-attribute 'org-document-title nil :height 1.0))
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -32,7 +37,8 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one)
+;; (setq doom-theme 'doom-one)
+(load-theme 'noctalia t)
 ;; 导入noctalia themes 目录加入到自定义主题加载路径中
 ;;(add-to-list 'custom-theme-load-path (expand-file-name "themes/" doom-user-dir))
 ;;(setq doom-theme 'noctalia)

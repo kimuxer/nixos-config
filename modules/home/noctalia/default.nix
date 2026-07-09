@@ -20,6 +20,11 @@
         };
       };
 
+      wallpaper = {
+        enabled = true;
+        directory = "/home/kim/Pictures/Wallpapers";
+      };
+
       location.address = "Dalian, CN";
     };
   };

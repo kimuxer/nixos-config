@@ -21,7 +21,7 @@
 
   ;; 3. 如果需要对某些语言自定义特定参数
   ;; (setf (alist-get 'rust-mode apheleia-formatters) '("rustfmt" "--edition" "2021"))
-)
+  )
 
 (provide 'core-formatting)
 ;;; core-formatting.el ends here

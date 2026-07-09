@@ -53,5 +53,6 @@
     papirus-icon-theme
     bibata-cursors
     emacs-lsp-booster
+    graphviz
   ];
 }
