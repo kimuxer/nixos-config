@@ -75,7 +75,7 @@
   :hook (after-init . envrc-global-mode))
 (use-package inheritenv)  ; envrc 的配套依赖，没有 :config 可写，只是确保被加载
 
-                                        ; (add-hook 'after-init-hook #'envrc-global-mode 90)
+; (add-hook 'after-init-hook #'envrc-global-mode 90)
 
 ;; === 6. Elisp 本身不需要 LSP ===
 ;; Emacs 自带 elisp-flymake-byte-compile 这个 flymake 后端就足够
