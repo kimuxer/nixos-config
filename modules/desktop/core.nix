@@ -52,7 +52,5 @@
     adw-gtk3
     papirus-icon-theme
     bibata-cursors
-    emacs-lsp-booster
-    graphviz
   ];
 }

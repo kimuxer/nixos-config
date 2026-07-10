@@ -37,8 +37,8 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-;; (setq doom-theme 'doom-one)
-(load-theme 'noctalia t)
+(setq doom-theme 'doom-one)
+;;(load-theme 'noctalia t)
 ;; 导入noctalia themes 目录加入到自定义主题加载路径中
 ;;(add-to-list 'custom-theme-load-path (expand-file-name "themes/" doom-user-dir))
 ;;(setq doom-theme 'noctalia)
@@ -51,15 +51,6 @@
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
-
-;; 正确的写法：使用 after! 确保 org 加载后才调用
-(after! org
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((nix . t)
-     (emacs-lisp . t)
-     (lua . t)
-     (sh . t))))
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `with-eval-after-load' block, otherwise Doom's defaults may override your
@@ -91,6 +82,7 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
+
 ;; -------------------------------------------------------------------
 ;; Fish Shell 兼容性配置（解决 doom doctor 的 POSIX 警告）
 ;; -------------------------------------------------------------------
@@ -101,10 +93,12 @@
 (setq-default vterm-shell "/run/current-system/sw/bin/fish")
 (setq-default explicit-shell-file-name "/run/current-system/sw/bin/fish")
 
-;;  添加警告信息： 不要编辑，会被org-babel-tangle覆盖
+;; -------------------------------------------------------------------
+;;  添加警告信息到生成的文件
+;; -------------------------------------------------------------------
+
 (defun +my/add-tangle-warning-h ()
-  "添加警告信息到刚刚生成的 tangle 文件中。"
-  (let* ((file buffer-file-name) ; org-babel-post-tangle-hook 运行时 buffer 正是生成的文件
+  (let* ((file buffer-file-name)
          (ext (file-name-extension file)))
     (when (member ext '("nix" "sh" "kdl" "el" "lua" "yaml"))
       (let ((comment-char (cond ((string= ext "kdl") "//")
@@ -119,23 +113,28 @@
                     (format "%s It is generated from flake.org by org-babel-tangle.\n\n" comment-char))
             (save-buffer)))))))
 
-;; 将此函数添加到 Hook 中
 (add-hook 'org-babel-post-tangle-hook #'+my/add-tangle-warning-h)
 
-;; BEGIN 增量更新
+;; -------------------------------------------------------------------
+;;  "只 tangle 光标所在代码块对应的目标文件。"
+;; -------------------------------------------------------------------
+
 (defun +org/tangle-current-file-only ()
-  "只 tangle 光标所在代码块对应的目标文件。"
   (interactive)
   (unless (org-in-src-block-p)
     (user-error "光标不在代码块内"))
-  (org-babel-tangle '(16))) ; 直接调用并传入参数
+  (org-babel-tangle '(16))
+  (message "已成功 Tangle: %s" (buffer-file-name)))
 
 (after! org
   (map! :map org-mode-map
         :localleader
         (:prefix ("b" . "babel")
          :desc "Tangle current block's file only" "T" #'+org/tangle-current-file-only)))
-;; END 增量更新
+
+;; -------------------------------------------------------------------
+;;  基础设置
+;; -------------------------------------------------------------------
 
 (after! org
   (setq org-startup-folded t)                 ; 打开时全部折叠
@@ -146,7 +145,10 @@
   (setq org-element-cache-persistent t)
   (setq org-element-use-cache t))
 
+;; -------------------------------------------------------------------
 ;; 备份文件位置  ~/.cache/emacs
+;; -------------------------------------------------------------------
+
 (after! emacs
   ;; 1. 定义根路径
   (setq my-cache-dir (expand-file-name "~/.cache/emacs/"))
@@ -169,9 +171,3 @@
 
   ;; 6. 历史记录路径
   (setq savehist-file (expand-file-name "history" my-cache-dir)))
-
-(after! org
-  (map! :map org-mode-map
-        :localleader
-        (:prefix ("b" . "babel")
-         :desc "Tangle current block's file only" "T" #'+org/tangle-current-file-only)))

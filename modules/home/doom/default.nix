@@ -24,6 +24,8 @@
     nixd
     pandoc # 提供 Markdown 编译/预览支持
     shellcheck # 提供 Shell 脚本的实时语法检查
+    emacs-lsp-booster
+    graphviz
   ];
 
   xdg.configFile."doom" = {
