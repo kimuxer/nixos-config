@@ -20,24 +20,20 @@
 ;;
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
-(setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 12)
-      doom-variable-pitch-font (font-spec :family "Noto Sans" :size 12))
+(setq doom-font "JetBrainsMono Nerd Font:style=SemiBold:size=13"
+      doom-variable-pitch-font (font-spec :family "Noto Sans CJK SC" :size 13))
 
 ;; 让中文字符宽度与字体大小对齐英文字符（避免表格/对齐错位）
 (add-hook 'after-setting-font-hook
           (lambda ()
             (dolist (charset '(kana han cjk-misc bopomofo))
-              (set-fontset-font t charset (font-spec :family "Noto Sans CJK SC") nil 'append))))
+              ;; 明确指定 :weight 'regular （如果觉得太细，可以改为 'medium 或 'bold）
+              ;; 明确指定 :slant 'normal 阻断可能出现的衬线体误匹配
+              (set-fontset-font t charset
+                                (font-spec :family "Noto Sans CJK SC" :size 17 :weight 'regular :slant 'normal)
+                                nil 'prepend))))
 
-;;
-;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
-;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
-(after! org
-  (set-face-attribute 'org-level-1 nil :height 1.1)
-  (set-face-attribute 'org-level-2 nil :height 1.0)
-  (set-face-attribute 'org-level-3 nil :height 1.0)
-  (set-face-attribute 'org-document-title nil :height 1.0))
-;;
+
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
 ;; refresh your font settings. If Emacs still can't find your font, it likely
@@ -46,22 +42,29 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one)
-;;(load-theme 'noctalia t)
+;; (setq doom-theme 'doom-one)
+(load-theme 'noctalia t)
 ;; 导入noctalia themes 目录加入到自定义主题加载路径中
-;;(add-to-list 'custom-theme-load-path (expand-file-name "themes/" doom-user-dir))
-;;(setq doom-theme 'noctalia)
+(add-to-list 'custom-theme-load-path (expand-file-name "themes/" doom-user-dir))
+(setq doom-theme 'noctalia)
 (setq org-src-fontify-natively t)
 (setq org-src-tab-acts-natively t)
+
+(after! org
+  (set-face-attribute 'org-level-1 nil :height 1.1)
+  (set-face-attribute 'org-level-2 nil :height 1.0)
+  (set-face-attribute 'org-level-3 nil :height 1.0)
+  (set-face-attribute 'org-document-title nil :height 1.0))
+
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type 'visual)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org/")
+(setq org-directory "~/.config/doom/org/")
 (after! org-roam
-  (setq org-roam-directory (file-truename "~/org/roam/"))
+  (setq org-roam-directory (file-truename "~/.config/doom/org/roam/"))
   (org-roam-db-autosync-mode))
 
 

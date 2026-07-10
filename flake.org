@@ -461,7 +461,6 @@ in
 { pkgs, ... }:
 {
   fonts = {
-    # 允许软件发现通过 Nix 安装的字体
     fontDir.enable = true;
 
     packages = with pkgs; [
@@ -471,7 +470,7 @@ in
       inter
       noto-fonts-color-emoji
       nerd-fonts.symbols-only
-      symbola # doom-emacs
+      symbola
     ];
 
     fontconfig = {
@@ -479,15 +478,15 @@ in
       defaultFonts = {
         # --- 终端与代码 ---
         monospace = [
-          "JetBrainsMono Nerd Font" # 首选：带图标的代码字体
-          "Noto Sans CJK SC" # 补位：中文字符
-          "Symbols Nerd Font" # 补位：特殊图标符号
+          "JetBrainsMono Nerd Font" 
+          "Noto Sans Mono CJK SC"    # 💡 修复：等宽必须用 Mono 版本，否则会导致 Emacs 回退到衬线体
+          "Symbols Nerd Font" 
         ];
 
         # --- 网页与系统 UI (无衬线) ---
         sansSerif = [
-          "Inter" # 首选：UI 英文担当
-          "Noto Sans CJK SC" # 补位：系统中文
+          "Inter" 
+          "Noto Sans CJK SC"        # 这里保持普通的 Sans 版本没问题
         ];
 
         # --- 阅读与正式文档 (衬线) ---
@@ -496,11 +495,9 @@ in
           "DejaVu Serif"
         ];
 
-        # --- 表情 ---
         emoji = [ "Noto Color Emoji" ];
       };
 
-      # 开启一些高级渲染优化
       subpixel = {
         rgba = "rgb";
         lcdfilter = "default";
@@ -1111,24 +1108,20 @@ Home Manager 用户级配置
 ;;
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
-;;(setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 12)
-;;      doom-variable-pitch-font (font-spec :family "Noto Sans" :size 12))
+(setq doom-font "JetBrainsMono Nerd Font:style=SemiBold:size=13"
+      doom-variable-pitch-font (font-spec :family "Noto Sans CJK SC" :size 13))
 
 ;; 让中文字符宽度与字体大小对齐英文字符（避免表格/对齐错位）
-;;(add-hook 'after-setting-font-hook
-;;          (lambda ()
-;;            (dolist (charset '(kana han cjk-misc bopomofo))
-;;              (set-fontset-font t charset (font-spec :family "Noto Sans CJK SC") nil 'append))))
+(add-hook 'after-setting-font-hook
+          (lambda ()
+            (dolist (charset '(kana han cjk-misc bopomofo))
+              ;; 明确指定 :weight 'regular （如果觉得太细，可以改为 'medium 或 'bold）
+              ;; 明确指定 :slant 'normal 阻断可能出现的衬线体误匹配
+              (set-fontset-font t charset
+                                (font-spec :family "Noto Sans CJK SC" :size 17 :weight 'regular :slant 'normal)
+                                nil 'prepend))))
 
-;;
-;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
-;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
-(after! org
-  (set-face-attribute 'org-level-1 nil :height 1.1)
-  (set-face-attribute 'org-level-2 nil :height 1.0)
-  (set-face-attribute 'org-level-3 nil :height 1.0)
-  (set-face-attribute 'org-document-title nil :height 1.0))
-;;
+
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
 ;; refresh your font settings. If Emacs still can't find your font, it likely
@@ -1137,22 +1130,29 @@ Home Manager 用户级配置
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one)
-;;(load-theme 'noctalia t)
+;; (setq doom-theme 'doom-one)
+(load-theme 'noctalia t)
 ;; 导入noctalia themes 目录加入到自定义主题加载路径中
-;;(add-to-list 'custom-theme-load-path (expand-file-name "themes/" doom-user-dir))
-;;(setq doom-theme 'noctalia)
+(add-to-list 'custom-theme-load-path (expand-file-name "themes/" doom-user-dir))
+(setq doom-theme 'noctalia)
 (setq org-src-fontify-natively t)
 (setq org-src-tab-acts-natively t)
+
+(after! org
+  (set-face-attribute 'org-level-1 nil :height 1.1)
+  (set-face-attribute 'org-level-2 nil :height 1.0)
+  (set-face-attribute 'org-level-3 nil :height 1.0)
+  (set-face-attribute 'org-document-title nil :height 1.0))
+
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type 'visual)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org/")
+(setq org-directory "~/.config/doom/org/")
 (after! org-roam
-  (setq org-roam-directory (file-truename "~/org/roam/"))
+  (setq org-roam-directory (file-truename "~/.config/doom/org/roam/"))
   (org-roam-db-autosync-mode))
 
 
