@@ -10,9 +10,7 @@
       evil-want-integration t
       evil-want-clipboard-init nil
       evil-default-state 'normal)
-
-;; 2. 强制开启 evil-mode 并确保其全局生效
-;;(evil-mode 1)
+(evil-set-leader nil (kbd "SPC"))
 
 ;; 3. 为所有可能的基础模式预设状态
 (evil-set-initial-state 'fundamental-mode 'normal)

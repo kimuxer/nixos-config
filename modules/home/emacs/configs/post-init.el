@@ -7,6 +7,8 @@
 ;; 这些模块完全独立，互不污染
 (require 'core-packages)
 (require 'core-ui)
+(require 'core-whichkey)
+(require 'core-keybindings)
 
 (with-eval-after-load 'evil
   (require 'core-evil))
