@@ -1,6 +1,20 @@
 ;;; core-keybindings.el --- 全局按键绑定 -*- lexical-binding: t; -*-
 
 (require 'evil)
+(require 'which-key)
+
+;; 设置延迟时间，单位秒 (比如按住 0.3 秒后显示提示)
+(setq which-key-idle-delay 0.3)
+
+;; 开启模式
+(which-key-mode 1)
+
+(which-key-add-key-based-replacements
+  "SPC f" "File"       ;; 将 SPC f 命名为 File
+  "SPC b" "Buffer"     ;; 将 SPC b 命名为 Buffer
+  "SPC w" "Window"     ;; 将 SPC w 命名为 Window
+  "SPC P" "Project"    ;; 将 SPC P 命名为 Project
+  "SPC c" "Code/LSP")  ;; 将 SPC c 命名为 Code/LSP
 
 ;; 1. 为 SPC 定义一个专用映射表 (Keymap)
 (defvar my-leader-map (make-sparse-keymap))
