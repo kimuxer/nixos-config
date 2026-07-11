@@ -1,30 +1,28 @@
 ;;; === FILE: modules/home/emacs/configs/lisp/core-evil.el ===
 ;;; core-evil.el --- Vim 模式配置 -*- lexical-binding: t; -*-
 
-;;; lisp/core-evil.el --- Evil 模式配置 -*- lexical-binding: t; -*-
+;; 1. evil 依赖的前置变量
+(setq evil-want-keybinding nil)
+(setq evil-want-integration t)
 
-(require 'evil)
+;; 2. 加载并配置 evil
+(use-package evil
+  :demand t
+  :config
+  (setq evil-default-state 'normal)
+  (setq evil-normal-state-cursor 'box)
+  (setq evil-insert-state-cursor 'bar)
+  (setq evil-emacs-state-cursor 'hbar)
+  ;; --- 核心修改点：保持独立剪切板 ---
+  (setq evil-want-clipboard-init nil)
+  (evil-mode 1))
 
-;; 1. 全局配置 (在激活模式前设置)
-(setq evil-want-keybinding nil
-      evil-want-integration t
-      evil-want-clipboard-init nil
-      evil-default-state 'normal)
-(evil-set-leader nil (kbd "SPC"))
-
-;; 3. 为所有可能的基础模式预设状态
-(evil-set-initial-state 'fundamental-mode 'normal)
-(evil-set-initial-state 'text-mode 'normal)
-(evil-set-initial-state 'prog-mode 'normal)
-
-;; 4. 配置光标样式
-(setq evil-normal-state-cursor 'box
-      evil-insert-state-cursor 'bar
-      evil-emacs-state-cursor 'hbar)
-
-;; 5. 初始化 evil-collection (确保它在 evil 之后加载)
-(require 'evil-collection)
-(evil-collection-init)
+;; 3. evil-collection：保持原有的 dired/magit 等模式的 vim 化
+(use-package evil-collection
+  :after evil
+  :demand t
+  :config
+  (evil-collection-init))
 
 ;; 4. 剪切板分离功能函数 (留在这里，供 core-keybindings 调用)
 (defun my/copy-to-system-clipboard (beg end)

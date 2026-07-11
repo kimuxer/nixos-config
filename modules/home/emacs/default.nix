@@ -3,24 +3,12 @@
 {
   programs.emacs = {
     enable = true;
-    package = pkgs.emacs31-nox;
+    package = pkgs.emacs31-pgtk;
     # 在这里声明你需要的插件
     extraPackages =
       epkgs: with epkgs; [
-        doom-themes
-        doom-modeline
-        evil
-        evil-collection
-        magit
-        orderless
-        vertico
-        marginalia
-        inheritenv
-        envrc
-        nix-mode
         kdl-mode
         apheleia
-        corfu
       ];
   };
 
@@ -29,9 +17,6 @@
     #    package = pkgs.emacs31-nox;
     client = {
       enable = true;
-      arguments = [
-        "-t"
-      ];
     };
   };
 
