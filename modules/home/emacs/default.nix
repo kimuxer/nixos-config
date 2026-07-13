@@ -2,11 +2,15 @@
 # It is generated from flake.org by org-babel-tangle.
 
 # -- modules/home/emacs/default.nix --
-{ pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 {
+  nixpkgs.overlays = [
+    inputs.emacs-overlay.overlays.default
+  ];
   programs.emacs = {
     enable = true;
-    package = pkgs.emacs31-pgtk;
+    package = pkgs.emacs-unstable-pgtk;
+  };
     # 在这里声明你需要的插件
     extraPackages =
       epkgs: with epkgs; [

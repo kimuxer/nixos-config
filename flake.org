@@ -4,7 +4,6 @@
 #+Exclude_TAGS: noexport
 #+PROPERTY: header-args :mkdirp yes :exports none
 
-* Flake
 使用 Home Manager 管理用户环境，并同时维护桌面主机和软路由两套配置。
 
 安装命令,仅支持全新安装:
@@ -43,14 +42,11 @@ nixos-config/
 - 桌面主机：`nixbox`
 - 软路由：`router`
 
+* Flake
 
-:PROPERTIES:
-:header-args: :tangle flake.nix :mkdirp yes :exports none
-:END:
-
-#+BEGIN_SRC nix
+#+BEGIN_SRC nix :tangle flake.nix :mkdirp yes :exports none
 {
-  description = "Kim's NixOS Flake (Flake-Parts)";
+  description = " Kim's NixOS Flake (Flake-Parts) ";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -117,11 +113,8 @@ nixos-config/
 * Modules
 ** Desktop 系统模块
 *** default.nix
-:PROPERTIES:
-:header-args: :tangle modules/desktop/default.nix :mkdirp yes :exports none
-:END:
 
-#+BEGIN_SRC nix
+#+BEGIN_SRC nix tangle modules/desktop/default.nix :mkdirp yes :exports none
 # -- modules/desktop/default.nix --
 { inputs, ... }:
 {
@@ -145,11 +138,8 @@ nixos-config/
 #+END_SRC
 
 *** base.nix
-:PROPERTIES:
-:header-args: :tangle modules/desktop/base.nix :mkdirp yes :exports none
-:END:
 
-#+BEGIN_SRC nix
+#+BEGIN_SRC nix :tangle modules/desktop/base.nix :mkdirp yes :exports none
 {
   config,
   pkgs,
@@ -249,11 +239,8 @@ nixos-config/
 #+END_SRC
 
 *** core.nix
-:PROPERTIES:
-:header-args: :tangle modules/desktop/core.nix :mkdirp yes :exports none
-:END:
 
-#+BEGIN_SRC nix
+#+BEGIN_SRC nix :tangle modules/desktop/core.nix :mkdirp yes :exports none
 # -- modules/desktop/core.nix --
 { pkgs, ... }:
 {
@@ -310,11 +297,8 @@ nixos-config/
 #+END_SRC
 
 *** desktop.nix
-:PROPERTIES:
-:header-args: :tangle modules/desktop/desktop.nix :mkdirp yes :exports none
-:END:
 
-#+BEGIN_SRC nix
+#+BEGIN_SRC nix :tangle modules/desktop/desktop.nix :mkdirp yes :exports none
 # -- modules/desktop/desktop.nix --
 {
   pkgs,
@@ -402,11 +386,8 @@ nixos-config/
 #+END_SRC
 
 *** disko.nix
-:PROPERTIES:
-:header-args: :tangle modules/desktop/disko.nix :mkdirp yes :exports none
-:END:
 
-#+BEGIN_SRC nix
+#+BEGIN_SRC nix :tangle modules/desktop/disko.nix :mkdirp yes :exports none
 # -- modules/desktop/disko.nix --
 { ... }:
 let
@@ -455,11 +436,8 @@ in
 #+END_SRC
 
 *** fonts.nix
-:PROPERTIES:
-:header-args: :tangle modules/desktop/fonts.nix :mkdirp yes :exports none
-:END:
 
-#+BEGIN_SRC nix
+#+BEGIN_SRC nix :tangle modules/desktop/fonts.nix :mkdirp yes :exports none
 # -- modules/desktop/fonts.nix --
 { pkgs, ... }:
 {
@@ -514,11 +492,8 @@ in
 }
 #+END_SRC
 *** hardware.nix
-:PROPERTIES:
-:header-args: :tangle modules/desktop/hardware.nix :mkdirp yes :exports none
-:END:
 
-#+BEGIN_SRC nix
+#+BEGIN_SRC nix :tangle modules/desktop/hardware.nix :mkdirp yes :exports none
 # -- modules/desktop/hardware.nix --
 { config, pkgs, ... }:
 
@@ -556,11 +531,8 @@ in
 #+END_SRC
 
 *** hm.nix
-:PROPERTIES:
-:header-args: :tangle modules/desktop/hm.nix :mkdirp yes :exports none
-:END:
 
-#+BEGIN_SRC nix
+#+BEGIN_SRC nix :tangle modules/desktop/hm.nix :mkdirp yes :exports none
 # -- modules/desktop/hm.nix --
 { inputs, ... }:
 {
@@ -584,11 +556,8 @@ in
 #+END_SRC
 
 *** kanata.nix
-:PROPERTIES:
-:header-args: :tangle modules/desktop/kanata.nix :mkdirp yes :exports none
-:END:
 
-#+BEGIN_SRC nix
+#+BEGIN_SRC nix :tangle modules/desktop/kanata.nix :mkdirp yes :exports none
 # -- modules/desktop/kanata.nix --
 { ... }:
 {
@@ -616,11 +585,8 @@ in
 #+END_SRC
 
 *** ollama.nix
-:PROPERTIES:
-:header-args: :tangle modules/desktop/ollama.nix :mkdirp yes :exports none
-:END:
 
-#+BEGIN_SRC nix
+#+BEGIN_SRC nix :tangle modules/desktop/ollama.nix :mkdirp yes :exports none
 # -- modules/desktop/ollama.nix --
 { pkgs, ... }:
 {
@@ -637,11 +603,8 @@ in
 #+END_SRC
 
 *** starship.nix
-:PROPERTIES:
-:header-args: :tangle modules/desktop/starship.nix :mkdirp yes :exports none
-:END:
 
-#+BEGIN_SRC nix
+#+BEGIN_SRC nix :tangle modules/desktop/starship.nix :mkdirp yes :exports none
 # -- modules/desktop/starship.nix --
 { ... }:
 {
@@ -672,11 +635,8 @@ in
 #+END_SRC
 
 *** storage.nix
-:PROPERTIES:
-:header-args: :tangle modules/desktop/storage.nix :mkdirp yes :exports none
-:END:
 
-#+BEGIN_SRC nix
+#+BEGIN_SRC nix :tangle modules/desktop/storage.nix :mkdirp yes :exports none
 # -- modules/desktop/storage.nix --
 { ... }:
 {
@@ -698,11 +658,8 @@ in
 }
 #+END_SRC
 *** virtualisation.nix
-:PROPERTIES:
-:header-args: :tangle modules/desktop/virtualisation.nix :mkdirp yes :exports none
-:END:
 
-#+BEGIN_SRC nix
+#+BEGIN_SRC nix :tangle modules/desktop/virtualisation.nix :mkdirp yes :exports none
 # -- modules/desktop/virtualisation.nix --
 { pkgs, ... }:
 {
@@ -841,12 +798,9 @@ Home Manager 用户级配置
 #+BEGIN_SRC nix
 { config, pkgs, inputs, ... }:
 {
-  nixpkgs.overlays = [
-    inputs.emacs-overlay.overlays.default
-  ];
   programs.emacs = {
     enable = true;
-    package = pkgs.emacs-unstable-pgtk;
+    package = pkgs.emacs31-pgtk;
   };
   services.emacs = {
     enable = true;

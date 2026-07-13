@@ -2,7 +2,7 @@
 # It is generated from flake.org by org-babel-tangle.
 
 {
-  description = "Kim's NixOS Flake (Flake-Parts)";
+  description = " Kim's NixOS Flake (Flake-Parts) ";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -30,6 +30,9 @@
 
     nix-index-database.url = "github:nix-community/nix-index-database";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
+
+    emacs-overlay.url = "github:nix-community/emacs-overlay";
+    emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
