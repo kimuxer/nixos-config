@@ -78,6 +78,9 @@ nixos-config/
 
     nix-index-database.url = "github:nix-community/nix-index-database";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
+
+    emacs-overlay.url = "github:nix-community/emacs-overlay";
+    emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -836,11 +839,14 @@ Home Manager 用户级配置
 :END:
 
 #+BEGIN_SRC nix
-{ pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 {
+  nixpkgs.overlays = [
+    inputs.emacs-overlay.overlays.default
+  ];
   programs.emacs = {
     enable = true;
-    package = pkgs.emacs31-pgtk;
+    package = pkgs.emacs-unstable-pgtk;
   };
   services.emacs = {
     enable = true;
@@ -1349,11 +1355,15 @@ Home Manager 用户级配置
 
 #+BEGIN_SRC nix
 # -- modules/home/emacs/default.nix --
-{ pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 {
+  nixpkgs.overlays = [
+    inputs.emacs-overlay.overlays.default
+  ];
   programs.emacs = {
     enable = true;
-    package = pkgs.emacs31-pgtk;
+    package = pkgs.emacs-unstable-pgtk;
+  };
     # 在这里声明你需要的插件
     extraPackages =
       epkgs: with epkgs; [
