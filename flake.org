@@ -74,9 +74,6 @@ nixos-config/
 
     nix-index-database.url = "github:nix-community/nix-index-database";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
-
-    emacs-overlay.url = "github:nix-community/emacs-overlay";
-    emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -117,10 +114,6 @@ nixos-config/
 # -- modules/desktop/default.nix --
 { inputs, ... }:
 {
-  nixpkgs.overlays = [
-    inputs.emacs-overlay.overlays.default
-  ];
-
   imports = [
     inputs.disko.nixosModules.disko
     ../shared
@@ -706,8 +699,7 @@ Home Manager 用户级配置
 {
   imports = [
     ./alacritty
-    #./doom
-    ./emacs
+    ./doom
     ./fastfetch
     ./fcitx5
     ./firefox
@@ -794,12 +786,8 @@ Home Manager 用户级配置
 
 *** Doom
 **** default.nix
-:PROPERTIES:
-:header-args: :tangle modules/home/doom/default.nix :mkdirp yes :exports none
-:END:
-
-#+BEGIN_SRC nix
-{ config, pkgs, inputs, ... }:
+#+BEGIN_SRC nix :tangle modules/home/doom/default.nix :mkdirp yes :exports none
+{ config, pkgs, ... }:
 {
   programs.emacs = {
     enable = true;
@@ -807,6 +795,7 @@ Home Manager 用户级配置
   };
   services.emacs = {
     enable = true;
+    client.enable = true;
   };
 
   home.packages = with pkgs; [
@@ -832,11 +821,7 @@ Home Manager 用户级配置
 
 **** configs
 ***** init.el
-:PROPERTIES:
-:header-args: :tangle modules/home/doom/configs/init.el :mkdirp yes :exports none
-:END:
-
-#+BEGIN_SRC elisp
+#+BEGIN_SRC elisp :tangle modules/home/doom/configs/init.el :mkdirp yes :exports none
 ;;; $DOOMDIR/init.el -*- lexical-binding: t; -*-
 
 ;; This file controls what Doom modules are enabled and what order they load
@@ -1041,11 +1026,7 @@ Home Manager 用户级配置
 #+END_SRC
 
 ***** config.el
-:PROPERTIES:
-:header-args: :tangle modules/home/doom/configs/config.el :mkdirp yes :exports none
-:END:
-
-#+BEGIN_SRC elisp
+#+BEGIN_SRC elisp :tangle modules/home/doom/configs/config.el :mkdirp yes :exports none
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
 ;; Place your private configuration here! Remember, you do not need to run 'doom
@@ -1054,7 +1035,7 @@ Home Manager 用户级配置
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
-(setq user-full-name "Kim"
+(setq! user-full-name "Kim"
       user-mail-address "kimuxer@gmail.com")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
@@ -1068,7 +1049,7 @@ Home Manager 用户级配置
 ;;
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
-(setq doom-font "JetBrainsMono Nerd Font:style=SemiBold:size=13"
+(setq! doom-font "JetBrainsMono Nerd Font:style=SemiBold:size=13"
       doom-variable-pitch-font (font-spec :family "Noto Sans CJK SC" :size 13))
 
 ;; 让中文字符宽度与字体大小对齐英文字符（避免表格/对齐错位）
@@ -1090,9 +1071,9 @@ Home Manager 用户级配置
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one)
-(setq org-src-fontify-natively t)
-(setq org-src-tab-acts-natively t)
+(setq! doom-theme 'doom-one)
+(setq! org-src-fontify-natively t)
+(setq! org-src-tab-acts-natively t)
 
 (after! org
   (set-face-attribute 'org-level-1 nil :height 1.1)
@@ -1100,13 +1081,23 @@ Home Manager 用户级配置
   (set-face-attribute 'org-level-3 nil :height 1.0)
   (set-face-attribute 'org-document-title nil :height 1.0))
 
+(defun +my/show-dashboard-if-empty (frame)
+  "当创建新窗口时，如果当前缓冲区是空白的，强制显示 dashboard。"
+  (with-selected-frame frame
+    (when (and (eq (current-buffer) (get-buffer "*scratch*"))
+               (not (buffer-modified-p)))
+      (doom-dashboard-mode))))
+
+;; 将这个函数挂载到创建 Frame 的钩子上
+(add-hook 'after-make-frame-functions #'+my/show-dashboard-if-empty)
+
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type 'visual)
+(setq! display-line-numbers-type 'visual)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/.config/doom/org/")
+(setq! org-directory "~/.config/doom/org/")
 (after! org-roam
   (setq org-roam-directory (file-truename "~/.config/doom/org/roam/"))
   (org-roam-db-autosync-mode))
@@ -1147,7 +1138,7 @@ Home Manager 用户级配置
 ;; Fish Shell 兼容性配置（解决 doom doctor 的 POSIX 警告）
 ;; -------------------------------------------------------------------
 ;; 让 Emacs 内部调用的子进程默认使用 bash（NixOS 中绝对存在）
-(setq shell-file-name (executable-find "bash"))
+(setq! shell-file-name (executable-find "bash"))
 (setq-default explicit-shell-file-name "/run/current-system/sw/bin/fish")
 
 ;; -------------------------------------------------------------------
@@ -1186,9 +1177,8 @@ Home Manager 用户级配置
 (after! org
   (map! :map org-mode-map
         :localleader
-        (:prefix ("b" . "babel")
+        (:prefix-map ("b" . "babel")
          :desc "Tangle current block's file only" "T" #'+org/tangle-current-file-only)))
-
 ;; -------------------------------------------------------------------
 ;;  基础设置
 ;; -------------------------------------------------------------------
@@ -1203,7 +1193,7 @@ Home Manager 用户级配置
   (setq org-element-use-cache t))
 
 ;; Evil 分屏后自动聚焦新窗
-(setq evil-split-window-below t
+(setq! evil-split-window-below t
       evil-vsplit-window-right t)
 
 ;; 排除，`projectile`/`consult-ripgrep`/`find-file` 索引
@@ -1212,43 +1202,24 @@ Home Manager 用户级配置
     (add-to-list 'projectile-globally-ignored-directories dir)))
 
 ;; which-key 弹出延
-(setq which-key-idle-delay 0.3)
+(setq! which-key-idle-delay 0.3)
 
 ;; -------------------------------------------------------------------
 ;; 备份文件位置  ~/.cache/emacs
 ;; -------------------------------------------------------------------
-
 (after! emacs
-  ;; 1. 定义根路径
-  (setq my-cache-dir (expand-file-name "~/.cache/emacs/"))
-
-  ;; 2. 定义子路径
-  (setq my-backup-dir (expand-file-name "backups/" my-cache-dir))
-  (setq my-auto-save-dir (expand-file-name "auto-save/" my-cache-dir))
-
-  ;; 3. 显式递归创建这三个目录
-  (make-directory my-backup-dir t)
-  (make-directory my-auto-save-dir t)
-
-  ;; 4. 设置备份目录
-  (setq backup-directory-alist
-        `(("." . ,my-backup-dir)))
-
-  ;; 5. 设置自动保存目录
-  (setq auto-save-file-name-transforms
-        `((".*" ,my-auto-save-dir t)))
-
-  ;; 6. 历史记录路径
-  (setq savehist-file (expand-file-name "history" my-cache-dir)))
+  (let ((cache-dir (expand-file-name "~/.cache/emacs/")))
+    (setq backup-directory-alist `(("." . ,(expand-file-name "backups/" cache-dir)))
+          auto-save-file-name-transforms `((".*" ,(expand-file-name "auto-save/" cache-dir) t))
+          savehist-file (expand-file-name "history" cache-dir))
+    ;; 确保目录存在
+    (make-directory (cdr (car backup-directory-alist)) t)
+    (make-directory (cadr (car auto-save-file-name-transforms)) t)))
 
 #+END_SRC
 
 ***** packages.el
-:PROPERTIES:
-:header-args: :tangle modules/home/doom/configs/packages.el :mkdirp yes :exports none
-:END:
-
-#+BEGIN_SRC elisp
+#+BEGIN_SRC elisp :tangle modules/home/doom/configs/packages.el :mkdirp yes :exports none
 ;;; $DOOMDIR/packages.el -*- lexical-binding: t; no-byte-compile: t -*-
 
 ;; To install a package:
@@ -1302,442 +1273,6 @@ Home Manager 用户级配置
 ;; (unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
-#+END_SRC
-
-*** Emacs
-**** default.nix
-#+BEGIN_SRC nix :tangle modules/home/emacs/default.nix :mkdirp yes :exports none
-# -- modules/home/emacs/default.nix --
-{ pkgs, config, ... }:
-{
-  services.emacs = {
-    enable = true;
-    package = config.programs.emacs.finalPackage;
-    client.enable = true;
-  };
-  programs.emacs = {
-    enable = true;
-    package = pkgs.emacsWithPackagesFromUsePackage {
-      config = ./configs/emacs.el;
-      package = pkgs.emacs31-pgtk;
-      #package = pkgs.emacs-unstable-pgtk;
-      defaultInitFile = true;
-      alwaysEnsure = true;
-      alwaysTangle = true;
-      extraEmacsPackages = epkgs: [
-        epkgs.treesit-grammars.with-all-grammars
-      ];
-    };
-  };
-
-  home.packages = with pkgs; [
-    clang
-    cmake
-    shellcheck
-    alejandra
-    shfmt
-    nixd
-    taplo
-    bash-language-server
-  ];
-
-  home.file.".config/emacs/early-init.el".source = ./configs/early-init.el;
-}
-#+END_SRC
-
-**** configs
-***** early-init
-#+BEGIN_SRC elisp :tangle modules/home/emacs/configs/early-init.el :mkdirp yes :exports none
-;;; early-init.el  -*- lexical-binding: t; -*-
-;; =============================================================================
-;; 1. 【EARLY-INIT STAGE】 Performance and GUI Optimizations
-;; =============================================================================
-(setq gc-cons-threshold most-positive-fixnum
-      gc-cons-percentage 0.6)
-
-;; Prevent frame flickering on Wayland/PGTK before rendering
-(setq frame-inhibit-implied-resize t)
-(push '(menu-bar-lines . 0) default-frame-alist)
-(push '(tool-bar-lines . 0) default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
-
-(when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-(when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-
-(setq inhibit-startup-screen t
-      inhibit-startup-echo-area-message t
-      inhibit-startup-buffer-menu t)
-
-;; Restore GC threshold after startup to prevent memory leaks
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (setq gc-cons-threshold (* 16 1024 1024)
-                  gc-cons-percentage 0.1)))
-#+END_SRC
-
-***** init
-#+BEGIN_SRC elisp :tangle modules/home/emacs/configs/emacs.el :exports none
-;;; emacs.el  -*- lexical-binding: t; -*-
-;; =============================================================================
-;; 1. 【INIT STAGE】 General Behavior and Core Settings
-;; =============================================================================
-(setq-default fill-column 80
-              tab-width 2
-              indent-tabs-mode nil)
-(setq require-final-newline t)
-(electric-pair-mode 1)
-(show-paren-mode 1)
-(delete-selection-mode 1)
-(setq make-backup-files nil
-      auto-save-default nil
-      create-lockfiles nil)
-(setq show-paren-context-when-offscreen 'child-frame)
-
-;; Force UTF-8 environment
-(set-language-environment "UTF-8")
-(set-default-coding-systems 'utf-8)
-(prefer-coding-system 'utf-8)
-
-;; Protect history file paths for read-only Nix store environment
-(make-directory "~/.local/share/emacs/" t)
-(use-package savehist
-  :ensure nil
-  :init
-  (setq savehist-file (expand-file-name "savehist" "~/.local/share/emacs/"))
-  (savehist-mode 1))
-
-(use-package recentf
-  :ensure nil
-  :init
-  (setq recentf-save-file (expand-file-name "recentf" "~/.local/share/emacs/"))
-  (recentf-mode 1)
-  :config
-  (setq recentf-max-saved-items 200))
-
-(use-package saveplace
-  :ensure nil
-  :init
-  (setq save-place-file (expand-file-name "places" "~/.local/share/emacs/"))
-  (save-place-mode 1))
-
-;; Smooth scrolling settings
-(setq scroll-margin 2
-      scroll-conservatively 101
-      scroll-preserve-screen-position t)
-(column-number-mode 1)
-(setq ring-bell-function 'ignore)
-(setq use-short-answers t)
-(global-subword-mode 1)
-
-(use-package vterm
-  :commands vterm)
-
-(use-package treesit-fold)
-
-(defun +my/add-tangle-warning-h ()
-  (let* ((file buffer-file-name)
-         (ext (file-name-extension file)))
-    (when (member ext '("nix" "sh" "kdl" "el" "lua" "yaml"))
-      (let ((comment-char (cond ((string= ext "kdl") "//")
-                                ((string= ext "el") ";;")
-                                ((string= ext "lua") "--")
-                                (t "#"))))
-        (save-excursion
-          (goto-char (point-min))
-          (unless (search-forward "DO NOT EDIT" nil t)
-            (goto-char (point-min))
-            (insert (format "%s DO NOT EDIT THIS FILE DIRECTLY.\n" comment-char)
-                    (format "%s It is generated from flake.org by org-babel-tangle.\n\n" comment-char))
-            (save-buffer)))))))
-
-(add-hook 'org-babel-post-tangle-hook #'+my/add-tangle-warning-h)
-
-#+END_SRC
-
-***** ui
-#+BEGIN_SRC elisp :tangle modules/home/emacs/configs/emacs.el :exports none
-;; =============================================================================
-;; 2. 【UI STAGE】 Appearance and Themes
-;; =============================================================================
-(use-package doom-themes
-  :demand t
-  :config
-  (load-theme 'doom-one t))
-
-(use-package doom-modeline
-  :demand t
-  :config
-  (setq doom-modeline-icon t
-        doom-modeline-major-mode-icon t
-        doom-modeline-buffer-encoding t)
-  (doom-modeline-mode 1))
-
-(setq display-line-numbers-type 'relative)
-(global-display-line-numbers-mode t)
-
-(use-package nerd-icons
-  :demand t)
-
-(use-package dashboard
-  :demand t
-  :config
-  (dashboard-setup-startup-hook)
-  (setq dashboard-items '((recents  . 5)
-                          (bookmarks . 5)
-                          (projects . 5)))
-
-  (setq dashboard-set-heading-icons t)
-  (setq dashboard-set-file-icons t)
-  (setq dashboard-icon-type 'nerd-icons)
-  (setq dashboard-startup-banner 'logo)
-
-  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))))
-
-#+END_SRC
-#
-***** evil
-#+BEGIN_SRC elisp :tangle modules/home/emacs/configs/emacs.el :exports none
-;; =============================================================================
-;; 3. 【EVIL STAGE】 Vim Keybindings and Integration
-;; =============================================================================
-(setq evil-want-keybinding nil)
-(setq evil-want-integration t)
-
-(use-package evil
-  :demand t
-  :config
-  (setq evil-default-state 'normal)
-  (setq evil-normal-state-cursor 'box)
-  (setq evil-insert-state-cursor 'bar)
-  (setq evil-emacs-state-cursor 'hbar)
-  (setq evil-want-clipboard-init nil)
-  (evil-mode 1))
-
-(use-package evil-collection
-  :after evil
-  :demand t
-  :config
-  (evil-collection-init))
-
-#+END_SRC
-
-***** completion
-#+BEGIN_SRC elisp :tangle modules/home/emacs/configs/emacs.el :exports none
-;; =============================================================================
-;; 4. Completion UI Framework (Vertico)
-;; =============================================================================
-(use-package vertico
-  :init
-  (vertico-mode 1))
-
-(use-package corfu
-  :demand t
-  :config
-  (global-corfu-mode 1)
-  (setq corfu-auto t
-        corfu-cycle t)
-  ;; Allow space to act as a separator for Orderless completion within Corfu
-  (setq corfu-quit-at-boundary 'separator))
-
-(use-package orderless
-  :demand t
-  :custom
-  (completion-styles '(orderless basic))
-  (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles basic partial-completion))))
-  :config
-  ;; Enable Corfu in minibuffer when completion-at-point is available
-  (defun my/corfu-enable-in-minibuffer ()
-    (when (local-variable-p 'completion-at-point-functions)
-      (setq-local corfu-auto nil)
-      (corfu-mode 1)))
-  (add-hook 'minibuffer-setup-hook #'my/corfu-enable-in-minibuffer))
-
-(use-package marginalia
-  :init
-  (marginalia-mode 1))
-
-#+END_SRC
-***** tree-sitter
-#+BEGIN_SRC elisp :tangle modules/home/emacs/configs/emacs.el :exports none
-;; =============================================================================
-;; 5. Syntax Highlighting (Tree-sitter)
-;; =============================================================================
-(setq major-mode-remap-alist
-      '((rust-mode . rust-ts-mode)
-        (bash-mode . bash-ts-mode)
-        (json-mode . json-ts-mode)
-        (lua-mode . lua-ts-mode)
-        (yaml-mode . yaml-ts-mode)))
-
-(defun my/treesit-common-setup ()
-  "Common setup applied to every tree-sitter major mode."
-  (treesit-inspect-mode -1)
-  (treesit-fold-mode 1)
-  (local-set-key (kbd "C-c C-f") 'treesit-fold-toggle))
-
-(dolist (mode-pair major-mode-remap-alist)
-  (let* ((ts-mode (cdr mode-pair))
-         (ts-hook (intern (concat (symbol-name ts-mode) "-hook"))))
-    (add-hook ts-hook #'my/treesit-common-setup)))
-
-#+END_SRC
-***** eglot
-#+BEGIN_SRC elisp :tangle modules/home/emacs/configs/emacs.el :exports none
-;; =============================================================================
-;; 6. LSP Code Intelligence (Eglot)
-;; =============================================================================
-(with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs '(nix-mode . ("nixd")))
-  (add-to-list 'eglot-server-programs '(conf-toml-mode . ("taplo" "lsp" "stdio")))
-  (add-to-list 'eglot-server-programs '(bash-ts-mode . ("bash-language-server" "start"))))
-
-(add-hook 'rust-ts-mode-hook #'eglot-ensure)
-(add-hook 'bash-ts-mode-hook #'eglot-ensure)
-(add-hook 'conf-toml-mode-hook #'eglot-ensure)
-(add-hook 'emacs-lisp-mode-hook #'flymake-mode)
-
-(use-package nix-mode
-  :mode "\\.nix\\'"
-  :hook (nix-mode . eglot-ensure))
-
-(use-package kdl-mode
-  :mode "\\.kdl\\'")
-
-(use-package envrc
-  :hook (after-init . envrc-global-mode))
-(use-package inheritenv)
-
-#+END_SRC
-***** formatting
-#+BEGIN_SRC elisp :tangle modules/home/emacs/configs/emacs.el :exports none
-;; =============================================================================
-;; 7. Formatting & Linting
-;; =============================================================================
-(use-package apheleia
-  :demand t
-  :config
-  (apheleia-global-mode +1)
-
-  (setf (alist-get 'nix-mode apheleia-formatters) '("alejandra" "-q"))
-  (setf (alist-get 'shfmt apheleia-formatters) '("shfmt" "-i" "2" "-bn"))
-
-  ;; 改这里: apheleia-mode-formatter-alist -> apheleia-mode-alist
-  (setf (alist-get 'nix-mode apheleia-mode-alist) 'nix-mode)
-
-#+END_SRC
-
-***** magit
-#+BEGIN_SRC elisp :tangle modules/home/emacs/configs/emacs.el :exports none
-;; =============================================================================
-;; 8. 【MAGIT】 Magit and Project Integration
-;; =============================================================================
-(use-package magit
-  :config
-  ;; Refine all hunks for crystal clear diffs
-  (setq magit-diff-refine-hunk 'all)
-  ;; Prevent annoying prompts when killing Emacs with active repo buffers
-  (setq magit-save-repository-buffers 'dontask)
-  ;; Control buffer display behavior to keep workspace clean
-  (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
-
-;; Integrate Magit seamlessly into project.el switch menu
-(with-eval-after-load 'project
-  (add-to-list 'project-switch-commands '(magit-status "Magit status") t))
-
-#+END_SRC
-
-***** org
-#+BEGIN_SRC elisp :tangle modules/home/emacs/configs/emacs.el :exports none
-;; =============================================================================
-;; 9. 【ORG】 Org Mode Configuration
-;; =============================================================================4
-(use-package org
-  :ensure nil
-  :config
-  (setq org-hide-emphasis-markers t)
-  (add-hook 'org-mode-hook #'visual-line-mode)
-  (setq org-return-follows-link t)
-
-  (use-package org-appear
-    :hook (org-mode . org-appear-mode)))
-
-(with-eval-after-load 'org
-  (setq org-directory "~/org")
-  (setq org-agenda-files (list org-directory))
-  (setq org-todo-keywords
-        '((sequence "TODO(t)" "PROG(p)" "|" "DONE(d)" "CANCELLED(c)")))
-  (setq org-log-done 'time))
-
-#+END_SRC
-
-***** keybindings
-#+BEGIN_SRC elisp :tangle modules/home/emacs/configs/emacs.el :exports none
-;; =============================================================================
-;; 10. 【KEYBINDINGS】 Keybindings (Modern Leader Key Setup)
-;; =============================================================================
-(use-package consult)
-
-(use-package which-key
-  :init (which-key-mode 1)
-  :config
-  (setq which-key-idle-delay 0.3))
-
-(use-package general
-  :demand t
-  :config
-  (general-evil-setup)
-
-  (eval-and-compile
-    (general-create-definer my-leader-def
-      :states '(normal visual motion)
-      :keymaps 'override
-      :prefix "SPC"
-      :global-prefix "C-SPC"))
-
-  (general-define-key
-   :states 'normal
-   "C-p" 'project-find-file)
-
-  ;; 3. SPC Leader Key Map
-  (my-leader-def
-    ;; Top-level single-letter binds
-    "SPC" '(execute-extended-command :which-key "M-x")
-    "/"   '(consult-line :which-key "Search buffer")
-
-    ;; [b] Buffers (Fixed: Removed void keymap variable)
-    "b"   '(:which-key "buffers")
-    "bb"  '(switch-to-buffer :which-key "Switch buffer")
-    "bd"  '(kill-current-buffer :which-key "Kill buffer")
-    "bn"  '(next-buffer :which-key "Next buffer")
-    "bp"  '(previous-buffer :which-key "Previous buffer")
-
-    ;; [c] Code / LSP (Integration with Eglot from Part C)
-    "c"   '(:which-key "code/lsp")
-    "ca"  '(eglot-code-actions :which-key "Code actions")
-    "cr"  '(eglot-rename :which-key "Rename symbol")
-    "cf"  '(apheleia-format-buffer :which-key "Format buffer") ; Force Apheleia
-    "cd"  '(eldoc :which-key "Show docs")
-
-    ;; [f] Files
-    "f"   '(:which-key "files")
-    "ff"  '(find-file :which-key "Find file")
-    "fr"  '(recentf-open-files :which-key "Recent files")
-
-    ;; [g] Git (Integration with Magit)
-    "g"   '(:which-key "git")
-    "gg"  '(magit-status :which-key "Magit status")
-
-    ;; [t] Toggle / Terminal (Integration with Vterm)
-    "t"   '(:which-key "toggle/terminal")
-    "tt"  '(vterm :which-key "Open Vterm")
-
-    ;; [o] Org Mode (Integration with Org Mode from Part B)
-    "o"   '(:which-key "org")
-    "oa"  '(org-agenda :which-key "Agenda")
-    "ot"  '(org-capture :which-key "Capture")))
-
 #+END_SRC
 
 *** Fastfetch

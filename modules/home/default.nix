@@ -5,8 +5,7 @@
 {
   imports = [
     ./alacritty
-    #./doom
-    ./emacs
+    ./doom
     ./fastfetch
     ./fcitx5
     ./firefox

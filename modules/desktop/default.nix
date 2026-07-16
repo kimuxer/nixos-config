@@ -4,10 +4,6 @@
 # -- modules/desktop/default.nix --
 { inputs, ... }:
 {
-  nixpkgs.overlays = [
-    inputs.emacs-overlay.overlays.default
-  ];
-
   imports = [
     inputs.disko.nixosModules.disko
     ../shared

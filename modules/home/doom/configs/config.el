@@ -6,7 +6,7 @@
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
-(setq user-full-name "Kim"
+(setq! user-full-name "Kim"
       user-mail-address "kimuxer@gmail.com")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
@@ -20,7 +20,7 @@
 ;;
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
-(setq doom-font "JetBrainsMono Nerd Font:style=SemiBold:size=13"
+(setq! doom-font "JetBrainsMono Nerd Font:style=SemiBold:size=13"
       doom-variable-pitch-font (font-spec :family "Noto Sans CJK SC" :size 13))
 
 ;; 让中文字符宽度与字体大小对齐英文字符（避免表格/对齐错位）
@@ -42,9 +42,9 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one)
-(setq org-src-fontify-natively t)
-(setq org-src-tab-acts-natively t)
+(setq! doom-theme 'doom-one)
+(setq! org-src-fontify-natively t)
+(setq! org-src-tab-acts-natively t)
 
 (after! org
   (set-face-attribute 'org-level-1 nil :height 1.1)
@@ -52,13 +52,23 @@
   (set-face-attribute 'org-level-3 nil :height 1.0)
   (set-face-attribute 'org-document-title nil :height 1.0))
 
+(defun +my/show-dashboard-if-empty (frame)
+  "当创建新窗口时，如果当前缓冲区是空白的，强制显示 dashboard。"
+  (with-selected-frame frame
+    (when (and (eq (current-buffer) (get-buffer "*scratch*"))
+               (not (buffer-modified-p)))
+      (doom-dashboard-mode))))
+
+;; 将这个函数挂载到创建 Frame 的钩子上
+(add-hook 'after-make-frame-functions #'+my/show-dashboard-if-empty)
+
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type 'visual)
+(setq! display-line-numbers-type 'visual)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/.config/doom/org/")
+(setq! org-directory "~/.config/doom/org/")
 (after! org-roam
   (setq org-roam-directory (file-truename "~/.config/doom/org/roam/"))
   (org-roam-db-autosync-mode))
@@ -99,7 +109,7 @@
 ;; Fish Shell 兼容性配置（解决 doom doctor 的 POSIX 警告）
 ;; -------------------------------------------------------------------
 ;; 让 Emacs 内部调用的子进程默认使用 bash（NixOS 中绝对存在）
-(setq shell-file-name (executable-find "bash"))
+(setq! shell-file-name (executable-find "bash"))
 (setq-default explicit-shell-file-name "/run/current-system/sw/bin/fish")
 
 ;; -------------------------------------------------------------------
@@ -138,9 +148,8 @@
 (after! org
   (map! :map org-mode-map
         :localleader
-        (:prefix ("b" . "babel")
+        (:prefix-map ("b" . "babel")
          :desc "Tangle current block's file only" "T" #'+org/tangle-current-file-only)))
-
 ;; -------------------------------------------------------------------
 ;;  基础设置
 ;; -------------------------------------------------------------------
@@ -155,7 +164,7 @@
   (setq org-element-use-cache t))
 
 ;; Evil 分屏后自动聚焦新窗
-(setq evil-split-window-below t
+(setq! evil-split-window-below t
       evil-vsplit-window-right t)
 
 ;; 排除，`projectile`/`consult-ripgrep`/`find-file` 索引
@@ -164,31 +173,16 @@
     (add-to-list 'projectile-globally-ignored-directories dir)))
 
 ;; which-key 弹出延
-(setq which-key-idle-delay 0.3)
+(setq! which-key-idle-delay 0.3)
 
 ;; -------------------------------------------------------------------
 ;; 备份文件位置  ~/.cache/emacs
 ;; -------------------------------------------------------------------
-
 (after! emacs
-  ;; 1. 定义根路径
-  (setq my-cache-dir (expand-file-name "~/.cache/emacs/"))
-
-  ;; 2. 定义子路径
-  (setq my-backup-dir (expand-file-name "backups/" my-cache-dir))
-  (setq my-auto-save-dir (expand-file-name "auto-save/" my-cache-dir))
-
-  ;; 3. 显式递归创建这三个目录
-  (make-directory my-backup-dir t)
-  (make-directory my-auto-save-dir t)
-
-  ;; 4. 设置备份目录
-  (setq backup-directory-alist
-        `(("." . ,my-backup-dir)))
-
-  ;; 5. 设置自动保存目录
-  (setq auto-save-file-name-transforms
-        `((".*" ,my-auto-save-dir t)))
-
-  ;; 6. 历史记录路径
-  (setq savehist-file (expand-file-name "history" my-cache-dir)))
+  (let ((cache-dir (expand-file-name "~/.cache/emacs/")))
+    (setq backup-directory-alist `(("." . ,(expand-file-name "backups/" cache-dir)))
+          auto-save-file-name-transforms `((".*" ,(expand-file-name "auto-save/" cache-dir) t))
+          savehist-file (expand-file-name "history" cache-dir))
+    ;; 确保目录存在
+    (make-directory (cdr (car backup-directory-alist)) t)
+    (make-directory (cadr (car auto-save-file-name-transforms)) t)))
