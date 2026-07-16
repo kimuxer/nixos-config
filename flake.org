@@ -1038,6 +1038,9 @@ Home Manager 用户级配置
 (setq! user-full-name "Kim"
       user-mail-address "kimuxer@gmail.com")
 
+;; 提前设置 org-directory，确保在 org 包被加载之前生效
+(setq! org-directory "~/.config/doom/org/")
+
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;
 ;; - `doom-font' -- the primary font to use
@@ -1072,34 +1075,43 @@ Home Manager 用户级配置
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 (setq! doom-theme 'doom-one)
-(setq! org-src-fontify-natively t)
-(setq! org-src-tab-acts-natively t)
+
+;; -------------------------------------------------------------------
+;;  org 基础设置（普通变量，无需等待 org 包加载，可直接顶层设置）
+;; -------------------------------------------------------------------
+(setq! org-startup-folded t                 ; 打开时全部折叠
+       org-hide-leading-stars t             ; 隐藏多余的星号
+       org-odd-levels-only nil              ; 保持层级清晰
+       org-element-cache-persistent t
+       org-src-fontify-natively t
+       org-src-tab-acts-natively t
+       org-element-use-cache t)
 
 (after! org
   (set-face-attribute 'org-level-1 nil :height 1.1)
   (set-face-attribute 'org-level-2 nil :height 1.0)
   (set-face-attribute 'org-level-3 nil :height 1.0)
-  (set-face-attribute 'org-document-title nil :height 1.0))
+  (set-face-attribute 'org-level-4 nil :height 1.0)
+  (set-face-attribute 'org-level-5 nil :height 1.0)
+  (set-face-attribute 'org-document-title nil :height 1.1)
 
-(defun +my/show-dashboard-if-empty (frame)
-  "当创建新窗口时，如果当前缓冲区是空白的，强制显示 dashboard。"
+;; -------------------------------------------------------------------
+;;  emacsclient -c 默认打开dashboard界面
+;; -------------------------------------------------------------------
+(defun +my/force-dashboard-h (frame)
   (with-selected-frame frame
-    (when (and (eq (current-buffer) (get-buffer "*scratch*"))
-               (not (buffer-modified-p)))
-      (doom-dashboard-mode))))
+    (when (get-buffer dashboard-buffer-name)
+      (switch-to-buffer dashboard-buffer-name)
+      - (dashboard-refresh-buffer))))
 
-;; 将这个函数挂载到创建 Frame 的钩子上
-(add-hook 'after-make-frame-functions #'+my/show-dashboard-if-empty)
+(add-hook 'after-make-frame-functions #'+my/force-dashboard-h)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq! display-line-numbers-type 'visual)
 
-;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
-(setq! org-directory "~/.config/doom/org/")
 (after! org-roam
-  (setq org-roam-directory (file-truename "~/.config/doom/org/roam/"))
+  (setq! org-roam-directory (file-truename "~/.config/doom/org/roam/"))
   (org-roam-db-autosync-mode))
 
 
@@ -1138,8 +1150,17 @@ Home Manager 用户级配置
 ;; Fish Shell 兼容性配置（解决 doom doctor 的 POSIX 警告）
 ;; -------------------------------------------------------------------
 ;; 让 Emacs 内部调用的子进程默认使用 bash（NixOS 中绝对存在）
-(setq! shell-file-name (executable-find "bash"))
-(setq-default explicit-shell-file-name "/run/current-system/sw/bin/fish")
+;; 加上 fallback，避免 executable-find 找不到 bash 时把
+;; shell-file-name 静默设为 nil，导致 shell-command 等功能失效
+(setq! shell-file-name (or (executable-find "bash") "/bin/sh"))
+
+;; 不再硬编码系统路径，改用 executable-find 动态查找 fish。
+;; 这样无论 fish 是系统级安装还是 home-manager 管理，都能正确找到；
+;; 如果 fish 不存在，则退回 nil，让 Emacs 使用默认 shell，而不是
+;; 静默指向一个可能已经不存在的路径
+;; 注：explicit-shell-file-name 是 buffer-local 变量，这里设置的是
+;; 其全局默认值，用途与 setq! 不同，保持 setq-default 即可
+(setq-default explicit-shell-file-name (executable-find "fish"))
 
 ;; -------------------------------------------------------------------
 ;;  添加警告信息到生成的文件
@@ -1164,7 +1185,7 @@ Home Manager 用户级配置
 (add-hook 'org-babel-post-tangle-hook #'+my/add-tangle-warning-h)
 
 ;; -------------------------------------------------------------------
-;;  "只 tangle 光标所在代码块对应的目标文件。"
+;;  " tangle 快捷键配置"
 ;; -------------------------------------------------------------------
 
 (defun +org/tangle-current-file-only ()
@@ -1177,45 +1198,45 @@ Home Manager 用户级配置
 (after! org
   (map! :map org-mode-map
         :localleader
+        (:prefix-map ("m" . "tangle")
+         :desc "Tangle whole file" "a" #'org-babel-tangle
+         :desc "Detangle current file" "d" #'org-babel-detangle)
         (:prefix-map ("b" . "babel")
-         :desc "Tangle current block's file only" "T" #'+org/tangle-current-file-only)))
+         :desc "Tangle current block's file only" "f" #'+org/tangle-current-file-only)))
+
+
 ;; -------------------------------------------------------------------
-;;  基础设置
-;; -------------------------------------------------------------------
-
-(after! org
-  (setq org-startup-folded t)                 ; 打开时全部折叠
-  (setq org-hide-leading-stars t)             ; 隐藏多余的星号
-  (setq org-odd-levels-only nil)              ; 保持层级清晰
-
-  ;; 如果文件真的很大（5000+ 行），可以启用
-  (setq org-element-cache-persistent t)
-  (setq org-element-use-cache t))
-
 ;; Evil 分屏后自动聚焦新窗
+;; -------------------------------------------------------------------
 (setq! evil-split-window-below t
       evil-vsplit-window-right t)
 
+;; -------------------------------------------------------------------
 ;; 排除，`projectile`/`consult-ripgrep`/`find-file` 索引
+;; -------------------------------------------------------------------
 (after! projectile
   (dolist (dir '("result" "result-*" ".direnv"))
     (add-to-list 'projectile-globally-ignored-directories dir)))
 
-;; which-key 弹出延
+;; -------------------------------------------------------------------
+;; which-key 弹出延迟
+;; -------------------------------------------------------------------
 (setq! which-key-idle-delay 0.3)
 
 ;; -------------------------------------------------------------------
 ;; 备份文件位置  ~/.cache/emacs
 ;; -------------------------------------------------------------------
-(after! emacs
-  (let ((cache-dir (expand-file-name "~/.cache/emacs/")))
-    (setq backup-directory-alist `(("." . ,(expand-file-name "backups/" cache-dir)))
-          auto-save-file-name-transforms `((".*" ,(expand-file-name "auto-save/" cache-dir) t))
-          savehist-file (expand-file-name "history" cache-dir))
-    ;; 确保目录存在
-    (make-directory (cdr (car backup-directory-alist)) t)
-    (make-directory (cadr (car auto-save-file-name-transforms)) t)))
-
+;; 原来用 (after! emacs ...) 包裹，但 Emacs 核心从不会
+;; (provide 'emacs)，所以这个 after! 永远不会触发，里面的设置
+;; 全部失效。这些是核心内建变量，启动早期就可用，直接去掉
+;; after! 包裹、顶层执行即可
+(let ((cache-dir (expand-file-name "~/.cache/emacs/")))
+  (setq! backup-directory-alist `(("." . ,(expand-file-name "backups/" cache-dir)))
+        auto-save-file-name-transforms `((".*" ,(expand-file-name "auto-save/" cache-dir) t))
+        savehist-file (expand-file-name "history" cache-dir))
+  ;; 确保目录存在
+  (make-directory (cdr (car backup-directory-alist)) t)
+  (make-directory (cadr (car auto-save-file-name-transforms)) t))
 #+END_SRC
 
 ***** packages.el
