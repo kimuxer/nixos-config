@@ -1,29 +1,14 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
-;; Place your private configuration here! Remember, you do not need to run 'doom
-;; sync' after modifying this file!
-
-
-;; Some functionality uses this to identify you, e.g. GPG configuration, email
-;; clients, file templates and snippets. It is optional.
 (setopt user-full-name "Kim"
-        user-mail-address "kimuxer@gmail.com")
+        user-mail-address "kimuxer@gmail.com"
 
-;; 提前设置 org-directory，确保在 org 包被加载之前生效
-(setopt org-directory "~/.cache/emacs/org/")
+        org-directory "~/.cache/emacs/org/"
 
-;; Doom exposes five (optional) variables for controlling fonts in Doom:
-;;
-;; - `doom-font' -- the primary font to use
-;; - `doom-variable-pitch-font' -- a non-monospace font (where applicable)
-;; - `doom-big-font' -- used for `doom-big-font-mode'; use this for
-;;   presentations or streaming.
-;; - `doom-symbol-font' -- for symbols
-;; - `doom-serif-font' -- for the `fixed-pitch-serif' face
-;;
-;; See 'C-h v doom-font' for documentation and more examples of what they
-;; accept. For example:
-(setopt doom-font "JetBrainsMono Nerd Font:style=SemiBold:size=13"
+        display-line-numbers-type 'visual)
+
+        doom-theme 'doom-one)
+        doom-font "JetBrainsMono Nerd Font:style=SemiBold:size=13"
         doom-variable-pitch-font (font-spec :family "Noto Sans CJK SC" :size 13))
 
 ;; 让中文字符宽度与字体大小对齐英文字符（避免表格/对齐错位）
@@ -37,26 +22,16 @@
                                 nil 'prepend))))
 
 
-;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
-;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
-;; refresh your font settings. If Emacs still can't find your font, it likely
-;; wasn't installed correctly. Font issues are rarely Doom issues!
-
-;; There are two ways to load a theme. Both assume the theme is installed and
-;; available. You can either set `doom-theme' or manually load a theme with the
-;; `load-theme' function. This is the default:
-(setopt doom-theme 'doom-one)
-
 ;; -------------------------------------------------------------------
 ;;  org 基础设置（普通变量，无需等待 org 包加载，可直接顶层设置）
 ;; -------------------------------------------------------------------
 (setopt org-startup-folded 'fold             ; 打开时全部折叠（仅显示顶层标题）
-         org-hide-leading-stars t             ; 隐藏多余的星号
-         org-odd-levels-only nil              ; 保持层级清晰
-       org-element-cache-persistent t
-       org-src-fontify-natively t
-       org-src-tab-acts-natively t
-       org-element-use-cache t)
+        org-hide-leading-stars t             ; 隐藏多余的星号
+        org-odd-levels-only nil              ; 保持层级清晰
+        org-element-cache-persistent t
+        org-src-fontify-natively t
+        org-src-tab-acts-natively t
+        org-element-use-cache t)
 
 (after! org
   ;; 高度调整集中在一份数据里，方便以后新增层级或调整数值，无需重复写 set-face-attribute
@@ -79,47 +54,12 @@
 
 (add-hook 'after-make-frame-functions #'+my/force-dashboard-h)
 
-;; This determines the style of line numbers in effect. If set to `nil', line
-;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setopt display-line-numbers-type 'visual)
-
 (after! org-roam
   (setopt org-roam-directory (file-truename "~/.cache/emacs/org/roam/"))
   ;; 确保目录存在，否则新机器上首次启动会因目录不存在而报错
   (make-directory org-roam-directory t)
   (org-roam-db-autosync-mode))
 
-
-;; Whenever you reconfigure a package, make sure to wrap your config in an
-;; `with-eval-after-load' block, otherwise Doom's defaults may override your
-;; settings. E.g.
-;;
-;;   (with-eval-after-load 'PACKAGE
-;;     (setq x y))
-;;
-;; The exceptions to this rule:
-;;
-;;   - Setting file/directory variables (like `org-directory')
-;;   - Setting variables which explicitly tell you to set them before their
-;;     package is loaded (see 'C-h v VARIABLE' to look them up).
-;;   - Setting doom variables (which start with 'doom-' or '+').
-;;
-;; Here are some additional functions/macros that will help you configure Doom.
-;;
-;; - `load!' for loading external *.el files relative to this one
-;; - `add-load-path!' for adding directories to the `load-path', relative to
-;;   this file. Emacs searches the `load-path' when you load packages with
-;;   `require' or `use-package'.
-;; - `map!' for binding new keys
-;;
-;; To get information about any of these functions/macros, move the cursor over
-;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
-;; This will open documentation for it, including demos of how they are used.
-;; Alternatively, use `C-h o' to look up a symbol (functions, variables, faces,
-;; etc).
-;;
-;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
-;; they are implemented.
 
 ;; -------------------------------------------------------------------
 ;; Fish Shell 兼容性配置（解决 doom doctor 的 POSIX 警告）
@@ -179,10 +119,9 @@
 (after! org
   (map! :map org-mode-map
         :localleader
-        (:prefix-map ("m" . "tangle")
+        (:prefix-map ("B" . "tangle")
          :desc "Tangle whole file" "a" #'org-babel-tangle
          :desc "Detangle current file" "d" #'org-babel-detangle)
-        (:prefix-map ("b" . "babel")
          :desc "Tangle current block's file only" "f" #'+org/tangle-current-file-only)))
 
 
