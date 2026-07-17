@@ -1039,7 +1039,7 @@ Home Manager 用户级配置
         user-mail-address "kimuxer@gmail.com")
 
 ;; 提前设置 org-directory，确保在 org 包被加载之前生效
-(setopt org-directory "~/.config/doom/org/")
+(setopt org-directory "~/.cache/emacs/org/")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;
@@ -1113,7 +1113,7 @@ Home Manager 用户级配置
 (setopt display-line-numbers-type 'visual)
 
 (after! org-roam
-  (setopt org-roam-directory (file-truename "~/.config/doom/org/roam/"))
+  (setopt org-roam-directory (file-truename "~/.cache/emacs/org/roam/"))
   ;; 确保目录存在，否则新机器上首次启动会因目录不存在而报错
   (make-directory org-roam-directory t)
   (org-roam-db-autosync-mode))
@@ -1154,12 +1154,16 @@ Home Manager 用户级配置
 ;; Fish Shell 兼容性配置（解决 doom doctor 的 POSIX 警告）
 ;; -------------------------------------------------------------------
 ;; 让 Emacs 内部调用的子进程默认使用 bash
-;; 只在真的找到 bash 时才覆盖 shell-file-name；找不到就保持 Emacs 自带的默认值，
-;; 不再硬编码 "/bin/sh"（NixOS 上未必存在，会导致 process-file 报 file-missing），
-;; 也不会把它静默设为 nil。
-(when-let* ((bash (executable-find "bash")))
-  (setopt shell-file-name bash))
-
+;; 依次尝试 bash → sh（都通过 PATH 动态查找，不硬编码具体路径，
+;; 因为 "/bin/sh" 在 NixOS 上未必存在，会导致 process-file 报 file-missing）。
+;; 如果两个都找不到才保留原有值——切记不能像 `(executable-find "bash")'
+;; 单独那样直接赋值：一旦 PATH 里没有 bash（比如 GUI 方式启动、没继承到完整 PATH 的
+;; 情况），shell-file-name 会被直接设为 nil，导致 org-roam 等调用 fd/rg 的地方在
+;; call-process-shell-command 时报 (wrong-type-argument stringp nil)。
+(setopt shell-file-name
+        (or (executable-find "bash")
+            (executable-find "sh")
+            shell-file-name))
 ;; 不再硬编码系统路径，改用 executable-find 动态查找 fish。
 ;; 这样无论 fish 是系统级安装还是 home-manager 管理，都能正确找到；
 ;; 如果 fish 不存在，则退回 nil，让 Emacs 使用默认 shell，而不是
