@@ -1,5 +1,6 @@
 #+TITLE: Flake Configuration
 #+AUTHOR: Kim
+#+STARTUP: fold
 #+OPTIONS: toc:t
 #+Exclude_TAGS: noexport
 #+PROPERTY: header-args :mkdirp yes :exports none
@@ -789,13 +790,11 @@ Home Manager 用户级配置
 #+BEGIN_SRC nix :tangle modules/home/doom/default.nix :mkdirp yes :exports none
 { config, pkgs, ... }:
 {
+  services.emacs.enable = true;
+
   programs.emacs = {
     enable = true;
     package = pkgs.emacs31-pgtk;
-  };
-  services.emacs = {
-    enable = true;
-    client.enable = true;
   };
 
   home.packages = with pkgs; [
@@ -1034,28 +1033,18 @@ Home Manager 用户级配置
 
         org-directory "~/.cache/emacs/org/"
 
-        display-line-numbers-type 'visual)
+        display-line-numbers-type 'visual
 
-        doom-theme 'doom-one)
+        doom-theme 'doom-one
         doom-font "JetBrainsMono Nerd Font:style=SemiBold:size=13"
         doom-variable-pitch-font (font-spec :family "Noto Sans CJK SC" :size 13))
-
-;; 让中文字符宽度与字体大小对齐英文字符（避免表格/对齐错位）
-(add-hook 'after-setting-font-hook
-          (lambda ()
-            (dolist (charset '(kana han cjk-misc bopomofo))
-              ;; 明确指定 :weight 'regular （如果觉得太细，可以改为 'medium 或 'bold）
-              ;; 明确指定 :slant 'normal 阻断可能出现的衬线体误匹配
-              (set-fontset-font t charset
-                                (font-spec :family "Noto Sans CJK SC" :size 17 :weight 'regular :slant 'normal)
-                                nil 'prepend))))
-
-
+;; test
 ;; -------------------------------------------------------------------
 ;;  org 基础设置（普通变量，无需等待 org 包加载，可直接顶层设置）
 ;; -------------------------------------------------------------------
-(setopt org-startup-folded 'fold             ; 打开时全部折叠（仅显示顶层标题）
-        org-hide-leading-stars t             ; 隐藏多余的星号
+;;(add-hook! 'org-mode-hook #'org-overview)
+
+(setopt org-hide-leading-stars t             ; 隐藏多余的星号
         org-odd-levels-only nil              ; 保持层级清晰
         org-element-cache-persistent t
         org-src-fontify-natively t
@@ -1072,45 +1061,20 @@ Home Manager 用户级配置
                           (org-document-title . 1.1)))
     (set-face-attribute (car face-height) nil :height (cdr face-height))))
 
-;; -------------------------------------------------------------------
-;;  emacsclient -c 默认打开dashboard界面
-;; -------------------------------------------------------------------
-(defun +my/force-dashboard-h (frame)
-  (with-selected-frame frame
-    (when (get-buffer dashboard-buffer-name)
-      (switch-to-buffer dashboard-buffer-name)
-      (dashboard-refresh-buffer))))
-
-(add-hook 'after-make-frame-functions #'+my/force-dashboard-h)
-
 (after! org-roam
   (setopt org-roam-directory (file-truename "~/.cache/emacs/org/roam/"))
   ;; 确保目录存在，否则新机器上首次启动会因目录不存在而报错
   (make-directory org-roam-directory t)
   (org-roam-db-autosync-mode))
 
-
 ;; -------------------------------------------------------------------
 ;; Fish Shell 兼容性配置（解决 doom doctor 的 POSIX 警告）
 ;; -------------------------------------------------------------------
-;; 让 Emacs 内部调用的子进程默认使用 bash
-;; 依次尝试 bash → sh（都通过 PATH 动态查找，不硬编码具体路径，
-;; 因为 "/bin/sh" 在 NixOS 上未必存在，会导致 process-file 报 file-missing）。
-;; 如果两个都找不到才保留原有值——切记不能像 `(executable-find "bash")'
-;; 单独那样直接赋值：一旦 PATH 里没有 bash（比如 GUI 方式启动、没继承到完整 PATH 的
-;; 情况），shell-file-name 会被直接设为 nil，导致 org-roam 等调用 fd/rg 的地方在
-;; call-process-shell-command 时报 (wrong-type-argument stringp nil)。
-(setopt shell-file-name
-        (or (executable-find "bash")
-            (executable-find "sh")
-            shell-file-name))
-;; 不再硬编码系统路径，改用 executable-find 动态查找 fish。
-;; 这样无论 fish 是系统级安装还是 home-manager 管理，都能正确找到；
-;; 如果 fish 不存在，则退回 nil，让 Emacs 使用默认 shell，而不是
-;; 静默指向一个可能已经不存在的路径
-;; 注：explicit-shell-file-name 是 buffer-local 变量，这里设置的是
-;; 其全局默认值，用途与 setq! 不同，保持 setq-default 即可
-(setq-default explicit-shell-file-name (executable-find "fish"))
+;;; add to $DOOMDIR/config.el
+(setq shell-file-name (executable-find "bash"))
+;;; add to $DOOMDIR/config.el
+(setq-default vterm-shell "/run/current-system/sw/bin/fish")
+(setq-default explicit-shell-file-name "/run/current-system/sw/bin/fish")
 
 ;; -------------------------------------------------------------------
 ;;  添加警告信息到生成的文件
@@ -1150,7 +1114,7 @@ Home Manager 用户级配置
         :localleader
         (:prefix-map ("B" . "tangle")
          :desc "Tangle whole file" "a" #'org-babel-tangle
-         :desc "Detangle current file" "d" #'org-babel-detangle)
+         :desc "Detangle current file" "d" #'org-babel-detangle
          :desc "Tangle current block's file only" "f" #'+org/tangle-current-file-only)))
 
 
@@ -1915,7 +1879,7 @@ Bottom=0
       q = "exit";
 
       # emacs
-      ec = "emacsclient -t"
+      ec = "emacsclient -t";
 
       # doom emacs
       dmu = "doom upgrade";
@@ -3150,7 +3114,7 @@ binds {
     "Mod+B"      { spawn "firefox"; }
     "Mod+E"      { spawn "alacritty" "-e" "yazi"; }
     "Mod+U"      { spawn "alacritty" "-e" "termusic"; }
-    "Mod+O"      { spawn "emacsclient" "-c"; }
+    "Mod+O"      { spawn "emacs"; }
 
     // 🛠️ 3. Noctalia 面板组件控制
     "Mod+D"         { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
