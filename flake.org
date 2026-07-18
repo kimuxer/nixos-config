@@ -803,8 +803,7 @@ Home Manager 用户级配置
   };
 
   home.packages = with pkgs; [
-    libvterm
-    emacsPackages.vterm
+    gnumake
     libtool
     clang
     cmake

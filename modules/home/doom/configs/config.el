@@ -9,19 +9,16 @@
 
         doom-theme 'doom-one
         doom-font "JetBrainsMono Nerd Font:style=SemiBold:size=13"
-        doom-variable-pitch-font (font-spec :family "Noto Sans CJK SC" :size 13))
-;; test
-;; -------------------------------------------------------------------
-;;  org 基础设置（普通变量，无需等待 org 包加载，可直接顶层设置）
-;; -------------------------------------------------------------------
-;;(add-hook! 'org-mode-hook #'org-overview)
+        doom-variable-pitch-font (font-spec :family "Noto Sans CJK SC" :size 13)
 
-(setopt org-hide-leading-stars t             ; 隐藏多余的星号
+        org-hide-leading-stars t             ; 隐藏多余的星号
         org-odd-levels-only nil              ; 保持层级清晰
         org-element-cache-persistent t
         org-src-fontify-natively t
         org-src-tab-acts-natively t
-        org-element-use-cache t)
+        org-element-use-cache t
+        which-key-idle-delay 0.3)
+
 
 (after! org
   ;; 高度调整集中在一份数据里，方便以后新增层级或调整数值，无需重复写 set-face-attribute
@@ -93,8 +90,9 @@
 ;; -------------------------------------------------------------------
 ;; Evil 分屏后自动聚焦新窗
 ;; -------------------------------------------------------------------
-(setopt evil-split-window-below t
-        evil-vsplit-window-right t)
+(after! evil
+  (setopt evil-split-window-below t
+          evil-vsplit-window-right t))
 
 ;; -------------------------------------------------------------------
 ;; 排除，`projectile`/`consult-ripgrep`/`find-file` 索引
@@ -104,17 +102,8 @@
     (add-to-list 'projectile-globally-ignored-directories dir)))
 
 ;; -------------------------------------------------------------------
-;; which-key 弹出延迟
-;; -------------------------------------------------------------------
-(setopt which-key-idle-delay 0.3)
-
-;; -------------------------------------------------------------------
 ;; 备份文件位置  ~/.cache/emacs
 ;; -------------------------------------------------------------------
-;; 原来用 (after! emacs ...) 包裹，但 Emacs 核心从不会
-;; (provide 'emacs)，所以这个 after! 永远不会触发，里面的设置
-;; 全部失效。这些是核心内建变量，启动早期就可用，直接去掉
-;; after! 包裹、顶层执行即可
 (let ((cache-dir (expand-file-name "~/.cache/emacs/")))
   (setopt backup-directory-alist `(("." . ,(expand-file-name "backups/" cache-dir)))
             auto-save-file-name-transforms `((".*" ,(expand-file-name "auto-save/" cache-dir) t))

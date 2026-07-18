@@ -4,14 +4,15 @@
 { config, pkgs, ... }:
 {
   services.emacs.enable = true;
- 
+
   programs.emacs = {
     enable = true;
     package = pkgs.emacs31-pgtk;
   };
 
   home.packages = with pkgs; [
-    # Emacs 基础包
+    gnumake
+    libtool
     clang
     cmake
     libxml2
