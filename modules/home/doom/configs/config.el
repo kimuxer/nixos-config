@@ -11,6 +11,7 @@
         doom-font "JetBrainsMono Nerd Font:style=SemiBold:size=13"
         doom-variable-pitch-font (font-spec :family "Noto Sans CJK SC" :size 13)
 
+        confirm-kill-emacs nil
         org-hide-leading-stars t             ; 隐藏多余的星号
         org-odd-levels-only nil              ; 保持层级清晰
         org-element-cache-persistent t

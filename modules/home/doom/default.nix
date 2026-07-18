@@ -11,6 +11,7 @@
   };
 
   home.packages = with pkgs; [
+    jq
     gnumake
     libtool
     clang

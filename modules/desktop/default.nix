@@ -17,7 +17,7 @@
     ./kanata.nix
     ./fonts.nix
     ./starship.nix
-    #./ollama.nix
+    ./ollama.nix
     #./virtualisation.nix
   ];
 }
