@@ -803,7 +803,9 @@ Home Manager 用户级配置
   };
 
   home.packages = with pkgs; [
-    # Emacs 基础包
+    libvterm
+    emacsPackages.vterm
+    libtool
     clang
     cmake
     libxml2
