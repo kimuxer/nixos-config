@@ -30,6 +30,7 @@
         "rustc"
         "rustfmt"
         "rust-analyzer"
+        "rustPlatform.rustLibSrc"
       ];
     in {
       devShells.${system}.default = pkgs.mkShell {

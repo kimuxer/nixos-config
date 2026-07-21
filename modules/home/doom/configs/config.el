@@ -112,3 +112,26 @@
   ;; 确保目录存在
   (make-directory (cdr (car backup-directory-alist)) t)
   (make-directory (cadr (car auto-save-file-name-transforms)) t))
+
+;; -------------------------------------------------------------------
+;; 自动补全
+;; -------------------------------------------------------------------
+(after! corfu
+  (setq corfu-auto t              ; 开启自动弹出
+        corfu-auto-delay 0.0
+        corfu-auto-prefix 1))
+
+;; -------------------------------------------------------------------
+;; AI
+;; -------------------------------------------------------------------
+(use-package! ellama
+  :bind ("C-c e" . ellama-transient-main-menu) ; 绑定全局快捷键唤出主菜单
+  :init
+  (setq ellama-language "zh") ; 设置 AI 回复语言为中文
+  :config
+  (require 'llm-ollama)
+  ;; 配置默认使用的本地大模型
+  (setq ellama-provider
+        (make-llm-ollama
+         :chat-model "qwen2.5-coder:7b"
+         :embedding-model "qwen2.5-coder:7b")))
