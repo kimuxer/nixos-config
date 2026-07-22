@@ -12,6 +12,7 @@
 
   home.packages = with pkgs; [
     jq
+    perl
     gnumake
     libtool
     clang
